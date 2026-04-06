@@ -175,18 +175,28 @@ export default function Admin() {
   // CRM Dashboard
   return (
     <div className="min-h-screen bg-background flex">
+      {/* Mobile sidebar backdrop */}
+      {sidebarOpen && (
+        <div className="fixed inset-0 bg-black/50 z-40 md:hidden" onClick={() => setSidebarOpen(false)} />
+      )}
+
       {/* Sidebar */}
       <AnimatePresence>
         {sidebarOpen && (
           <motion.aside
-            initial={{ width: 0, opacity: 0 }}
-            animate={{ width: 240, opacity: 1 }}
-            exit={{ width: 0, opacity: 0 }}
-            className="h-screen bg-card border-r border-border flex flex-col sticky top-0"
+            initial={{ x: -240, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: -240, opacity: 0 }}
+            className="fixed md:sticky top-0 left-0 h-screen w-60 bg-card border-r border-border flex flex-col z-50"
           >
-            <div className="p-4 flex items-center gap-2 border-b border-border">
-              <Package className="w-5 h-5 text-primary" />
-              <span className="font-bold text-foreground">Cargo<span className="text-primary">Link</span></span>
+            <div className="p-4 flex items-center justify-between border-b border-border">
+              <div className="flex items-center gap-2">
+                <Package className="w-5 h-5 text-primary" />
+                <span className="font-bold text-foreground">Cargo<span className="text-primary">Link</span></span>
+              </div>
+              <button onClick={() => setSidebarOpen(false)} className="md:hidden p-1 text-muted-foreground hover:text-foreground">
+                <X className="w-5 h-5" />
+              </button>
             </div>
             <nav className="flex-1 p-2 space-y-1">
               {[
@@ -196,7 +206,7 @@ export default function Admin() {
               ].map((item) => (
                 <button
                   key={item.key}
-                  onClick={() => setTab(item.key)}
+                  onClick={() => { setTab(item.key); setSidebarOpen(false); }}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-colors ${
                     tab === item.key ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted"
                   }`}
@@ -207,7 +217,7 @@ export default function Admin() {
               ))}
             </nav>
             <div className="p-2 border-t border-border space-y-1">
-              <LanguageSwitcher />
+              <LanguageSwitcher dropUp />
               <button
                 onClick={() => { setAuthed(false); navigate("/admin"); }}
                 className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm text-destructive hover:bg-destructive/10 transition-colors"
@@ -222,9 +232,9 @@ export default function Admin() {
 
       {/* Main */}
       <div className="flex-1 min-h-screen">
-        <header className="h-16 border-b border-border flex items-center justify-between px-6 bg-card/50">
+        <header className="h-16 border-b border-border flex items-center justify-between px-4 md:px-6 bg-card/50">
           <button onClick={() => setSidebarOpen(!sidebarOpen)} className="text-foreground p-2 hover:bg-muted rounded-lg">
-            <Users className="w-5 h-5" />
+            <Menu className="w-5 h-5" />
           </button>
           <div className="flex items-center gap-4">
             <div className="text-sm text-muted-foreground">
@@ -233,7 +243,7 @@ export default function Admin() {
           </div>
         </header>
 
-        <main className="p-6">
+        <main className="p-4 md:p-6">
           {/* Clients Tab */}
           {tab === "clients" && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
