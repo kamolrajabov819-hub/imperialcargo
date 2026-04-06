@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "@/lib/i18n";
 import { Header } from "@/components/Header";
 import { getCurrentUser, logoutUser, getWarehouseString, getWarehouseAddress } from "@/lib/mockData";
-import { Copy, Check, Package, MapPin, Truck, LogOut, MessageCircle } from "lucide-react";
+import { Copy, Check, Package, MapPin, Truck, LogOut, MessageCircle, Send } from "lucide-react";
 import { useState, useEffect } from "react";
 
 export default function Dashboard() {
@@ -35,7 +35,8 @@ export default function Dashboard() {
   const whatsappMessage = encodeURIComponent(
     `Hello! My CargoLink code is ${user.code}.\n\nWarehouse Address:\n${warehouseString}\nID: ${user.code}`
   );
-  const whatsappUrl = `https://wa.me/996555000000?text=${whatsappMessage}`;
+  const whatsappUrl = `https://wa.me/77718191119?text=${whatsappMessage}`;
+  const telegramUrl = "https://t.me/sultanb19";
 
   return (
     <div className="min-h-screen bg-background">
@@ -125,6 +126,19 @@ export default function Dashboard() {
             >
               <MessageCircle className="w-5 h-5" />
               {t("dashboard.contactManager")}
+            </motion.a>
+
+            <motion.a
+              href={telegramUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="w-full py-3 rounded-xl font-medium flex items-center justify-center gap-2 transition-colors text-white"
+              style={{ backgroundColor: "#229ED9" }}
+            >
+              <Send className="w-5 h-5" />
+              {t("dashboard.contactTelegram")}
             </motion.a>
           </div>
         </motion.div>

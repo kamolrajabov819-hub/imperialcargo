@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useTranslation } from "@/lib/i18n";
 import { Header } from "@/components/Header";
-import { WhatsAppButton } from "@/components/WhatsAppButton";
+import { ContactButtons } from "@/components/ContactButtons";
 import { findClientByNameAndPhone, setCurrentUser } from "@/lib/mockData";
 import { Input } from "@/components/ui/input";
 import { PhoneInput } from "@/components/PhoneInput";
@@ -31,7 +31,7 @@ export default function Login() {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <WhatsAppButton />
+      <ContactButtons />
 
       <div className="min-h-screen flex items-center justify-center pt-16 px-4">
         <motion.div

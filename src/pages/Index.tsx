@@ -1,7 +1,7 @@
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import { useTranslation } from "@/lib/i18n";
 import { Header } from "@/components/Header";
-import { WhatsAppButton } from "@/components/WhatsAppButton";
+import { ContactButtons } from "@/components/ContactButtons";
 import { ArrowRight, Package, Star, Mail, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, User } from "lucide-react";
 import { Link } from "react-router-dom";
 import { getCurrentUser } from "@/lib/mockData";
@@ -72,7 +72,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background overflow-hidden">
       <Header />
-      <WhatsAppButton />
+      <ContactButtons />
 
       {/* ─── HERO ─── */}
       <section className="relative min-h-screen flex items-center px-4 md:px-8 pt-20 pb-8">
