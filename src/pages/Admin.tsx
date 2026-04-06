@@ -635,7 +635,7 @@ export default function Admin() {
 
       {/* Add Client Modal */}
       <Dialog open={addOpen} onOpenChange={setAddOpen}>
-        <DialogContent className="bg-card border-border text-foreground max-w-[calc(100vw-2rem)]">
+        <DialogContent className="bg-card border-border text-foreground max-w-md mx-auto">
           <DialogHeader>
             <DialogTitle>{t("admin.addClient")}</DialogTitle>
           </DialogHeader>
