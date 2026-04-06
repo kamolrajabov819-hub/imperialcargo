@@ -513,6 +513,50 @@ export default function Admin() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Comments Dialog */}
+      <Dialog open={!!commentClient} onOpenChange={(open) => !open && setCommentClient(null)}>
+        <DialogContent className="bg-card border-border text-foreground max-h-[80vh] flex flex-col">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <MessageSquare className="w-5 h-5 text-primary" />
+              {commentClient?.name}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="flex-1 overflow-y-auto space-y-3 min-h-0">
+            {comments.length === 0 && (
+              <p className="text-sm text-muted-foreground text-center py-4">No comments yet</p>
+            )}
+            {comments.map((c) => (
+              <div key={c.id} className="bg-secondary rounded-lg p-3 flex items-start justify-between gap-2">
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm text-foreground">{c.text}</p>
+                  <p className="text-xs text-muted-foreground mt-1">{new Date(c.createdAt).toLocaleString()}</p>
+                </div>
+                <button onClick={() => handleDeleteComment(c.id)} className="p-1 text-destructive hover:bg-destructive/10 rounded shrink-0">
+                  <Trash2 className="w-3 h-3" />
+                </button>
+              </div>
+            ))}
+          </div>
+          <div className="flex gap-2 pt-2 border-t border-border">
+            <Input
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+              placeholder="Add a comment..."
+              className="bg-secondary border-border text-foreground"
+              onKeyDown={(e) => e.key === "Enter" && handleAddComment()}
+            />
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              onClick={handleAddComment}
+              className="px-4 py-2 rounded-xl bg-primary text-primary-foreground font-medium shrink-0"
+            >
+              Add
+            </motion.button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
