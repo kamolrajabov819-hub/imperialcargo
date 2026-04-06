@@ -113,6 +113,7 @@ const translations = {
     "dashboard.tracking": "Order Tracking",
     "dashboard.trackingDesc": "Coming soon — track your packages in real-time.",
     "dashboard.contactManager": "Contact Manager",
+    "dashboard.contactTelegram": "Contact via Telegram",
     "dashboard.logout": "Log Out",
 
     // Admin
