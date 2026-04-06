@@ -51,7 +51,7 @@ export default function Signup() {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <WhatsAppButton />
+      <ContactButtons />
 
       <div className="min-h-screen flex items-center justify-center pt-16 px-4">
         <motion.div
