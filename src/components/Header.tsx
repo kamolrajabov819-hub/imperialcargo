@@ -3,7 +3,7 @@ import { useTranslation } from "@/lib/i18n";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { getCurrentUser } from "@/lib/mockData";
 
 export function Header() {
@@ -11,6 +11,7 @@ export function Header() {
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [activeSection, setActiveSection] = useState("");
   const user = getCurrentUser();
   const isHome = location.pathname === "/";
 
@@ -19,6 +20,29 @@ export function Header() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  // Scroll spy for hash sections
+  useEffect(() => {
+    if (!isHome) return;
+    const sectionIds = ["about", "services", "contact"];
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveSection("#" + entry.target.id);
+          }
+        });
+      },
+      { rootMargin: "-40% 0px -55% 0px", threshold: 0 }
+    );
+
+    sectionIds.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, [isHome]);
 
   const links = [
     { to: "/", label: t("nav.home") },
@@ -32,12 +56,19 @@ export function Header() {
     ...(user ? [{ to: "/dashboard", label: t("nav.dashboard") }] : [{ to: "/signup", label: t("nav.signup") }]),
   ];
 
-  const handleClick = (to: string) => {
-    setMobileOpen(false);
-    if (to.startsWith("#")) {
+  const handleHashClick = useCallback((to: string) => {
+    setActiveSection(to);
+    // Use setTimeout to let mobile menu close animation start before scrolling
+    setTimeout(() => {
       const el = document.querySelector(to);
       el?.scrollIntoView({ behavior: "smooth" });
-    }
+    }, 50);
+  }, []);
+
+  const isActive = (to: string) => {
+    if (to === "/") return location.pathname === "/" && !activeSection;
+    if (to.startsWith("#")) return activeSection === to;
+    return location.pathname === to;
   };
 
   return (
@@ -66,8 +97,12 @@ export function Header() {
               link.to.startsWith("#") ? (
                 <button
                   key={link.to}
-                  onClick={() => handleClick(link.to)}
-                  className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors rounded-full hover:bg-white/80"
+                  onClick={() => handleHashClick(link.to)}
+                  className={`px-4 py-2 text-sm transition-colors rounded-full ${
+                    isActive(link.to)
+                      ? "bg-white text-foreground font-medium shadow-sm"
+                      : "text-muted-foreground hover:text-foreground hover:bg-white/80"
+                  }`}
                 >
                   {link.label}
                 </button>
@@ -76,7 +111,7 @@ export function Header() {
                   key={link.to}
                   to={link.to}
                   className={`px-4 py-2 text-sm transition-colors rounded-full ${
-                    location.pathname === link.to
+                    isActive(link.to)
                       ? "bg-white text-foreground font-medium shadow-sm"
                       : "text-muted-foreground hover:text-foreground hover:bg-white/80"
                   }`}
@@ -88,7 +123,7 @@ export function Header() {
           </div>
         </nav>
 
-        {/* Desktop right - only language switcher */}
+        {/* Desktop right */}
         <div className="hidden md:flex items-center">
           <LanguageSwitcher />
         </div>
@@ -117,8 +152,15 @@ export function Header() {
                 link.to.startsWith("#") ? (
                   <button
                     key={link.to}
-                    onClick={() => handleClick(link.to)}
-                    className="block w-full text-left px-4 py-3 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/60 rounded-xl transition-colors"
+                    onClick={() => {
+                      setMobileOpen(false);
+                      handleHashClick(link.to);
+                    }}
+                    className={`block w-full text-left px-4 py-3 text-sm rounded-xl transition-colors ${
+                      isActive(link.to)
+                        ? "bg-primary/10 text-primary font-medium"
+                        : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
+                    }`}
                   >
                     {link.label}
                   </button>
@@ -128,7 +170,7 @@ export function Header() {
                     to={link.to}
                     onClick={() => setMobileOpen(false)}
                     className={`block px-4 py-3 text-sm rounded-xl transition-colors ${
-                      location.pathname === link.to
+                      isActive(link.to)
                         ? "bg-primary/10 text-primary font-medium"
                         : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
                     }`}
