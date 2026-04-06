@@ -355,7 +355,7 @@ export default function Admin() {
 
           {/* Settings Tab */}
           {tab === "settings" && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6 max-w-2xl">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6 max-w-2xl mx-auto">
               {/* Warehouse Address Editor */}
               <div className="glass rounded-xl p-6">
                 <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
