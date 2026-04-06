@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "@/lib/i18n";
 import { Header } from "@/components/Header";
 import { getCurrentUser, logoutUser, getWarehouseString, getWarehouseAddress } from "@/lib/mockData";
-import { Copy, Check, Package, MapPin, Truck, LogOut, MessageCircle, Send } from "lucide-react";
+import { Copy, Check, Package, MapPin, Truck, LogOut, MessageCircle, Send } from "lucide-react"; // v2
 import { useState, useEffect } from "react";
 
 export default function Dashboard() {
