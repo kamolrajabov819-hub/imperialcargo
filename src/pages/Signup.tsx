@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useTranslation } from "@/lib/i18n";
 import { Header } from "@/components/Header";
-import { ContactButtons } from "@/components/ContactButtons";
+
 import { addClient, setCurrentUser, type Client } from "@/lib/mockData";
 import { Input } from "@/components/ui/input";
 import { PhoneInput } from "@/components/PhoneInput";
