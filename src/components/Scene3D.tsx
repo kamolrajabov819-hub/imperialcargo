@@ -39,7 +39,7 @@ function CargoBox() {
 
 function GlobeRoute() {
   const globeRef = useRef<THREE.Mesh>(null);
-  const curveRef = useRef<THREE.Line>(null);
+  
 
   const curve = useMemo(() => {
     const points: THREE.Vector3[] = [];
