@@ -5,6 +5,7 @@ import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import {
   getClients, addClient, updateClient, deleteClient, type Client,
   getClientStats, exportClientsCSV, getWarehouseAddress, saveWarehouseAddress, DEFAULT_WAREHOUSE,
+  getClientComments, addClientComment, deleteClientComment, type Comment,
 } from "@/lib/mockData";
 import { Input } from "@/components/ui/input";
 import {
@@ -15,7 +16,7 @@ import {
 } from "@/components/ui/dialog";
 import {
   Search, Plus, Pencil, Trash2, Users, Settings, LogOut, Package,
-  BarChart3, Download, TrendingUp, MapPin, ShieldCheck,
+  BarChart3, Download, TrendingUp, MapPin, ShieldCheck, Menu, X, MessageSquare,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
@@ -40,8 +41,11 @@ export default function Admin() {
   const [editName, setEditName] = useState("");
   const [editPhone, setEditPhone] = useState("");
   const [editCity, setEditCity] = useState("");
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [warehouse, setWarehouse] = useState(getWarehouseAddress);
+  const [commentClient, setCommentClient] = useState<Client | null>(null);
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [newComment, setNewComment] = useState("");
 
   const handleLogin = () => {
     if (email === "admin@cargolink.com" && password === "admin123") {
@@ -109,6 +113,24 @@ export default function Admin() {
     saveWarehouseAddress(warehouse);
   };
 
+  const openComments = (c: Client) => {
+    setCommentClient(c);
+    setComments(getClientComments(c.id));
+    setNewComment("");
+  };
+
+  const handleAddComment = () => {
+    if (!commentClient || !newComment.trim()) return;
+    addClientComment(commentClient.id, newComment.trim());
+    setComments(getClientComments(commentClient.id));
+    setNewComment("");
+  };
+
+  const handleDeleteComment = (id: string) => {
+    deleteClientComment(id);
+    if (commentClient) setComments(getClientComments(commentClient.id));
+  };
+
   // Login screen
   if (!authed) {
     return (
@@ -153,18 +175,28 @@ export default function Admin() {
   // CRM Dashboard
   return (
     <div className="min-h-screen bg-background flex">
+      {/* Mobile sidebar backdrop */}
+      {sidebarOpen && (
+        <div className="fixed inset-0 bg-black/50 z-40 md:hidden" onClick={() => setSidebarOpen(false)} />
+      )}
+
       {/* Sidebar */}
       <AnimatePresence>
         {sidebarOpen && (
           <motion.aside
-            initial={{ width: 0, opacity: 0 }}
-            animate={{ width: 240, opacity: 1 }}
-            exit={{ width: 0, opacity: 0 }}
-            className="h-screen bg-card border-r border-border flex flex-col sticky top-0"
+            initial={{ x: -240, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: -240, opacity: 0 }}
+            className="fixed md:sticky top-0 left-0 h-screen w-60 bg-card border-r border-border flex flex-col z-50"
           >
-            <div className="p-4 flex items-center gap-2 border-b border-border">
-              <Package className="w-5 h-5 text-primary" />
-              <span className="font-bold text-foreground">Cargo<span className="text-primary">Link</span></span>
+            <div className="p-4 flex items-center justify-between border-b border-border">
+              <div className="flex items-center gap-2">
+                <Package className="w-5 h-5 text-primary" />
+                <span className="font-bold text-foreground">Cargo<span className="text-primary">Link</span></span>
+              </div>
+              <button onClick={() => setSidebarOpen(false)} className="md:hidden p-1 text-muted-foreground hover:text-foreground">
+                <X className="w-5 h-5" />
+              </button>
             </div>
             <nav className="flex-1 p-2 space-y-1">
               {[
@@ -174,7 +206,7 @@ export default function Admin() {
               ].map((item) => (
                 <button
                   key={item.key}
-                  onClick={() => setTab(item.key)}
+                  onClick={() => { setTab(item.key); setSidebarOpen(false); }}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-colors ${
                     tab === item.key ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted"
                   }`}
@@ -185,7 +217,7 @@ export default function Admin() {
               ))}
             </nav>
             <div className="p-2 border-t border-border space-y-1">
-              <LanguageSwitcher />
+              <LanguageSwitcher dropUp />
               <button
                 onClick={() => { setAuthed(false); navigate("/admin"); }}
                 className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm text-destructive hover:bg-destructive/10 transition-colors"
@@ -200,9 +232,9 @@ export default function Admin() {
 
       {/* Main */}
       <div className="flex-1 min-h-screen">
-        <header className="h-16 border-b border-border flex items-center justify-between px-6 bg-card/50">
+        <header className="h-16 border-b border-border flex items-center justify-between px-4 md:px-6 bg-card/50">
           <button onClick={() => setSidebarOpen(!sidebarOpen)} className="text-foreground p-2 hover:bg-muted rounded-lg">
-            <Users className="w-5 h-5" />
+            <Menu className="w-5 h-5" />
           </button>
           <div className="flex items-center gap-4">
             <div className="text-sm text-muted-foreground">
@@ -211,7 +243,7 @@ export default function Admin() {
           </div>
         </header>
 
-        <main className="p-6">
+        <main className="p-4 md:p-6">
           {/* Clients Tab */}
           {tab === "clients" && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
@@ -258,7 +290,10 @@ export default function Admin() {
                           <TableCell className="text-primary font-mono font-bold">{c.code}</TableCell>
                           <TableCell className="text-muted-foreground hidden md:table-cell">{c.createdAt}</TableCell>
                           <TableCell className="text-right">
-                            <div className="flex items-center justify-end gap-2">
+                            <div className="flex items-center justify-end gap-1">
+                              <button onClick={() => openComments(c)} className="p-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors">
+                                <MessageSquare className="w-4 h-4" />
+                              </button>
                               <button onClick={() => openEdit(c)} className="p-2 rounded-lg hover:bg-primary/10 text-primary transition-colors">
                                 <Pencil className="w-4 h-4" />
                               </button>
@@ -280,7 +315,7 @@ export default function Admin() {
           {tab === "statistics" && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
               {/* Stat Cards */}
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {[
                   { label: t("admin.totalClients"), value: stats.total, icon: Users },
                   { label: t("admin.newThisMonth"), value: stats.newThisMonth, icon: TrendingUp },
@@ -475,6 +510,50 @@ export default function Admin() {
               <motion.button whileTap={{ scale: 0.95 }} onClick={() => setEditClient(null)} className="flex-1 py-3 rounded-xl bg-secondary text-foreground font-medium">{t("admin.cancel")}</motion.button>
               <motion.button whileTap={{ scale: 0.95 }} onClick={handleEdit} className="flex-1 py-3 rounded-xl bg-primary text-primary-foreground font-semibold">{t("admin.save")}</motion.button>
             </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Comments Dialog */}
+      <Dialog open={!!commentClient} onOpenChange={(open) => !open && setCommentClient(null)}>
+        <DialogContent className="bg-card border-border text-foreground max-h-[80vh] flex flex-col">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <MessageSquare className="w-5 h-5 text-primary" />
+              {commentClient?.name}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="flex-1 overflow-y-auto space-y-3 min-h-0">
+            {comments.length === 0 && (
+              <p className="text-sm text-muted-foreground text-center py-4">No comments yet</p>
+            )}
+            {comments.map((c) => (
+              <div key={c.id} className="bg-secondary rounded-lg p-3 flex items-start justify-between gap-2">
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm text-foreground">{c.text}</p>
+                  <p className="text-xs text-muted-foreground mt-1">{new Date(c.createdAt).toLocaleString()}</p>
+                </div>
+                <button onClick={() => handleDeleteComment(c.id)} className="p-1 text-destructive hover:bg-destructive/10 rounded shrink-0">
+                  <Trash2 className="w-3 h-3" />
+                </button>
+              </div>
+            ))}
+          </div>
+          <div className="flex gap-2 pt-2 border-t border-border">
+            <Input
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+              placeholder="Add a comment..."
+              className="bg-secondary border-border text-foreground"
+              onKeyDown={(e) => e.key === "Enter" && handleAddComment()}
+            />
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              onClick={handleAddComment}
+              className="px-4 py-2 rounded-xl bg-primary text-primary-foreground font-medium shrink-0"
+            >
+              Add
+            </motion.button>
           </div>
         </DialogContent>
       </Dialog>

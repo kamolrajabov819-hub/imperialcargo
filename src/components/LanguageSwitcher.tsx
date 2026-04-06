@@ -9,7 +9,7 @@ const languages: { code: Language; label: string; flag: string }[] = [
   { code: "kg", label: "Кыргызча", flag: "🇰🇬" },
 ];
 
-export function LanguageSwitcher() {
+export function LanguageSwitcher({ dropUp = false }: { dropUp?: boolean } = {}) {
   const { language, setLanguage } = useTranslation();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -43,7 +43,7 @@ export function LanguageSwitcher() {
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
-            className="absolute right-0 top-full mt-2 glass-strong rounded-lg overflow-hidden z-50 min-w-[150px]"
+            className={`absolute right-0 glass-strong rounded-lg overflow-hidden z-50 min-w-[150px] ${dropUp ? "bottom-full mb-2" : "top-full mt-2"}`}
           >
             {languages.map((lang) => (
               <button
