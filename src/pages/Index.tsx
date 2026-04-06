@@ -72,7 +72,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background overflow-hidden">
       <Header />
-      <WhatsAppButton />
+      <ContactButtons />
 
       {/* ─── HERO ─── */}
       <section className="relative min-h-screen flex items-center px-4 md:px-8 pt-20 pb-8">
