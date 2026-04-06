@@ -345,6 +345,8 @@ export default function Admin() {
                       </Pie>
                       <Tooltip
                         contentStyle={{ background: "hsl(240,15%,8%)", border: "1px solid hsl(240,10%,18%)", borderRadius: "8px", color: "hsl(200,100%,95%)" }}
+                        itemStyle={{ color: "hsl(200,100%,95%)" }}
+                        labelStyle={{ color: "hsl(200,100%,95%)" }}
                       />
                     </PieChart>
                   </ResponsiveContainer>
