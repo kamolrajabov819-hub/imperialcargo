@@ -331,9 +331,13 @@ export default function Admin() {
                         nameKey="city"
                         cx="50%"
                         cy="50%"
-                        outerRadius={90}
-                        label={({ city, count }) => `${city}: ${count}`}
-                        labelLine={false}
+                        outerRadius={80}
+                        label={({ city, count, x, y }) => (
+                          <text x={x} y={y} fill="hsl(var(--foreground))" fontSize={13} fontWeight={500} textAnchor="middle" dominantBaseline="central">
+                            {`${city}: ${count}`}
+                          </text>
+                        )}
+                        labelLine={{ stroke: "hsl(var(--muted-foreground))", strokeWidth: 1 }}
                       >
                         {stats.clientsByCity.map((_, i) => (
                           <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
