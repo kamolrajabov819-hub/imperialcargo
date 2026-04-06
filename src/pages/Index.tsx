@@ -2,7 +2,7 @@ import { motion, useInView, AnimatePresence } from "framer-motion";
 import { useTranslation } from "@/lib/i18n";
 import { Header } from "@/components/Header";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
-import { ArrowRight, Package, Star, Mail, ChevronDown, ChevronUp, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowRight, Package, Star, Mail, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, User } from "lucide-react";
 import { Link } from "react-router-dom";
 import { getCurrentUser } from "@/lib/mockData";
 import { useRef, useEffect, useState } from "react";
