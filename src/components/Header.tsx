@@ -81,18 +81,26 @@ export function Header() {
         </div>
       </div>
 
+        <div className="md:hidden flex items-center gap-2">
+          <LanguageSwitcher />
+          <button onClick={() => setMobileOpen(!mobileOpen)} className="p-2 text-white">
+            {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+        </div>
+      </div>
+
       {mobileOpen && (
         <motion.div
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: "auto" }}
-          className="md:hidden glass-strong border-t border-border"
+          className="md:hidden bg-black/80 backdrop-blur-md border-t border-white/10"
         >
           {links.map((link) =>
             link.to.startsWith("#") ? (
               <button
                 key={link.to}
                 onClick={() => handleClick(link.to)}
-                className="block w-full text-left px-6 py-3 text-sm text-foreground hover:text-primary hover:bg-primary/5 transition-colors"
+                className="block w-full text-left px-6 py-3 text-sm text-white/80 hover:text-white hover:bg-white/10 transition-colors"
               >
                 {link.label}
               </button>
@@ -101,7 +109,7 @@ export function Header() {
                 key={link.to}
                 to={link.to}
                 onClick={() => setMobileOpen(false)}
-                className="block px-6 py-3 text-sm text-foreground hover:text-primary hover:bg-primary/5 transition-colors"
+                className="block px-6 py-3 text-sm text-white/80 hover:text-white hover:bg-white/10 transition-colors"
               >
                 {link.label}
               </Link>
