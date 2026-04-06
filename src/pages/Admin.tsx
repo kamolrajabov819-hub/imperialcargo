@@ -87,6 +87,11 @@ export default function Admin() {
     );
   }, [clients, search]);
 
+  const totalPages = Math.max(1, Math.ceil(filtered.length / CLIENTS_PER_PAGE));
+  const paginatedClients = filtered.slice((currentPage - 1) * CLIENTS_PER_PAGE, currentPage * CLIENTS_PER_PAGE);
+  const showingFrom = filtered.length === 0 ? 0 : (currentPage - 1) * CLIENTS_PER_PAGE + 1;
+  const showingTo = Math.min(currentPage * CLIENTS_PER_PAGE, filtered.length);
+
   const stats = useMemo(() => getClientStats(), [clients]);
 
   const handleAdd = () => {
