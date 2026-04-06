@@ -127,6 +127,19 @@ export default function Dashboard() {
               <MessageCircle className="w-5 h-5" />
               {t("dashboard.contactManager")}
             </motion.a>
+
+            <motion.a
+              href={telegramUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="w-full py-3 rounded-xl font-medium flex items-center justify-center gap-2 transition-colors text-white"
+              style={{ backgroundColor: "#229ED9" }}
+            >
+              <Send className="w-5 h-5" />
+              {t("dashboard.contactTelegram")}
+            </motion.a>
           </div>
         </motion.div>
 

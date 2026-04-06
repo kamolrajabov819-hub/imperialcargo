@@ -426,6 +426,7 @@ const translations = {
     "dashboard.tracking": "Заказды көзөмөлдөө",
     "dashboard.trackingDesc": "Жакында — посылкаларыңызды реалдуу убакытта көзөмөлдөңүз.",
     "dashboard.contactManager": "Менеджер менен байланыш",
+    "dashboard.contactTelegram": "Telegram аркылуу байланыш",
     "dashboard.logout": "Чыгуу",
 
     "admin.login": "Админ кирүү",
