@@ -69,6 +69,13 @@ export function logoutUser(): void {
   localStorage.removeItem(USER_KEY);
 }
 
+export function findClientByNameAndPhone(name: string, phone: string): Client | null {
+  const clients = getClients();
+  const trimName = name.trim().toLowerCase();
+  const trimPhone = phone.replace(/\s+/g, "");
+  return clients.find((c) => c.name.toLowerCase().trim() === trimName && c.phone.replace(/\s+/g, "") === trimPhone) || null;
+}
+
 export const DEFAULT_WAREHOUSE = {
   name: "CargoLink Warehouse",
   line1: "Room 302, Building A, Yiwu International Trade City",

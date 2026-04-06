@@ -1,11 +1,12 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useTranslation } from "@/lib/i18n";
 import { Header } from "@/components/Header";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
 import { addClient, setCurrentUser, type Client } from "@/lib/mockData";
 import { Input } from "@/components/ui/input";
+import { PhoneInput } from "@/components/PhoneInput";
 import { ArrowLeft, ArrowRight, Check, User, Phone, MapPin } from "lucide-react";
 
 const cities = [
@@ -116,12 +117,7 @@ export default function Signup() {
                 {step === 1 && (
                   <div className="space-y-4">
                     <label className="block text-sm text-muted-foreground">{t("signup.step2")}</label>
-                    <Input
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      placeholder={t("signup.phonePlaceholder")}
-                      className="bg-secondary border-border text-foreground"
-                    />
+                    <PhoneInput value={phone} onChange={setPhone} />
                     <div className="flex gap-3">
                       <motion.button whileTap={{ scale: 0.95 }} onClick={back} className="flex-1 py-3 rounded-xl bg-secondary text-foreground font-medium flex items-center justify-center gap-2">
                         <ArrowLeft className="w-4 h-4" /> {t("signup.back")}
@@ -132,6 +128,8 @@ export default function Signup() {
                     </div>
                   </div>
                 )}
+
+
 
                 {step === 2 && (
                   <div className="space-y-4">
@@ -186,6 +184,15 @@ export default function Signup() {
                 )}
               </motion.div>
             </AnimatePresence>
+
+            {step < 3 && (
+              <p className="text-center text-sm text-muted-foreground mt-6">
+                {t("login.noAccount" as any) === t("login.noAccount" as any) ? "" : ""} 
+                <Link to="/login" className="text-primary hover:underline font-medium">
+                  {t("nav.login" as any)}
+                </Link>
+              </p>
+            )}
           </div>
         </motion.div>
       </div>

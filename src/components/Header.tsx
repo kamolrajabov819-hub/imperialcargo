@@ -53,7 +53,12 @@ export function Header() {
           { to: "#contact", label: t("nav.contact") },
         ]
       : []),
-    ...(user ? [{ to: "/dashboard", label: t("nav.dashboard") }] : [{ to: "/signup", label: t("nav.signup") }]),
+    ...(user
+      ? [{ to: "/dashboard", label: t("nav.dashboard") }]
+      : [
+          { to: "/login", label: t("nav.login") },
+          { to: "/signup", label: t("nav.signup") },
+        ]),
   ];
 
   const handleHashClick = useCallback((to: string) => {
