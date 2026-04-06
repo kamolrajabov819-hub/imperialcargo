@@ -374,7 +374,7 @@ export default function Admin() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {filtered.map((c) => (
+                      {paginatedClients.map((c) => (
                         <TableRow key={c.id} className="border-border hover:bg-muted/30">
                           <TableCell className="text-foreground font-medium">{c.name}</TableCell>
                           <TableCell className="text-foreground">{c.phone}</TableCell>
