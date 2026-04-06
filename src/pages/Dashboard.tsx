@@ -2,9 +2,8 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "@/lib/i18n";
 import { Header } from "@/components/Header";
-import { WhatsAppButton } from "@/components/WhatsAppButton";
 import { getCurrentUser, logoutUser, getWarehouseString, getWarehouseAddress } from "@/lib/mockData";
-import { Copy, Check, Package, MapPin, Truck, LogOut } from "lucide-react";
+import { Copy, Check, Package, MapPin, Truck, LogOut, MessageCircle } from "lucide-react";
 import { useState, useEffect } from "react";
 
 export default function Dashboard() {
@@ -13,7 +12,7 @@ export default function Dashboard() {
   const user = getCurrentUser();
   const [codeCopied, setCodeCopied] = useState(false);
   const [addrCopied, setAddrCopied] = useState(false);
-  const warehouseAddress = getWarehouseAddress();
+  const [warehouseAddress] = useState(getWarehouseAddress);
 
   useEffect(() => {
     if (!user) navigate("/signup");
@@ -32,10 +31,15 @@ export default function Dashboard() {
     navigate("/");
   };
 
+  const warehouseString = getWarehouseString();
+  const whatsappMessage = encodeURIComponent(
+    `Hello! My CargoLink code is ${user.code}.\n\nWarehouse Address:\n${warehouseString}\nID: ${user.code}`
+  );
+  const whatsappUrl = `https://wa.me/996555000000?text=${whatsappMessage}`;
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <WhatsAppButton />
 
       <div className="pt-24 pb-32 px-4 container mx-auto max-w-2xl">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex justify-between items-center mb-8">
@@ -98,15 +102,31 @@ export default function Dashboard() {
             <p className="text-muted-foreground">Tel: {warehouseAddress.phone}</p>
             <p className="text-primary font-semibold mt-2">ID: {user.code}</p>
           </div>
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={() => copyToClipboard(getWarehouseString() + `\nID: ${user.code}`, setAddrCopied)}
-            className="w-full py-3 rounded-xl bg-primary/10 text-primary font-medium flex items-center justify-center gap-2 hover:bg-primary/20 transition-colors"
-          >
-            {addrCopied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-            {addrCopied ? t("dashboard.copied") : t("dashboard.copyAddress")}
-          </motion.button>
+          <div className="space-y-3">
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => copyToClipboard(getWarehouseString() + `\nID: ${user.code}`, setAddrCopied)}
+              className="w-full py-3 rounded-xl bg-primary/10 text-primary font-medium flex items-center justify-center gap-2 hover:bg-primary/20 transition-colors"
+            >
+              {addrCopied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+              {addrCopied ? t("dashboard.copied") : t("dashboard.copyAddress")}
+            </motion.button>
+
+            {/* WhatsApp button with pre-filled message */}
+            <motion.a
+              href={whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="w-full py-3 rounded-xl font-medium flex items-center justify-center gap-2 transition-colors text-white"
+              style={{ backgroundColor: "hsl(142, 70%, 45%)" }}
+            >
+              <MessageCircle className="w-5 h-5" />
+              {t("dashboard.contactManager")}
+            </motion.a>
+          </div>
         </motion.div>
 
         {/* Order Tracking Placeholder */}

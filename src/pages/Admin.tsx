@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useTranslation } from "@/lib/i18n";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import {
@@ -16,16 +16,27 @@ import {
 } from "@/components/ui/dialog";
 import {
   Search, Plus, Pencil, Trash2, Users, Settings, LogOut, Package,
-  BarChart3, Download, TrendingUp, MapPin, ShieldCheck, Menu, X, MessageSquare,
+  BarChart3, Download, TrendingUp, MapPin, ShieldCheck, Menu, X, MessageSquare, Check,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 
 const CHART_COLORS = ["hsl(185,100%,50%)", "hsl(185,80%,40%)", "hsl(185,60%,30%)", "hsl(200,80%,50%)", "hsl(160,70%,45%)", "hsl(220,70%,50%)"];
 
+function useIsMobile() {
+  const [mobile, setMobile] = useState(window.innerWidth < 768);
+  useEffect(() => {
+    const handler = () => setMobile(window.innerWidth < 768);
+    window.addEventListener("resize", handler);
+    return () => window.removeEventListener("resize", handler);
+  }, []);
+  return mobile;
+}
+
 export default function Admin() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   const [authed, setAuthed] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -41,8 +52,9 @@ export default function Admin() {
   const [editName, setEditName] = useState("");
   const [editPhone, setEditPhone] = useState("");
   const [editCity, setEditCity] = useState("");
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(!isMobile);
   const [warehouse, setWarehouse] = useState(getWarehouseAddress);
+  const [warehouseSaved, setWarehouseSaved] = useState(false);
   const [commentClient, setCommentClient] = useState<Client | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
@@ -111,6 +123,8 @@ export default function Admin() {
 
   const handleSaveWarehouse = () => {
     saveWarehouseAddress(warehouse);
+    setWarehouseSaved(true);
+    setTimeout(() => setWarehouseSaved(false), 2500);
   };
 
   const openComments = (c: Client) => {
@@ -172,70 +186,91 @@ export default function Admin() {
     );
   }
 
+  // Sidebar content (shared between desktop and mobile)
+  const sidebarContent = (
+    <>
+      <div className="p-4 flex items-center justify-between border-b border-border">
+        <div className="flex items-center gap-2">
+          <Package className="w-5 h-5 text-primary" />
+          <span className="font-bold text-foreground">Cargo<span className="text-primary">Link</span></span>
+        </div>
+        <button onClick={() => setSidebarOpen(false)} className="md:hidden p-1 text-muted-foreground hover:text-foreground">
+          <X className="w-5 h-5" />
+        </button>
+      </div>
+      <nav className="flex-1 p-2 space-y-1">
+        {[
+          { key: "clients" as const, icon: Users, label: t("admin.clients") },
+          { key: "statistics" as const, icon: BarChart3, label: t("admin.statistics") },
+          { key: "settings" as const, icon: Settings, label: t("admin.settings") },
+        ].map((item) => (
+          <button
+            key={item.key}
+            onClick={() => { setTab(item.key); if (isMobile) setSidebarOpen(false); }}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-colors ${
+              tab === item.key ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted"
+            }`}
+          >
+            <item.icon className="w-4 h-4" />
+            {item.label}
+          </button>
+        ))}
+      </nav>
+      <div className="p-2 border-t border-border space-y-1">
+        <LanguageSwitcher dropUp />
+        <button
+          onClick={() => { setAuthed(false); navigate("/admin"); }}
+          className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm text-destructive hover:bg-destructive/10 transition-colors"
+        >
+          <LogOut className="w-4 h-4" />
+          {t("admin.logout")}
+        </button>
+      </div>
+    </>
+  );
+
   // CRM Dashboard
   return (
     <div className="min-h-screen bg-background flex">
       {/* Mobile sidebar backdrop */}
-      {sidebarOpen && (
-        <div className="fixed inset-0 bg-black/50 z-40 md:hidden" onClick={() => setSidebarOpen(false)} />
-      )}
-
-      {/* Sidebar */}
       <AnimatePresence>
-        {sidebarOpen && (
+        {sidebarOpen && isMobile && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 z-40"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Desktop sidebar - always visible */}
+      <aside className="hidden md:flex sticky top-0 left-0 h-screen w-60 bg-card border-r border-border flex-col z-30 shrink-0">
+        {sidebarContent}
+      </aside>
+
+      {/* Mobile sidebar - overlay drawer */}
+      <AnimatePresence>
+        {sidebarOpen && isMobile && (
           <motion.aside
             initial={{ x: -240, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: -240, opacity: 0 }}
-            className="fixed md:sticky top-0 left-0 h-screen w-60 bg-card border-r border-border flex flex-col z-50"
+            className="fixed top-0 left-0 h-screen w-60 bg-card border-r border-border flex flex-col z-50"
           >
-            <div className="p-4 flex items-center justify-between border-b border-border">
-              <div className="flex items-center gap-2">
-                <Package className="w-5 h-5 text-primary" />
-                <span className="font-bold text-foreground">Cargo<span className="text-primary">Link</span></span>
-              </div>
-              <button onClick={() => setSidebarOpen(false)} className="md:hidden p-1 text-muted-foreground hover:text-foreground">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-            <nav className="flex-1 p-2 space-y-1">
-              {[
-                { key: "clients" as const, icon: Users, label: t("admin.clients") },
-                { key: "statistics" as const, icon: BarChart3, label: t("admin.statistics") },
-                { key: "settings" as const, icon: Settings, label: t("admin.settings") },
-              ].map((item) => (
-                <button
-                  key={item.key}
-                  onClick={() => { setTab(item.key); setSidebarOpen(false); }}
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-colors ${
-                    tab === item.key ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted"
-                  }`}
-                >
-                  <item.icon className="w-4 h-4" />
-                  {item.label}
-                </button>
-              ))}
-            </nav>
-            <div className="p-2 border-t border-border space-y-1">
-              <LanguageSwitcher dropUp />
-              <button
-                onClick={() => { setAuthed(false); navigate("/admin"); }}
-                className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm text-destructive hover:bg-destructive/10 transition-colors"
-              >
-                <LogOut className="w-4 h-4" />
-                {t("admin.logout")}
-              </button>
-            </div>
+            {sidebarContent}
           </motion.aside>
         )}
       </AnimatePresence>
 
       {/* Main */}
-      <div className="flex-1 min-h-screen">
-        <header className="h-16 border-b border-border flex items-center justify-between px-4 md:px-6 bg-card/50">
-          <button onClick={() => setSidebarOpen(!sidebarOpen)} className="text-foreground p-2 hover:bg-muted rounded-lg">
+      <div className="flex-1 min-h-screen min-w-0">
+        <header className="h-14 md:h-16 border-b border-border flex items-center justify-between px-3 md:px-6 bg-card/50 sticky top-0 z-20">
+          <button onClick={() => setSidebarOpen(!sidebarOpen)} className="md:hidden text-foreground p-2 hover:bg-muted rounded-lg">
             <Menu className="w-5 h-5" />
           </button>
+          <div className="hidden md:block" />
           <div className="flex items-center gap-4">
             <div className="text-sm text-muted-foreground">
               {t("admin.totalClients")}: <span className="text-primary font-bold">{clients.length}</span>
@@ -243,11 +278,11 @@ export default function Admin() {
           </div>
         </header>
 
-        <main className="p-4 md:p-6">
+        <main className="p-3 md:p-6">
           {/* Clients Tab */}
           {tab === "clients" && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-              <div className="flex flex-col sm:flex-row gap-4 mb-6">
+              <div className="flex flex-col sm:flex-row gap-3 mb-4 md:mb-6">
                 <div className="flex-1 relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
@@ -261,23 +296,62 @@ export default function Admin() {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => setAddOpen(true)}
-                  className="px-6 py-2 rounded-xl bg-primary text-primary-foreground font-medium flex items-center gap-2 whitespace-nowrap"
+                  className="px-4 md:px-6 py-2 rounded-xl bg-primary text-primary-foreground font-medium flex items-center justify-center gap-2 whitespace-nowrap text-sm"
                 >
                   <Plus className="w-4 h-4" />
                   {t("admin.addClient")}
                 </motion.button>
               </div>
 
-              <div className="glass rounded-xl overflow-hidden">
+              {/* Mobile card view */}
+              <div className="md:hidden space-y-3">
+                {filtered.map((c) => (
+                  <motion.div
+                    key={c.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="glass rounded-xl p-4"
+                  >
+                    <div className="flex items-start justify-between gap-2 mb-2">
+                      <div className="min-w-0">
+                        <p className="text-foreground font-medium truncate">{c.name}</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">{c.createdAt}</p>
+                      </div>
+                      <span className="text-primary font-mono font-bold text-sm shrink-0">{c.code}</span>
+                    </div>
+                    <div className="flex items-center gap-3 text-sm text-muted-foreground mb-3">
+                      <span>{c.phone}</span>
+                      {c.city && <span>• {c.city}</span>}
+                    </div>
+                    <div className="flex items-center gap-1 justify-end">
+                      <button onClick={() => openComments(c)} className="p-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors">
+                        <MessageSquare className="w-4 h-4" />
+                      </button>
+                      <button onClick={() => openEdit(c)} className="p-2 rounded-lg hover:bg-primary/10 text-primary transition-colors">
+                        <Pencil className="w-4 h-4" />
+                      </button>
+                      <button onClick={() => handleDelete(c.id)} className="p-2 rounded-lg hover:bg-destructive/10 text-destructive transition-colors">
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </motion.div>
+                ))}
+                {filtered.length === 0 && (
+                  <p className="text-center text-muted-foreground text-sm py-8">No clients found</p>
+                )}
+              </div>
+
+              {/* Desktop table view */}
+              <div className="hidden md:block glass rounded-xl overflow-hidden">
                 <div className="overflow-x-auto">
                   <Table>
                     <TableHeader>
                       <TableRow className="border-border">
                         <TableHead className="text-muted-foreground">{t("admin.name")}</TableHead>
                         <TableHead className="text-muted-foreground">{t("admin.phone")}</TableHead>
-                        <TableHead className="text-muted-foreground hidden sm:table-cell">{t("admin.location")}</TableHead>
+                        <TableHead className="text-muted-foreground">{t("admin.location")}</TableHead>
                         <TableHead className="text-muted-foreground">{t("admin.identityCode")}</TableHead>
-                        <TableHead className="text-muted-foreground hidden md:table-cell">{t("admin.date")}</TableHead>
+                        <TableHead className="text-muted-foreground">{t("admin.date")}</TableHead>
                         <TableHead className="text-muted-foreground text-right">{t("admin.actions")}</TableHead>
                       </TableRow>
                     </TableHeader>
@@ -286,9 +360,9 @@ export default function Admin() {
                         <TableRow key={c.id} className="border-border hover:bg-muted/30">
                           <TableCell className="text-foreground font-medium">{c.name}</TableCell>
                           <TableCell className="text-foreground">{c.phone}</TableCell>
-                          <TableCell className="text-foreground hidden sm:table-cell">{c.city}</TableCell>
+                          <TableCell className="text-foreground">{c.city}</TableCell>
                           <TableCell className="text-primary font-mono font-bold">{c.code}</TableCell>
-                          <TableCell className="text-muted-foreground hidden md:table-cell">{c.createdAt}</TableCell>
+                          <TableCell className="text-muted-foreground">{c.createdAt}</TableCell>
                           <TableCell className="text-right">
                             <div className="flex items-center justify-end gap-1">
                               <button onClick={() => openComments(c)} className="p-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors">
@@ -313,9 +387,9 @@ export default function Admin() {
 
           {/* Statistics Tab */}
           {tab === "statistics" && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4 md:space-y-6">
               {/* Stat Cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
                 {[
                   { label: t("admin.totalClients"), value: stats.total, icon: Users },
                   { label: t("admin.newThisMonth"), value: stats.newThisMonth, icon: TrendingUp },
@@ -327,28 +401,28 @@ export default function Admin() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.1 }}
-                    className="glass rounded-xl p-5"
+                    className="glass rounded-xl p-3 md:p-5"
                   >
-                    <div className="flex items-center gap-3 mb-2">
-                      <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                        <card.icon className="w-5 h-5 text-primary" />
+                    <div className="flex items-center gap-2 md:gap-3 mb-2">
+                      <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                        <card.icon className="w-4 h-4 md:w-5 md:h-5 text-primary" />
                       </div>
                     </div>
-                    <p className="text-2xl font-bold text-foreground">{card.value}</p>
-                    <p className="text-xs text-muted-foreground mt-1">{card.label}</p>
+                    <p className="text-xl md:text-2xl font-bold text-foreground">{card.value}</p>
+                    <p className="text-[10px] md:text-xs text-muted-foreground mt-1 leading-tight">{card.label}</p>
                   </motion.div>
                 ))}
               </div>
 
               {/* Charts */}
-              <div className="grid lg:grid-cols-2 gap-6">
-                <div className="glass rounded-xl p-6">
-                  <h3 className="text-lg font-semibold text-foreground mb-4">{t("admin.registrationsByMonth")}</h3>
-                  <ResponsiveContainer width="100%" height={250}>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
+                <div className="glass rounded-xl p-4 md:p-6">
+                  <h3 className="text-base md:text-lg font-semibold text-foreground mb-4">{t("admin.registrationsByMonth")}</h3>
+                  <ResponsiveContainer width="100%" height={220}>
                     <BarChart data={stats.registrationsByMonth}>
                       <CartesianGrid strokeDasharray="3 3" stroke="hsl(240,10%,18%)" />
-                      <XAxis dataKey="month" stroke="hsl(220,10%,55%)" fontSize={12} />
-                      <YAxis stroke="hsl(220,10%,55%)" fontSize={12} />
+                      <XAxis dataKey="month" stroke="hsl(220,10%,55%)" fontSize={11} />
+                      <YAxis stroke="hsl(220,10%,55%)" fontSize={11} />
                       <Tooltip
                         contentStyle={{ background: "hsl(240,15%,8%)", border: "1px solid hsl(240,10%,18%)", borderRadius: "8px", color: "hsl(200,100%,95%)" }}
                       />
@@ -356,9 +430,9 @@ export default function Admin() {
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
-                <div className="glass rounded-xl p-6">
-                  <h3 className="text-lg font-semibold text-foreground mb-4">{t("admin.clientsByCity")}</h3>
-                  <ResponsiveContainer width="100%" height={250}>
+                <div className="glass rounded-xl p-4 md:p-6">
+                  <h3 className="text-base md:text-lg font-semibold text-foreground mb-4">{t("admin.clientsByCity")}</h3>
+                  <ResponsiveContainer width="100%" height={220}>
                     <PieChart>
                       <Pie
                         data={stats.clientsByCity}
@@ -366,13 +440,13 @@ export default function Admin() {
                         nameKey="city"
                         cx="50%"
                         cy="50%"
-                        outerRadius={80}
-                        label={({ city, count, x, y }) => (
+                        outerRadius={isMobile ? 60 : 80}
+                        label={isMobile ? false : ({ city, count, x, y }) => (
                           <text x={x} y={y} fill="#1a1a2e" fontSize={14} fontWeight={600} textAnchor="middle" dominantBaseline="central">
                             {`${city}: ${count}`}
                           </text>
                         )}
-                        labelLine={{ stroke: "hsl(var(--muted-foreground))", strokeWidth: 1 }}
+                        labelLine={isMobile ? false : { stroke: "hsl(var(--muted-foreground))", strokeWidth: 1 }}
                       >
                         {stats.clientsByCity.map((_, i) => (
                           <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
@@ -385,6 +459,17 @@ export default function Admin() {
                       />
                     </PieChart>
                   </ResponsiveContainer>
+                  {/* Legend for mobile */}
+                  {isMobile && (
+                    <div className="flex flex-wrap gap-2 mt-3 justify-center">
+                      {stats.clientsByCity.map((item, i) => (
+                        <div key={i} className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                          <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: CHART_COLORS[i % CHART_COLORS.length] }} />
+                          <span>{item.city}: {item.count}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             </motion.div>
@@ -392,10 +477,10 @@ export default function Admin() {
 
           {/* Settings Tab */}
           {tab === "settings" && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6 max-w-2xl mx-auto">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4 md:space-y-6 max-w-2xl mx-auto">
               {/* Warehouse Address Editor */}
-              <div className="glass rounded-xl p-6">
-                <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+              <div className="glass rounded-xl p-4 md:p-6">
+                <h3 className="text-base md:text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
                   <MapPin className="w-5 h-5 text-primary" />
                   {t("admin.warehouseAddress")}
                 </h3>
@@ -414,16 +499,43 @@ export default function Admin() {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={handleSaveWarehouse}
-                    className="w-full py-3 rounded-xl bg-primary text-primary-foreground font-semibold mt-2"
+                    className={`w-full py-3 rounded-xl font-semibold mt-2 flex items-center justify-center gap-2 transition-colors duration-300 ${
+                      warehouseSaved
+                        ? "bg-green-500/20 text-green-400 border border-green-500/30"
+                        : "bg-primary text-primary-foreground"
+                    }`}
+                    disabled={warehouseSaved}
                   >
-                    {t("admin.save")}
+                    <AnimatePresence mode="wait">
+                      {warehouseSaved ? (
+                        <motion.span
+                          key="saved"
+                          initial={{ opacity: 0, scale: 0.8 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          exit={{ opacity: 0, scale: 0.8 }}
+                          className="flex items-center gap-2"
+                        >
+                          <Check className="w-5 h-5" />
+                          {t("dashboard.copied") || "Saved ✓"}
+                        </motion.span>
+                      ) : (
+                        <motion.span
+                          key="save"
+                          initial={{ opacity: 0, scale: 0.8 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          exit={{ opacity: 0, scale: 0.8 }}
+                        >
+                          {t("admin.save")}
+                        </motion.span>
+                      )}
+                    </AnimatePresence>
                   </motion.button>
                 </div>
               </div>
 
               {/* Admin Credentials */}
-              <div className="glass rounded-xl p-6">
-                <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+              <div className="glass rounded-xl p-4 md:p-6">
+                <h3 className="text-base md:text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
                   <ShieldCheck className="w-5 h-5 text-primary" />
                   {t("admin.adminCredentials")}
                 </h3>
@@ -440,8 +552,8 @@ export default function Admin() {
               </div>
 
               {/* Export CSV */}
-              <div className="glass rounded-xl p-6">
-                <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+              <div className="glass rounded-xl p-4 md:p-6">
+                <h3 className="text-base md:text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
                   <Download className="w-5 h-5 text-primary" />
                   {t("admin.exportCSV")}
                 </h3>
@@ -462,7 +574,7 @@ export default function Admin() {
 
       {/* Add Client Modal */}
       <Dialog open={addOpen} onOpenChange={setAddOpen}>
-        <DialogContent className="bg-card border-border text-foreground">
+        <DialogContent className="bg-card border-border text-foreground max-w-[calc(100vw-2rem)]">
           <DialogHeader>
             <DialogTitle>{t("admin.addClient")}</DialogTitle>
           </DialogHeader>
@@ -489,7 +601,7 @@ export default function Admin() {
 
       {/* Edit Client Modal */}
       <Dialog open={!!editClient} onOpenChange={(open) => !open && setEditClient(null)}>
-        <DialogContent className="bg-card border-border text-foreground">
+        <DialogContent className="bg-card border-border text-foreground max-w-[calc(100vw-2rem)]">
           <DialogHeader>
             <DialogTitle>{t("admin.edit")}</DialogTitle>
           </DialogHeader>
@@ -516,7 +628,7 @@ export default function Admin() {
 
       {/* Comments Dialog */}
       <Dialog open={!!commentClient} onOpenChange={(open) => !open && setCommentClient(null)}>
-        <DialogContent className="bg-card border-border text-foreground max-h-[80vh] flex flex-col">
+        <DialogContent className="bg-card border-border text-foreground max-h-[80vh] flex flex-col max-w-[calc(100vw-2rem)]">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <MessageSquare className="w-5 h-5 text-primary" />
