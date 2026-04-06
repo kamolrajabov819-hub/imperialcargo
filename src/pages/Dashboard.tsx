@@ -91,11 +91,11 @@ export default function Dashboard() {
             <h2 className="text-lg font-semibold text-foreground">{t("dashboard.warehouse")}</h2>
           </div>
           <div className="space-y-1 text-sm text-foreground mb-6 font-mono bg-secondary/50 rounded-xl p-4">
-            <p className="font-semibold">{WAREHOUSE_ADDRESS.name}</p>
-            <p>{WAREHOUSE_ADDRESS.line1}</p>
-            <p>{WAREHOUSE_ADDRESS.line2}</p>
-            <p>{WAREHOUSE_ADDRESS.city}, {WAREHOUSE_ADDRESS.country} {WAREHOUSE_ADDRESS.postal}</p>
-            <p className="text-muted-foreground">Tel: {WAREHOUSE_ADDRESS.phone}</p>
+            <p className="font-semibold">{warehouseAddress.name}</p>
+            <p>{warehouseAddress.line1}</p>
+            <p>{warehouseAddress.line2}</p>
+            <p>{warehouseAddress.city}, {warehouseAddress.country} {warehouseAddress.postal}</p>
+            <p className="text-muted-foreground">Tel: {warehouseAddress.phone}</p>
             <p className="text-primary font-semibold mt-2">ID: {user.code}</p>
           </div>
           <motion.button
