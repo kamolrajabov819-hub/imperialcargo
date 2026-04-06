@@ -150,6 +150,16 @@ const translations = {
     "admin.currentEmail": "Current Email",
     "admin.currentPassword": "Current Password",
 
+    // Login
+    "login.title": "Log In",
+    "login.nameLabel": "Full Name",
+    "login.phoneLabel": "WhatsApp Number",
+    "login.submit": "Log In",
+    "login.error": "Account not found. Check your name and phone number.",
+    "login.noAccount": "Don't have an account?",
+    "login.signupLink": "Sign Up",
+    "nav.login": "Log In",
+
     // Cities
     "city.bishkek": "Bishkek",
     "city.osh": "Osh",
