@@ -13,6 +13,7 @@ export default function Dashboard() {
   const user = getCurrentUser();
   const [codeCopied, setCodeCopied] = useState(false);
   const [addrCopied, setAddrCopied] = useState(false);
+  const warehouseAddress = getWarehouseAddress();
 
   useEffect(() => {
     if (!user) navigate("/signup");
