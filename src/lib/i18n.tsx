@@ -271,6 +271,7 @@ const translations = {
     "dashboard.tracking": "Отслеживание заказов",
     "dashboard.trackingDesc": "Скоро — отслеживайте посылки в реальном времени.",
     "dashboard.contactManager": "Связаться с менеджером",
+    "dashboard.contactTelegram": "Связаться в Telegram",
     "dashboard.logout": "Выйти",
 
     "admin.login": "Вход для админа",
