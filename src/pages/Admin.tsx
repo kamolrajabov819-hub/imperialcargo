@@ -41,8 +41,11 @@ export default function Admin() {
   const [editName, setEditName] = useState("");
   const [editPhone, setEditPhone] = useState("");
   const [editCity, setEditCity] = useState("");
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [warehouse, setWarehouse] = useState(getWarehouseAddress);
+  const [commentClient, setCommentClient] = useState<Client | null>(null);
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [newComment, setNewComment] = useState("");
 
   const handleLogin = () => {
     if (email === "admin@cargolink.com" && password === "admin123") {
