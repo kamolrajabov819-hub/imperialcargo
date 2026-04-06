@@ -333,7 +333,7 @@ export default function Admin() {
                         cy="50%"
                         outerRadius={80}
                         label={({ city, count, x, y }) => (
-                          <text x={x} y={y} fill="hsl(var(--foreground))" fontSize={13} fontWeight={500} textAnchor="middle" dominantBaseline="central">
+                          <text x={x} y={y} fill="#1a1a2e" fontSize={14} fontWeight={600} textAnchor="middle" dominantBaseline="central">
                             {`${city}: ${count}`}
                           </text>
                         )}
