@@ -160,7 +160,7 @@ export default function Admin() {
             initial={{ width: 0, opacity: 0 }}
             animate={{ width: 240, opacity: 1 }}
             exit={{ width: 0, opacity: 0 }}
-            className="h-screen bg-card border-r border-border flex flex-col overflow-hidden sticky top-0"
+            className="h-screen bg-card border-r border-border flex flex-col sticky top-0"
           >
             <div className="p-4 flex items-center gap-2 border-b border-border">
               <Package className="w-5 h-5 text-primary" />
