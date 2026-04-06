@@ -1,17 +1,24 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "@/lib/i18n";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { Link, useLocation } from "react-router-dom";
-import { Package, Menu, X } from "lucide-react";
-import { useState } from "react";
+import { Menu, X } from "lucide-react";
+import { useState, useEffect } from "react";
 import { getCurrentUser } from "@/lib/mockData";
 
 export function Header() {
   const { t } = useTranslation();
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const user = getCurrentUser();
   const isHome = location.pathname === "/";
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 50);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const links = [
     { to: "/", label: t("nav.home") },
@@ -38,23 +45,29 @@ export function Header() {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ type: "spring", stiffness: 100 }}
-      className="fixed top-0 left-0 right-0 z-40 bg-transparent"
+      className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
+        scrolled
+          ? "bg-white/80 backdrop-blur-lg shadow-sm"
+          : "bg-white/60 backdrop-blur-md"
+      }`}
     >
-      <div className="container mx-auto px-4 h-20 flex items-center justify-between">
+      <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+        {/* Logo */}
         <Link to="/" className="flex items-center gap-2">
-          <span className="text-xl font-bold text-white italic">
+          <span className="text-xl font-bold text-foreground italic">
             Cargo<span className="text-primary">Link</span>
           </span>
         </Link>
 
+        {/* Desktop Nav */}
         <nav className="hidden md:flex items-center">
-          <div className="flex items-center gap-1 px-2 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20">
+          <div className="flex items-center gap-1 px-2 py-1.5 rounded-full bg-muted/60 border border-border">
             {links.map((link) =>
               link.to.startsWith("#") ? (
                 <button
                   key={link.to}
                   onClick={() => handleClick(link.to)}
-                  className="px-4 py-2 text-sm text-white/80 hover:text-white transition-colors rounded-full hover:bg-white/10"
+                  className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors rounded-full hover:bg-white/80"
                 >
                   {link.label}
                 </button>
@@ -63,7 +76,9 @@ export function Header() {
                   key={link.to}
                   to={link.to}
                   className={`px-4 py-2 text-sm transition-colors rounded-full ${
-                    location.pathname === link.to ? "bg-white text-foreground font-medium" : "text-white/80 hover:text-white hover:bg-white/10"
+                    location.pathname === link.to
+                      ? "bg-white text-foreground font-medium shadow-sm"
+                      : "text-muted-foreground hover:text-foreground hover:bg-white/80"
                   }`}
                 >
                   {link.label}
@@ -73,49 +88,59 @@ export function Header() {
           </div>
         </nav>
 
-        <div className="hidden md:flex items-center gap-3">
+        {/* Desktop right - only language switcher */}
+        <div className="hidden md:flex items-center">
           <LanguageSwitcher />
-          <button className="p-2 text-white">
-            <Menu className="w-6 h-6" />
-          </button>
         </div>
 
+        {/* Mobile toggle */}
         <div className="md:hidden flex items-center gap-2">
           <LanguageSwitcher />
-          <button onClick={() => setMobileOpen(!mobileOpen)} className="p-2 text-white">
+          <button onClick={() => setMobileOpen(!mobileOpen)} className="p-2 text-foreground">
             {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
         </div>
       </div>
 
-      {mobileOpen && (
-        <motion.div
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: "auto" }}
-          className="md:hidden bg-black/80 backdrop-blur-md border-t border-white/10"
-        >
-          {links.map((link) =>
-            link.to.startsWith("#") ? (
-              <button
-                key={link.to}
-                onClick={() => handleClick(link.to)}
-                className="block w-full text-left px-6 py-3 text-sm text-white/80 hover:text-white hover:bg-white/10 transition-colors"
-              >
-                {link.label}
-              </button>
-            ) : (
-              <Link
-                key={link.to}
-                to={link.to}
-                onClick={() => setMobileOpen(false)}
-                className="block px-6 py-3 text-sm text-white/80 hover:text-white hover:bg-white/10 transition-colors"
-              >
-                {link.label}
-              </Link>
-            )
-          )}
-        </motion.div>
-      )}
+      {/* Mobile menu */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.25 }}
+            className="md:hidden bg-white/95 backdrop-blur-lg border-t border-border overflow-hidden"
+          >
+            <div className="px-4 py-3 space-y-1">
+              {links.map((link) =>
+                link.to.startsWith("#") ? (
+                  <button
+                    key={link.to}
+                    onClick={() => handleClick(link.to)}
+                    className="block w-full text-left px-4 py-3 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/60 rounded-xl transition-colors"
+                  >
+                    {link.label}
+                  </button>
+                ) : (
+                  <Link
+                    key={link.to}
+                    to={link.to}
+                    onClick={() => setMobileOpen(false)}
+                    className={`block px-4 py-3 text-sm rounded-xl transition-colors ${
+                      location.pathname === link.to
+                        ? "bg-primary/10 text-primary font-medium"
+                        : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                )
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.header>
   );
 }
