@@ -60,6 +60,10 @@ export default function Admin() {
   const [commentClient, setCommentClient] = useState<Client | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // Reset page when search changes
+  useEffect(() => { setCurrentPage(1); }, [search]);
 
   const handleLogin = () => {
     if (email === "admin@cargolink.com" && password === "admin123") {
