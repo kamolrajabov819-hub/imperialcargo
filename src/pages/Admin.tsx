@@ -662,7 +662,7 @@ export default function Admin() {
 
       {/* Edit Client Modal */}
       <Dialog open={!!editClient} onOpenChange={(open) => !open && setEditClient(null)}>
-        <DialogContent className="bg-card border-border text-foreground max-w-[calc(100vw-2rem)]">
+        <DialogContent className="bg-card border-border text-foreground max-w-md mx-auto">
           <DialogHeader>
             <DialogTitle>{t("admin.edit")}</DialogTitle>
           </DialogHeader>
