@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "@/lib/i18n";
 import { Header } from "@/components/Header";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
-import { getCurrentUser, logoutUser, getWarehouseString, WAREHOUSE_ADDRESS } from "@/lib/mockData";
+import { getCurrentUser, logoutUser, getWarehouseString, getWarehouseAddress } from "@/lib/mockData";
 import { Copy, Check, Package, MapPin, Truck, LogOut } from "lucide-react";
 import { useState, useEffect } from "react";
 

@@ -88,7 +88,41 @@ export function saveWarehouseAddress(address: typeof DEFAULT_WAREHOUSE): void {
   localStorage.setItem(WAREHOUSE_KEY, JSON.stringify(address));
 }
 
-export const WAREHOUSE_ADDRESS = getWarehouseAddress();
+// Comment types and storage
+const COMMENTS_KEY = "cargolink-comments";
+
+export interface Comment {
+  id: string;
+  clientId: string;
+  text: string;
+  createdAt: string;
+}
+
+export function getClientComments(clientId: string): Comment[] {
+  const data = localStorage.getItem(COMMENTS_KEY);
+  const all: Comment[] = data ? JSON.parse(data) : [];
+  return all.filter((c) => c.clientId === clientId).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+}
+
+export function addClientComment(clientId: string, text: string): Comment {
+  const data = localStorage.getItem(COMMENTS_KEY);
+  const all: Comment[] = data ? JSON.parse(data) : [];
+  const comment: Comment = {
+    id: crypto.randomUUID(),
+    clientId,
+    text,
+    createdAt: new Date().toISOString(),
+  };
+  all.push(comment);
+  localStorage.setItem(COMMENTS_KEY, JSON.stringify(all));
+  return comment;
+}
+
+export function deleteClientComment(id: string): void {
+  const data = localStorage.getItem(COMMENTS_KEY);
+  const all: Comment[] = data ? JSON.parse(data) : [];
+  localStorage.setItem(COMMENTS_KEY, JSON.stringify(all.filter((c) => c.id !== id)));
+}
 
 export function getWarehouseString(): string {
   const a = getWarehouseAddress();
