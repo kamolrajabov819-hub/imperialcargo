@@ -35,7 +35,8 @@ export default function Dashboard() {
   const whatsappMessage = encodeURIComponent(
     `Hello! My CargoLink code is ${user.code}.\n\nWarehouse Address:\n${warehouseString}\nID: ${user.code}`
   );
-  const whatsappUrl = `https://wa.me/996555000000?text=${whatsappMessage}`;
+  const whatsappUrl = `https://wa.me/77718191119?text=${whatsappMessage}`;
+  const telegramUrl = "https://t.me/sultanb19";
 
   return (
     <div className="min-h-screen bg-background">
