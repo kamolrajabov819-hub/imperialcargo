@@ -142,9 +142,13 @@ const Index = () => {
               {/* Left - Business Clients */}
               <div className="bg-white rounded-2xl px-5 py-3 shadow-lg flex items-center gap-3">
                 <div className="flex -space-x-2">
-                  {[0, 1, 2].map((i) => (
-                    <div key={i} className="w-8 h-8 rounded-full bg-muted border-2 border-white flex items-center justify-center text-xs font-bold text-muted-foreground">
-                      {["A", "B", "C"][i]}
+                  {[
+                    "bg-gradient-to-br from-orange-400 to-orange-600",
+                    "bg-gradient-to-br from-blue-400 to-blue-600",
+                    "bg-gradient-to-br from-emerald-400 to-emerald-600",
+                  ].map((gradient, i) => (
+                    <div key={i} className={`w-8 h-8 rounded-full ${gradient} border-2 border-white flex items-center justify-center`}>
+                      <User className="w-4 h-4 text-white" />
                     </div>
                   ))}
                   <div className="w-8 h-8 rounded-full bg-foreground border-2 border-white flex items-center justify-center text-[10px] font-bold text-white">
