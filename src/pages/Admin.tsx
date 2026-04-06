@@ -635,7 +635,7 @@ export default function Admin() {
 
       {/* Add Client Modal */}
       <Dialog open={addOpen} onOpenChange={setAddOpen}>
-        <DialogContent className="bg-card border-border text-foreground max-w-[calc(100vw-2rem)]">
+        <DialogContent className="bg-card border-border text-foreground max-w-md mx-auto">
           <DialogHeader>
             <DialogTitle>{t("admin.addClient")}</DialogTitle>
           </DialogHeader>
@@ -662,7 +662,7 @@ export default function Admin() {
 
       {/* Edit Client Modal */}
       <Dialog open={!!editClient} onOpenChange={(open) => !open && setEditClient(null)}>
-        <DialogContent className="bg-card border-border text-foreground max-w-[calc(100vw-2rem)]">
+        <DialogContent className="bg-card border-border text-foreground max-w-md mx-auto">
           <DialogHeader>
             <DialogTitle>{t("admin.edit")}</DialogTitle>
           </DialogHeader>
@@ -689,7 +689,7 @@ export default function Admin() {
 
       {/* Comments Dialog */}
       <Dialog open={!!commentClient} onOpenChange={(open) => !open && setCommentClient(null)}>
-        <DialogContent className="bg-card border-border text-foreground max-h-[80vh] flex flex-col max-w-[calc(100vw-2rem)]">
+        <DialogContent className="bg-card border-border text-foreground max-h-[80vh] flex flex-col max-w-lg mx-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <MessageSquare className="w-5 h-5 text-primary" />
