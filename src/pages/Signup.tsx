@@ -184,6 +184,15 @@ export default function Signup() {
                 )}
               </motion.div>
             </AnimatePresence>
+
+            {step < 3 && (
+              <p className="text-center text-sm text-muted-foreground mt-6">
+                {t("login.noAccount" as any) === t("login.noAccount" as any) ? "" : ""} 
+                <Link to="/login" className="text-primary hover:underline font-medium">
+                  {t("nav.login" as any)}
+                </Link>
+              </p>
+            )}
           </div>
         </motion.div>
       </div>
