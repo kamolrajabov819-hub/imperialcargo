@@ -79,7 +79,6 @@ export function Header() {
             <Menu className="w-6 h-6" />
           </button>
         </div>
-      </div>
 
         <div className="md:hidden flex items-center gap-2">
           <LanguageSwitcher />
