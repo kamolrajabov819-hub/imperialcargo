@@ -306,6 +306,15 @@ const translations = {
     "admin.currentEmail": "Текущий email",
     "admin.currentPassword": "Текущий пароль",
 
+    "login.title": "Вход",
+    "login.nameLabel": "ФИО",
+    "login.phoneLabel": "Номер WhatsApp",
+    "login.submit": "Войти",
+    "login.error": "Аккаунт не найден. Проверьте имя и номер телефона.",
+    "login.noAccount": "Нет аккаунта?",
+    "login.signupLink": "Регистрация",
+    "nav.login": "Вход",
+
     "city.bishkek": "Бишкек",
     "city.osh": "Ош",
     "city.jalalabad": "Джалал-Абад",
