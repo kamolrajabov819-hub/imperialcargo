@@ -314,9 +314,16 @@ export default function Admin() {
                 </motion.button>
               </div>
 
+              {/* Showing info */}
+              {filtered.length > 0 && (
+                <p className="text-sm text-muted-foreground mb-3">
+                  Showing {showingFrom}–{showingTo} of {filtered.length} clients
+                </p>
+              )}
+
               {/* Mobile card view */}
               <div className="md:hidden space-y-3">
-                {filtered.map((c) => (
+                {paginatedClients.map((c) => (
                   <motion.div
                     key={c.id}
                     initial={{ opacity: 0, y: 10 }}
