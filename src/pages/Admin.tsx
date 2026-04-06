@@ -17,11 +17,13 @@ import {
 import {
   Search, Plus, Pencil, Trash2, Users, Settings, LogOut, Package,
   BarChart3, Download, TrendingUp, MapPin, ShieldCheck, Menu, X, MessageSquare, Check,
+  ChevronLeft, ChevronRight,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 
 const CHART_COLORS = ["hsl(185,100%,50%)", "hsl(185,80%,40%)", "hsl(185,60%,30%)", "hsl(200,80%,50%)", "hsl(160,70%,45%)", "hsl(220,70%,50%)"];
+const CLIENTS_PER_PAGE = 20;
 
 function useIsMobile() {
   const [mobile, setMobile] = useState(window.innerWidth < 768);
@@ -58,6 +60,10 @@ export default function Admin() {
   const [commentClient, setCommentClient] = useState<Client | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // Reset page when search changes
+  useEffect(() => { setCurrentPage(1); }, [search]);
 
   const handleLogin = () => {
     if (email === "admin@cargolink.com" && password === "admin123") {
@@ -80,6 +86,11 @@ export default function Admin() {
         c.phone.includes(q)
     );
   }, [clients, search]);
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / CLIENTS_PER_PAGE));
+  const paginatedClients = filtered.slice((currentPage - 1) * CLIENTS_PER_PAGE, currentPage * CLIENTS_PER_PAGE);
+  const showingFrom = filtered.length === 0 ? 0 : (currentPage - 1) * CLIENTS_PER_PAGE + 1;
+  const showingTo = Math.min(currentPage * CLIENTS_PER_PAGE, filtered.length);
 
   const stats = useMemo(() => getClientStats(), [clients]);
 
@@ -303,9 +314,16 @@ export default function Admin() {
                 </motion.button>
               </div>
 
+              {/* Showing info */}
+              {filtered.length > 0 && (
+                <p className="text-sm text-muted-foreground mb-3">
+                  Showing {showingFrom}–{showingTo} of {filtered.length} clients
+                </p>
+              )}
+
               {/* Mobile card view */}
               <div className="md:hidden space-y-3">
-                {filtered.map((c) => (
+                {paginatedClients.map((c) => (
                   <motion.div
                     key={c.id}
                     initial={{ opacity: 0, y: 10 }}
@@ -356,7 +374,7 @@ export default function Admin() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {filtered.map((c) => (
+                      {paginatedClients.map((c) => (
                         <TableRow key={c.id} className="border-border hover:bg-muted/30">
                           <TableCell className="text-foreground font-medium">{c.name}</TableCell>
                           <TableCell className="text-foreground">{c.phone}</TableCell>
@@ -382,6 +400,49 @@ export default function Admin() {
                   </Table>
                 </div>
               </div>
+              {/* Pagination controls */}
+              {totalPages > 1 && (
+                <div className="flex items-center justify-center gap-2 mt-4 md:mt-6">
+                  <button
+                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
+                    className="p-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                  </button>
+                  {Array.from({ length: totalPages }, (_, i) => i + 1)
+                    .filter((p) => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 1)
+                    .reduce<(number | "ellipsis")[]>((acc, p, idx, arr) => {
+                      if (idx > 0 && p - (arr[idx - 1] as number) > 1) acc.push("ellipsis");
+                      acc.push(p);
+                      return acc;
+                    }, [])
+                    .map((item, idx) =>
+                      item === "ellipsis" ? (
+                        <span key={`e-${idx}`} className="px-1 text-muted-foreground">…</span>
+                      ) : (
+                        <button
+                          key={item}
+                          onClick={() => setCurrentPage(item as number)}
+                          className={`min-w-[2rem] h-8 rounded-lg text-sm font-medium transition-colors ${
+                            currentPage === item
+                              ? "bg-primary text-primary-foreground"
+                              : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                          }`}
+                        >
+                          {item}
+                        </button>
+                      )
+                    )}
+                  <button
+                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                    disabled={currentPage === totalPages}
+                    className="p-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
             </motion.div>
           )}
 
