@@ -78,9 +78,7 @@ function GlobeRoute() {
           wireframe
         />
       </mesh>
-      <line ref={curveRef as any} geometry={lineGeometry}>
-        <lineBasicMaterial color="#00F0FF" transparent opacity={0.8} linewidth={2} />
-      </line>
+      <primitive object={new THREE.Line(lineGeometry, new THREE.LineBasicMaterial({ color: "#00F0FF", transparent: true, opacity: 0.8 }))} />
       {/* Route endpoints */}
       <Sphere args={[0.08]} position={curvePoints[0]}>
         <meshBasicMaterial color="#00F0FF" />
