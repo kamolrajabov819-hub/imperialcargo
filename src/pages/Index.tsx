@@ -209,10 +209,10 @@ const Index = () => {
               </div>
             </div>
 
-            {/* Transfer card mockup */}
-            <div className="relative hidden lg:block">
-              <div className="bg-gradient-to-br from-primary/20 via-primary/10 to-transparent rounded-3xl p-8 aspect-square flex items-center justify-center">
-                <div className="bg-card rounded-2xl shadow-xl p-6 w-72 border border-border">
+            {/* Transfer card + truck image */}
+            <div className="relative">
+              <div className="bg-gradient-to-br from-primary via-primary/80 to-orange-400 rounded-3xl p-6 md:p-8">
+                <div className="bg-card rounded-2xl shadow-xl p-6 w-full max-w-xs mx-auto border border-border mb-6">
                   <p className="text-sm font-semibold text-foreground mb-3">Transfer From</p>
                   <div className="bg-muted rounded-xl p-3 mb-4">
                     <p className="text-primary text-sm font-mono font-bold">kf145721457ad</p>
@@ -226,6 +226,9 @@ const Index = () => {
                     <p className="text-primary text-sm font-mono font-bold">eilm1452145klm</p>
                     <p className="text-xs text-muted-foreground">Bishkek, Kyrgyzstan</p>
                   </div>
+                </div>
+                <div className="rounded-2xl overflow-hidden">
+                  <img src={heroBg} alt="Cargo truck" className="w-full h-48 object-cover rounded-2xl" />
                 </div>
               </div>
             </div>
