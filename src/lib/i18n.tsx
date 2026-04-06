@@ -460,6 +460,15 @@ const translations = {
     "admin.currentEmail": "Учурдагы email",
     "admin.currentPassword": "Учурдагы сыр сөз",
 
+    "login.title": "Кирүү",
+    "login.nameLabel": "Толук аты-жөнү",
+    "login.phoneLabel": "WhatsApp номери",
+    "login.submit": "Кирүү",
+    "login.error": "Аккаунт табылган жок. Атыңызды жана телефон номериңизди текшериңиз.",
+    "login.noAccount": "Аккаунтуңуз жокпу?",
+    "login.signupLink": "Каттоо",
+    "nav.login": "Кирүү",
+
     "city.bishkek": "Бишкек",
     "city.osh": "Ош",
     "city.jalalabad": "Жалал-Абад",

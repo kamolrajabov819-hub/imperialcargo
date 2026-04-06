@@ -117,12 +117,17 @@ export default function Signup() {
                 {step === 1 && (
                   <div className="space-y-4">
                     <label className="block text-sm text-muted-foreground">{t("signup.step2")}</label>
-                    <Input
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      placeholder={t("signup.phonePlaceholder")}
-                      className="bg-secondary border-border text-foreground"
-                    />
+                    <PhoneInput value={phone} onChange={setPhone} />
+                    <div className="flex gap-3">
+                      <motion.button whileTap={{ scale: 0.95 }} onClick={back} className="flex-1 py-3 rounded-xl bg-secondary text-foreground font-medium flex items-center justify-center gap-2">
+                        <ArrowLeft className="w-4 h-4" /> {t("signup.back")}
+                      </motion.button>
+                      <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={next} disabled={!canProceed[1]} className="flex-1 py-3 rounded-xl bg-primary text-primary-foreground font-semibold flex items-center justify-center gap-2 disabled:opacity-40">
+                        {t("signup.next")} <ArrowRight className="w-4 h-4" />
+                      </motion.button>
+                    </div>
+                  </div>
+                )}
                     <div className="flex gap-3">
                       <motion.button whileTap={{ scale: 0.95 }} onClick={back} className="flex-1 py-3 rounded-xl bg-secondary text-foreground font-medium flex items-center justify-center gap-2">
                         <ArrowLeft className="w-4 h-4" /> {t("signup.back")}
