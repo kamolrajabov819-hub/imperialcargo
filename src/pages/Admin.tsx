@@ -5,6 +5,7 @@ import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import {
   getClients, addClient, updateClient, deleteClient, type Client,
   getClientStats, exportClientsCSV, getWarehouseAddress, saveWarehouseAddress, DEFAULT_WAREHOUSE,
+  getClientComments, addClientComment, deleteClientComment, type Comment,
 } from "@/lib/mockData";
 import { Input } from "@/components/ui/input";
 import {
@@ -15,7 +16,7 @@ import {
 } from "@/components/ui/dialog";
 import {
   Search, Plus, Pencil, Trash2, Users, Settings, LogOut, Package,
-  BarChart3, Download, TrendingUp, MapPin, ShieldCheck,
+  BarChart3, Download, TrendingUp, MapPin, ShieldCheck, Menu, X, MessageSquare,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
