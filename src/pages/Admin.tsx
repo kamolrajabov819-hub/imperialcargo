@@ -290,7 +290,10 @@ export default function Admin() {
                           <TableCell className="text-primary font-mono font-bold">{c.code}</TableCell>
                           <TableCell className="text-muted-foreground hidden md:table-cell">{c.createdAt}</TableCell>
                           <TableCell className="text-right">
-                            <div className="flex items-center justify-end gap-2">
+                            <div className="flex items-center justify-end gap-1">
+                              <button onClick={() => openComments(c)} className="p-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors">
+                                <MessageSquare className="w-4 h-4" />
+                              </button>
                               <button onClick={() => openEdit(c)} className="p-2 rounded-lg hover:bg-primary/10 text-primary transition-colors">
                                 <Pencil className="w-4 h-4" />
                               </button>
