@@ -113,6 +113,24 @@ export default function Admin() {
     saveWarehouseAddress(warehouse);
   };
 
+  const openComments = (c: Client) => {
+    setCommentClient(c);
+    setComments(getClientComments(c.id));
+    setNewComment("");
+  };
+
+  const handleAddComment = () => {
+    if (!commentClient || !newComment.trim()) return;
+    addClientComment(commentClient.id, newComment.trim());
+    setComments(getClientComments(commentClient.id));
+    setNewComment("");
+  };
+
+  const handleDeleteComment = (id: string) => {
+    deleteClientComment(id);
+    if (commentClient) setComments(getClientComments(commentClient.id));
+  };
+
   // Login screen
   if (!authed) {
     return (
