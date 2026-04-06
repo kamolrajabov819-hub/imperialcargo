@@ -4,6 +4,7 @@ import { useTranslation } from "@/lib/i18n";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import {
   getClients, addClient, updateClient, deleteClient, type Client,
+  getClientStats, exportClientsCSV, getWarehouseAddress, saveWarehouseAddress, DEFAULT_WAREHOUSE,
 } from "@/lib/mockData";
 import { Input } from "@/components/ui/input";
 import {
@@ -13,9 +14,13 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle,
 } from "@/components/ui/dialog";
 import {
-  Search, Plus, Pencil, Trash2, Users, Settings, LogOut, Package, X, Check,
+  Search, Plus, Pencil, Trash2, Users, Settings, LogOut, Package,
+  BarChart3, Download, TrendingUp, MapPin, ShieldCheck,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
+
+const CHART_COLORS = ["hsl(185,100%,50%)", "hsl(185,80%,40%)", "hsl(185,60%,30%)", "hsl(200,80%,50%)", "hsl(160,70%,45%)", "hsl(220,70%,50%)"];
 
 export default function Admin() {
   const { t } = useTranslation();
@@ -26,7 +31,7 @@ export default function Admin() {
   const [error, setError] = useState("");
   const [clients, setClients] = useState<Client[]>([]);
   const [search, setSearch] = useState("");
-  const [tab, setTab] = useState<"clients" | "settings">("clients");
+  const [tab, setTab] = useState<"clients" | "statistics" | "settings">("clients");
   const [addOpen, setAddOpen] = useState(false);
   const [editClient, setEditClient] = useState<Client | null>(null);
   const [newName, setNewName] = useState("");
@@ -36,6 +41,7 @@ export default function Admin() {
   const [editPhone, setEditPhone] = useState("");
   const [editCity, setEditCity] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [warehouse, setWarehouse] = useState(getWarehouseAddress);
 
   const handleLogin = () => {
     if (email === "admin@cargolink.com" && password === "admin123") {
@@ -58,6 +64,8 @@ export default function Admin() {
         c.phone.includes(q)
     );
   }, [clients, search]);
+
+  const stats = useMemo(() => getClientStats(), [clients]);
 
   const handleAdd = () => {
     if (!newName || !newPhone) return;
@@ -84,6 +92,21 @@ export default function Admin() {
     setEditName(c.name);
     setEditPhone(c.phone);
     setEditCity(c.city);
+  };
+
+  const handleExportCSV = () => {
+    const csv = exportClientsCSV();
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "cargolink-clients.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleSaveWarehouse = () => {
+    saveWarehouseAddress(warehouse);
   };
 
   // Login screen
@@ -146,6 +169,7 @@ export default function Admin() {
             <nav className="flex-1 p-2 space-y-1">
               {[
                 { key: "clients" as const, icon: Users, label: t("admin.clients") },
+                { key: "statistics" as const, icon: BarChart3, label: t("admin.statistics") },
                 { key: "settings" as const, icon: Settings, label: t("admin.settings") },
               ].map((item) => (
                 <button
@@ -188,9 +212,9 @@ export default function Admin() {
         </header>
 
         <main className="p-6">
+          {/* Clients Tab */}
           {tab === "clients" && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-              {/* Toolbar */}
               <div className="flex flex-col sm:flex-row gap-4 mb-6">
                 <div className="flex-1 relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -212,7 +236,6 @@ export default function Admin() {
                 </motion.button>
               </div>
 
-              {/* Table */}
               <div className="glass rounded-xl overflow-hidden">
                 <div className="overflow-x-auto">
                   <Table>
@@ -253,10 +276,144 @@ export default function Admin() {
             </motion.div>
           )}
 
+          {/* Statistics Tab */}
+          {tab === "statistics" && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+              {/* Stat Cards */}
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                {[
+                  { label: t("admin.totalClients"), value: stats.total, icon: Users },
+                  { label: t("admin.newThisMonth"), value: stats.newThisMonth, icon: TrendingUp },
+                  { label: t("admin.topCity"), value: stats.topCity, icon: MapPin },
+                  { label: t("admin.activeCodes"), value: stats.activeCodes, icon: ShieldCheck },
+                ].map((card, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.1 }}
+                    className="glass rounded-xl p-5"
+                  >
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                        <card.icon className="w-5 h-5 text-primary" />
+                      </div>
+                    </div>
+                    <p className="text-2xl font-bold text-foreground">{card.value}</p>
+                    <p className="text-xs text-muted-foreground mt-1">{card.label}</p>
+                  </motion.div>
+                ))}
+              </div>
+
+              {/* Charts */}
+              <div className="grid lg:grid-cols-2 gap-6">
+                <div className="glass rounded-xl p-6">
+                  <h3 className="text-lg font-semibold text-foreground mb-4">{t("admin.registrationsByMonth")}</h3>
+                  <ResponsiveContainer width="100%" height={250}>
+                    <BarChart data={stats.registrationsByMonth}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(240,10%,18%)" />
+                      <XAxis dataKey="month" stroke="hsl(220,10%,55%)" fontSize={12} />
+                      <YAxis stroke="hsl(220,10%,55%)" fontSize={12} />
+                      <Tooltip
+                        contentStyle={{ background: "hsl(240,15%,8%)", border: "1px solid hsl(240,10%,18%)", borderRadius: "8px", color: "hsl(200,100%,95%)" }}
+                      />
+                      <Bar dataKey="count" fill="hsl(185,100%,50%)" radius={[4, 4, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+                <div className="glass rounded-xl p-6">
+                  <h3 className="text-lg font-semibold text-foreground mb-4">{t("admin.clientsByCity")}</h3>
+                  <ResponsiveContainer width="100%" height={250}>
+                    <PieChart>
+                      <Pie
+                        data={stats.clientsByCity}
+                        dataKey="count"
+                        nameKey="city"
+                        cx="50%"
+                        cy="50%"
+                        outerRadius={90}
+                        label={({ city, count }) => `${city}: ${count}`}
+                        labelLine={false}
+                      >
+                        {stats.clientsByCity.map((_, i) => (
+                          <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
+                        ))}
+                      </Pie>
+                      <Tooltip
+                        contentStyle={{ background: "hsl(240,15%,8%)", border: "1px solid hsl(240,10%,18%)", borderRadius: "8px", color: "hsl(200,100%,95%)" }}
+                      />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {/* Settings Tab */}
           {tab === "settings" && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="glass rounded-2xl p-8 max-w-lg">
-              <h2 className="text-xl font-bold text-foreground mb-4">{t("admin.settings")}</h2>
-              <p className="text-muted-foreground text-sm">Settings coming soon — Supabase integration, n8n workflows, and more.</p>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6 max-w-2xl">
+              {/* Warehouse Address Editor */}
+              <div className="glass rounded-xl p-6">
+                <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+                  <MapPin className="w-5 h-5 text-primary" />
+                  {t("admin.warehouseAddress")}
+                </h3>
+                <div className="space-y-3">
+                  {(Object.keys(DEFAULT_WAREHOUSE) as (keyof typeof DEFAULT_WAREHOUSE)[]).map((key) => (
+                    <div key={key}>
+                      <label className="text-xs text-muted-foreground capitalize">{key}</label>
+                      <Input
+                        value={warehouse[key]}
+                        onChange={(e) => setWarehouse({ ...warehouse, [key]: e.target.value })}
+                        className="bg-secondary border-border text-foreground mt-1"
+                      />
+                    </div>
+                  ))}
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={handleSaveWarehouse}
+                    className="w-full py-3 rounded-xl bg-primary text-primary-foreground font-semibold mt-2"
+                  >
+                    {t("admin.save")}
+                  </motion.button>
+                </div>
+              </div>
+
+              {/* Admin Credentials */}
+              <div className="glass rounded-xl p-6">
+                <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+                  <ShieldCheck className="w-5 h-5 text-primary" />
+                  {t("admin.adminCredentials")}
+                </h3>
+                <div className="space-y-3">
+                  <div>
+                    <label className="text-xs text-muted-foreground">{t("admin.currentEmail")}</label>
+                    <Input value="admin@cargolink.com" readOnly className="bg-secondary border-border text-muted-foreground mt-1" />
+                  </div>
+                  <div>
+                    <label className="text-xs text-muted-foreground">{t("admin.currentPassword")}</label>
+                    <Input value="••••••••" readOnly className="bg-secondary border-border text-muted-foreground mt-1" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Export CSV */}
+              <div className="glass rounded-xl p-6">
+                <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+                  <Download className="w-5 h-5 text-primary" />
+                  {t("admin.exportCSV")}
+                </h3>
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={handleExportCSV}
+                  className="w-full py-3 rounded-xl bg-primary/10 text-primary font-semibold flex items-center justify-center gap-2 hover:bg-primary/20 transition-colors"
+                >
+                  <Download className="w-4 h-4" />
+                  {t("admin.exportCSV")}
+                </motion.button>
+              </div>
             </motion.div>
           )}
         </main>
