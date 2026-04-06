@@ -160,7 +160,7 @@ export default function Admin() {
             initial={{ width: 0, opacity: 0 }}
             animate={{ width: 240, opacity: 1 }}
             exit={{ width: 0, opacity: 0 }}
-            className="h-screen bg-card border-r border-border flex flex-col overflow-hidden sticky top-0"
+            className="h-screen bg-card border-r border-border flex flex-col sticky top-0"
           >
             <div className="p-4 flex items-center gap-2 border-b border-border">
               <Package className="w-5 h-5 text-primary" />
@@ -333,7 +333,7 @@ export default function Admin() {
                         cy="50%"
                         outerRadius={80}
                         label={({ city, count, x, y }) => (
-                          <text x={x} y={y} fill="hsl(var(--foreground))" fontSize={13} fontWeight={500} textAnchor="middle" dominantBaseline="central">
+                          <text x={x} y={y} fill="#1a1a2e" fontSize={14} fontWeight={600} textAnchor="middle" dominantBaseline="central">
                             {`${city}: ${count}`}
                           </text>
                         )}
@@ -355,7 +355,7 @@ export default function Admin() {
 
           {/* Settings Tab */}
           {tab === "settings" && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6 max-w-2xl">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6 max-w-2xl mx-auto">
               {/* Warehouse Address Editor */}
               <div className="glass rounded-xl p-6">
                 <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
