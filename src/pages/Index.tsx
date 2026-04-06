@@ -75,78 +75,97 @@ const Index = () => {
       <WhatsAppButton />
 
       {/* ─── HERO ─── */}
-      <section className="relative min-h-screen flex items-end pb-12 md:items-center md:pb-0">
-        <img src={heroBg} alt="Cargo truck on highway" className="absolute inset-0 w-full h-full object-cover" width={1920} height={1080} />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />
+      <section className="relative min-h-screen flex items-center px-4 md:px-8 pt-20 pb-8">
+        {/* Rounded hero container */}
+        <div className="relative w-full max-w-[1400px] mx-auto rounded-3xl overflow-hidden min-h-[85vh] flex items-end md:items-center">
+          <img src={heroBg} alt="Cargo truck on highway" className="absolute inset-0 w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-black/10" />
 
-        <div className="relative z-10 container mx-auto px-4 pt-24 md:pt-16">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-white text-sm mb-6">
-              <Star className="w-4 h-4 text-primary" /> {t("hero.learnMore")}
-            </span>
-          </motion.div>
+          <div className="relative z-10 w-full px-6 md:px-12 py-10">
+            {/* Badge */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="flex justify-center mb-8"
+            >
+              <span className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-sm font-medium">
+                <Star className="w-4 h-4 text-primary" /> {t("hero.learnMore")}
+              </span>
+            </motion.div>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.8 }}
-            className="text-4xl md:text-6xl lg:text-7xl font-bold text-white leading-tight max-w-4xl mb-6"
-          >
-            {t("hero.title")}{" "}
-            <span className="text-primary">{t("hero.titleHighlight")}</span>
-          </motion.h1>
+            {/* Main heading */}
+            <motion.h1
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.8 }}
+              className="text-4xl md:text-6xl lg:text-7xl font-bold text-white leading-[1.1] text-center max-w-5xl mx-auto mb-10"
+            >
+              {t("hero.title")}{" "}
+              <span className="text-primary">{t("hero.titleHighlight")}</span>
+            </motion.h1>
 
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-            className="text-lg text-white/80 max-w-xl mb-8"
-          >
-            {t("hero.subtitle")}
-          </motion.p>
+            {/* CTA buttons */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6 }}
+              className="flex flex-wrap justify-center gap-4 mb-16"
+            >
+              <Link to={user ? "/dashboard" : "/signup"}>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="px-8 py-4 rounded-full bg-primary text-primary-foreground font-semibold text-base flex items-center gap-2 shadow-lg"
+                >
+                  {t("hero.cta")} <ArrowRight className="w-5 h-5" />
+                </motion.button>
+              </Link>
+              <a href="#about">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="px-8 py-4 rounded-full bg-white/10 backdrop-blur-sm border border-white/30 text-white font-semibold text-base flex items-center gap-2"
+                >
+                  {t("hero.learnMore")} <ArrowRight className="w-5 h-5" />
+                </motion.button>
+              </a>
+            </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.7 }}
-            className="flex flex-wrap gap-4 mb-12"
-          >
-            <Link to={user ? "/dashboard" : "/signup"}>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="px-8 py-4 rounded-full bg-primary text-primary-foreground font-semibold text-base flex items-center gap-2 shadow-lg"
-              >
-                {t("hero.cta")} <ArrowRight className="w-5 h-5" />
-              </motion.button>
-            </Link>
-            <a href="#about">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="px-8 py-4 rounded-full bg-white/10 backdrop-blur-sm border border-white/30 text-white font-semibold text-base flex items-center gap-2"
-              >
-                {t("hero.learnMore")} <ArrowRight className="w-5 h-5" />
-              </motion.button>
-            </a>
-          </motion.div>
+            {/* Bottom stat chips */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.9 }}
+              className="flex justify-between items-end"
+            >
+              {/* Left - Business Clients */}
+              <div className="bg-white rounded-2xl px-5 py-3 shadow-lg flex items-center gap-3">
+                <div className="flex -space-x-2">
+                  {[0, 1, 2].map((i) => (
+                    <div key={i} className="w-8 h-8 rounded-full bg-muted border-2 border-white flex items-center justify-center text-xs font-bold text-muted-foreground">
+                      {["A", "B", "C"][i]}
+                    </div>
+                  ))}
+                  <div className="w-8 h-8 rounded-full bg-foreground border-2 border-white flex items-center justify-center text-[10px] font-bold text-white">
+                    500+
+                  </div>
+                </div>
+                <div className="text-sm font-semibold text-foreground">{t("hero.stat.clients")}</div>
+              </div>
 
-          {/* Stat chips */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.9 }}
-            className="flex flex-wrap gap-4"
-          >
-            <div className="bg-white rounded-2xl px-5 py-3 shadow-lg flex items-center gap-3">
-              <div className="text-xl font-bold text-foreground"><AnimatedCounter end={500} suffix="+" /></div>
-              <div className="text-xs text-muted-foreground">{t("hero.stat.clients")}</div>
-            </div>
-            <div className="bg-white rounded-2xl px-5 py-3 shadow-lg flex items-center gap-3">
-              <div className="text-xl font-bold text-foreground"><AnimatedCounter end={10000} suffix="+" /></div>
-              <div className="text-xs text-muted-foreground">{t("hero.stat.shipments")}</div>
-            </div>
-          </motion.div>
+              {/* Right - Shipments */}
+              <div className="hidden md:flex bg-white rounded-2xl px-4 py-3 shadow-lg items-center gap-3">
+                <div className="w-14 h-14 rounded-xl overflow-hidden">
+                  <img src={heroBg} alt="Shipment" className="w-full h-full object-cover" />
+                </div>
+                <div>
+                  <div className="text-xl font-bold text-foreground"><AnimatedCounter end={10000} suffix="+" /></div>
+                  <div className="text-xs text-muted-foreground">{t("hero.stat.shipments")}</div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
         </div>
       </section>
 
