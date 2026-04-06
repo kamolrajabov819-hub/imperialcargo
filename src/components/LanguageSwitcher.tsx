@@ -9,7 +9,7 @@ const languages: { code: Language; label: string; flag: string }[] = [
   { code: "kg", label: "Кыргызча", flag: "🇰🇬" },
 ];
 
-export function LanguageSwitcher() {
+export function LanguageSwitcher({ dropUp = false }: { dropUp?: boolean } = {}) {
   const { language, setLanguage } = useTranslation();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
