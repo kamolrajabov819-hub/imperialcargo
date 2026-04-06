@@ -315,7 +315,7 @@ export default function Admin() {
           {tab === "statistics" && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
               {/* Stat Cards */}
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {[
                   { label: t("admin.totalClients"), value: stats.total, icon: Users },
                   { label: t("admin.newThisMonth"), value: stats.newThisMonth, icon: TrendingUp },
