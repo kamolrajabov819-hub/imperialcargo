@@ -1,12 +1,16 @@
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, AnimatePresence } from "framer-motion";
 import { useTranslation } from "@/lib/i18n";
 import { Header } from "@/components/Header";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
-import { ArrowRight, Package, Warehouse, Ship, Boxes, Users, Truck, BarChart3, UserPlus, QrCode, Send, Star, Mail } from "lucide-react";
+import { ArrowRight, Package, Star, Mail, ChevronDown, ChevronUp, ChevronLeft, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { getCurrentUser } from "@/lib/mockData";
 import { useRef, useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
+import heroBg from "@/assets/hero-bg.jpg";
+import whyTeam from "@/assets/why-team.jpg";
+import whyDelivery from "@/assets/why-delivery.jpg";
+import whyTracking from "@/assets/why-tracking.jpg";
 
 function AnimatedCounter({ end, suffix = "" }: { end: number; suffix?: string }) {
   const [count, setCount] = useState(0);
@@ -20,12 +24,8 @@ function AnimatedCounter({ end, suffix = "" }: { end: number; suffix?: string })
     const step = end / (duration / 16);
     const timer = setInterval(() => {
       start += step;
-      if (start >= end) {
-        setCount(end);
-        clearInterval(timer);
-      } else {
-        setCount(Math.floor(start));
-      }
+      if (start >= end) { setCount(end); clearInterval(timer); }
+      else setCount(Math.floor(start));
     }, 16);
     return () => clearInterval(timer);
   }, [inView, end]);
@@ -35,7 +35,7 @@ function AnimatedCounter({ end, suffix = "" }: { end: number; suffix?: string })
 
 function Section({ children, className = "", id }: { children: React.ReactNode; className?: string; id?: string }) {
   const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-100px" });
+  const inView = useInView(ref, { once: true, margin: "-80px" });
   return (
     <motion.section
       ref={ref}
@@ -53,50 +53,54 @@ function Section({ children, className = "", id }: { children: React.ReactNode; 
 const Index = () => {
   const { t } = useTranslation();
   const user = getCurrentUser();
+  const [openService, setOpenService] = useState<number | null>(null);
+  const [activeTestimonial, setActiveTestimonial] = useState(0);
+
+  const services = [
+    { title: t("services.cargo.title"), desc: t("services.cargo.desc") },
+    { title: t("services.warehouse.title"), desc: t("services.warehouse.desc") },
+    { title: t("services.freight.title"), desc: t("services.freight.desc") },
+    { title: t("services.supply.title"), desc: t("services.supply.desc") },
+  ];
+
+  const testimonials = [
+    { text: t("testimonial.1.text" as any), name: t("testimonial.1.name" as any), city: t("testimonial.1.city" as any) },
+    { text: t("testimonial.2.text" as any), name: t("testimonial.2.name" as any), city: t("testimonial.2.city" as any) },
+    { text: t("testimonial.3.text" as any), name: t("testimonial.3.name" as any), city: t("testimonial.3.city" as any) },
+  ];
 
   return (
     <div className="min-h-screen bg-background overflow-hidden">
       <Header />
       <WhatsAppButton />
 
-      {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center pt-16 overflow-hidden">
-        {/* Animated background */}
-        <div className="absolute inset-0">
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl animate-glow-pulse" />
-          <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-primary/8 rounded-full blur-3xl animate-glow-pulse" style={{ animationDelay: "1.5s" }} />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] border border-primary/5 rounded-full" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] border border-primary/3 rounded-full" />
-        </div>
+      {/* ─── HERO ─── */}
+      <section className="relative min-h-screen flex items-end pb-12 md:items-center md:pb-0">
+        <img src={heroBg} alt="Cargo truck on highway" className="absolute inset-0 w-full h-full object-cover" width={1920} height={1080} />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />
 
-        <div className="relative z-10 container mx-auto px-4 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-          >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-8">
-              <Package className="w-4 h-4 text-primary" />
-              <span className="text-sm text-primary font-medium">CargoLink</span>
-            </div>
+        <div className="relative z-10 container mx-auto px-4 pt-24 md:pt-16">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-white text-sm mb-6">
+              <Star className="w-4 h-4 text-primary" /> {t("hero.learnMore")}
+            </span>
           </motion.div>
 
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
-            className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 text-foreground leading-tight"
+            transition={{ delay: 0.3, duration: 0.8 }}
+            className="text-4xl md:text-6xl lg:text-7xl font-bold text-white leading-tight max-w-4xl mb-6"
           >
-            {t("hero.title")}
-            <br />
-            <span className="text-primary glow-cyan">{t("hero.titleHighlight")}</span>
+            {t("hero.title")}{" "}
+            <span className="text-primary">{t("hero.titleHighlight")}</span>
           </motion.h1>
 
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.5 }}
-            className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10"
+            transition={{ delay: 0.5 }}
+            className="text-lg text-white/80 max-w-xl mb-8"
           >
             {t("hero.subtitle")}
           </motion.p>
@@ -104,173 +108,230 @@ const Index = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.7 }}
-            className="flex flex-col sm:flex-row gap-4 justify-center mb-16"
+            transition={{ delay: 0.7 }}
+            className="flex flex-wrap gap-4 mb-12"
           >
             <Link to={user ? "/dashboard" : "/signup"}>
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="px-8 py-4 rounded-xl bg-primary text-primary-foreground font-semibold text-lg flex items-center gap-2 shadow-lg shadow-primary/30 hover:shadow-primary/50 transition-shadow"
+                className="px-8 py-4 rounded-full bg-primary text-primary-foreground font-semibold text-base flex items-center gap-2 shadow-lg"
               >
-                {t("hero.cta")}
-                <ArrowRight className="w-5 h-5" />
+                {t("hero.cta")} <ArrowRight className="w-5 h-5" />
               </motion.button>
             </Link>
             <a href="#about">
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="px-8 py-4 rounded-xl border border-border text-foreground font-semibold text-lg hover:bg-muted transition-colors"
+                className="px-8 py-4 rounded-full bg-white/10 backdrop-blur-sm border border-white/30 text-white font-semibold text-base flex items-center gap-2"
               >
-                {t("hero.learnMore")}
+                {t("hero.learnMore")} <ArrowRight className="w-5 h-5" />
               </motion.button>
             </a>
           </motion.div>
 
-          {/* Stats */}
+          {/* Stat chips */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.9 }}
-            className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto"
+            transition={{ delay: 0.9 }}
+            className="flex flex-wrap gap-4"
           >
-            {[
-              { value: 10000, suffix: "+", label: t("hero.stat.shipments") },
-              { value: 500, suffix: "+", label: t("hero.stat.clients") },
-              { value: 2, suffix: "", label: t("hero.stat.countries") },
-              { value: 5, suffix: "+", label: t("hero.stat.years") },
-            ].map((stat, i) => (
-              <div key={i} className="text-center">
-                <div className="text-2xl md:text-3xl font-bold text-primary glow-cyan">
-                  <AnimatedCounter end={stat.value} suffix={stat.suffix} />
-                </div>
-                <div className="text-sm text-muted-foreground mt-1">{stat.label}</div>
-              </div>
-            ))}
+            <div className="bg-white rounded-2xl px-5 py-3 shadow-lg flex items-center gap-3">
+              <div className="text-xl font-bold text-foreground"><AnimatedCounter end={500} suffix="+" /></div>
+              <div className="text-xs text-muted-foreground">{t("hero.stat.clients")}</div>
+            </div>
+            <div className="bg-white rounded-2xl px-5 py-3 shadow-lg flex items-center gap-3">
+              <div className="text-xl font-bold text-foreground"><AnimatedCounter end={10000} suffix="+" /></div>
+              <div className="text-xs text-muted-foreground">{t("hero.stat.shipments")}</div>
+            </div>
           </motion.div>
         </div>
       </section>
 
-      {/* About Section */}
-      <Section id="about" className="py-24 relative z-10">
+      {/* ─── PARTNER LOGOS ─── */}
+      <Section className="py-8 border-b border-border bg-card">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <span className="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
-              {t("about.tag")}
-            </span>
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">{t("about.title")}</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">{t("about.desc")}</p>
+          <div className="flex items-center justify-center gap-10 flex-wrap opacity-40">
+            {["DHL", "FedEx", "Maersk", "COSCO", "SF Express", "Cainiao"].map((name) => (
+              <span key={name} className="text-lg font-bold text-foreground tracking-wider">{name}</span>
+            ))}
           </div>
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        </div>
+      </Section>
+
+      {/* ─── ABOUT ─── */}
+      <Section id="about" className="py-20 bg-card">
+        <div className="container mx-auto px-4">
+          <div className="grid lg:grid-cols-2 gap-16 items-start">
+            <div>
+              <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-border text-sm text-muted-foreground mb-6">
+                <Star className="w-3.5 h-3.5" /> {t("about.tag")}
+              </span>
+              <h2 className="text-3xl md:text-5xl font-bold text-foreground leading-tight mb-6">{t("about.title")}</h2>
+              <p className="text-muted-foreground leading-relaxed mb-10">{t("about.desc")}</p>
+
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="glass-dark rounded-2xl p-6">
+                  <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center mb-4">
+                    <Package className="w-5 h-5 text-primary" />
+                  </div>
+                  <h3 className="text-lg font-bold text-white mb-2">{t("about.card1.title")}</h3>
+                  <p className="text-sm text-white/70 leading-relaxed">{t("about.card1.desc")}</p>
+                </div>
+                <div className="bg-card rounded-2xl p-6 border border-border">
+                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
+                    <Package className="w-5 h-5 text-primary" />
+                  </div>
+                  <h3 className="text-lg font-bold text-foreground mb-2">{t("about.card2.title")}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{t("about.card2.desc")}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Transfer card mockup */}
+            <div className="relative hidden lg:block">
+              <div className="bg-gradient-to-br from-primary/20 via-primary/10 to-transparent rounded-3xl p-8 aspect-square flex items-center justify-center">
+                <div className="bg-card rounded-2xl shadow-xl p-6 w-72 border border-border">
+                  <p className="text-sm font-semibold text-foreground mb-3">Transfer From</p>
+                  <div className="bg-muted rounded-xl p-3 mb-4">
+                    <p className="text-primary text-sm font-mono font-bold">kf145721457ad</p>
+                    <p className="text-xs text-muted-foreground">Yiwu, China</p>
+                  </div>
+                  <div className="flex justify-center mb-4">
+                    <div className="w-8 h-8 rounded-full border border-border flex items-center justify-center text-muted-foreground text-xs">↕</div>
+                  </div>
+                  <p className="text-sm font-semibold text-foreground mb-3">Transfer To</p>
+                  <div className="bg-muted rounded-xl p-3">
+                    <p className="text-primary text-sm font-mono font-bold">eilm1452145klm</p>
+                    <p className="text-xs text-muted-foreground">Bishkek, Kyrgyzstan</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Section>
+
+      {/* ─── SERVICES ACCORDION ─── */}
+      <Section id="services" className="py-20 bg-background">
+        <div className="container mx-auto px-4">
+          <div className="grid lg:grid-cols-2 gap-12 items-start mb-12">
+            <div>
+              <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-border text-sm text-muted-foreground mb-6">
+                <Star className="w-3.5 h-3.5" /> {t("services.tag")}
+              </span>
+              <h2 className="text-3xl md:text-5xl font-bold text-foreground leading-tight">{t("services.title")}</h2>
+            </div>
+            <p className="text-muted-foreground leading-relaxed self-end">{t("about.desc")}</p>
+          </div>
+
+          <div className="space-y-3">
+            {services.map((svc, i) => {
+              const isOpen = openService === i;
+              return (
+                <motion.div
+                  key={i}
+                  layout
+                  className={`rounded-2xl overflow-hidden transition-colors duration-300 ${
+                    isOpen ? "glass-dark" : "bg-card border border-border"
+                  }`}
+                >
+                  <button
+                    onClick={() => setOpenService(isOpen ? null : i)}
+                    className="w-full flex items-center justify-between px-8 py-6 text-left"
+                  >
+                    <div className="flex items-center gap-6">
+                      <span className={`text-lg font-bold ${isOpen ? "text-primary" : "text-primary"}`}>
+                        {String(i + 1).padStart(2, "0")}.
+                      </span>
+                      <span className={`text-xl font-bold ${isOpen ? "text-white" : "text-foreground"}`}>
+                        {svc.title}
+                      </span>
+                    </div>
+                    <div className={`w-10 h-10 rounded-full border flex items-center justify-center transition-colors ${
+                      isOpen ? "border-white/30 text-white" : "border-primary text-primary"
+                    }`}>
+                      {isOpen ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                    </div>
+                  </button>
+                  <AnimatePresence>
+                    {isOpen && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="px-8 pb-6 pl-20">
+                          <p className="text-white/70 leading-relaxed max-w-lg">{svc.desc}</p>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
+      </Section>
+
+      {/* ─── WHY CHOOSE US — Image Cards ─── */}
+      <Section className="py-20 bg-card">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-14">
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-border text-sm text-muted-foreground mb-6">
+              <Star className="w-3.5 h-3.5" /> {t("why.tag")}
+            </span>
+            <h2 className="text-3xl md:text-5xl font-bold text-foreground">{t("why.title")}</h2>
+          </div>
+          <div className="grid md:grid-cols-3 gap-6">
             {[
-              { title: t("about.card1.title"), desc: t("about.card1.desc"), icon: Truck },
-              { title: t("about.card2.title"), desc: t("about.card2.desc"), icon: BarChart3 },
+              { img: whyTeam, title: t("why.team.title"), desc: t("why.team.desc") },
+              { img: whyDelivery, title: t("why.delivery.title"), desc: t("why.delivery.desc") },
+              { img: whyTracking, title: t("why.tracking.title"), desc: t("why.tracking.desc") },
             ].map((card, i) => (
               <motion.div
                 key={i}
-                whileHover={{ y: -5 }}
-                className="glass rounded-2xl p-8 hover:glow-box-cyan transition-all duration-500"
+                whileHover={{ y: -8 }}
+                className="relative group rounded-2xl overflow-hidden aspect-[4/5] cursor-pointer"
               >
-                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
-                  <card.icon className="w-6 h-6 text-primary" />
+                <img src={card.img} alt={card.title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 p-6">
+                  <h3 className="text-xl font-bold text-white mb-1">{card.title}</h3>
+                  <p className="text-sm text-white/70 leading-relaxed opacity-0 group-hover:opacity-100 transition-opacity duration-300">{card.desc}</p>
                 </div>
-                <h3 className="text-xl font-bold text-foreground mb-2">{card.title}</h3>
-                <p className="text-muted-foreground text-sm leading-relaxed">{card.desc}</p>
               </motion.div>
             ))}
           </div>
         </div>
       </Section>
 
-      {/* Services Section */}
-      <Section id="services" className="py-24 relative z-10 bg-card/30">
+      {/* ─── HOW IT WORKS ─── */}
+      <Section className="py-20 bg-background">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <span className="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
-              {t("services.tag")}
+          <div className="text-center mb-14">
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-border text-sm text-muted-foreground mb-6">
+              <Star className="w-3.5 h-3.5" /> {t("how.tag")}
             </span>
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground">{t("services.title")}</h2>
-          </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              { icon: Package, title: t("services.cargo.title"), desc: t("services.cargo.desc") },
-              { icon: Warehouse, title: t("services.warehouse.title"), desc: t("services.warehouse.desc") },
-              { icon: Ship, title: t("services.freight.title"), desc: t("services.freight.desc") },
-              { icon: Boxes, title: t("services.supply.title"), desc: t("services.supply.desc") },
-            ].map((service, i) => (
-              <motion.div
-                key={i}
-                whileHover={{ y: -5, scale: 1.02 }}
-                className="glass rounded-2xl p-6 text-center hover:glow-box-cyan transition-all duration-500 group"
-              >
-                <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4 group-hover:bg-primary/20 transition-colors">
-                  <service.icon className="w-7 h-7 text-primary" />
-                </div>
-                <h3 className="text-lg font-bold text-foreground mb-2">{service.title}</h3>
-                <p className="text-muted-foreground text-sm leading-relaxed">{service.desc}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </Section>
-
-      {/* Why Choose Us */}
-      <Section className="py-24 relative z-10">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <span className="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
-              {t("why.tag")}
-            </span>
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground">{t("why.title")}</h2>
-          </div>
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            {[
-              { icon: Users, title: t("why.team.title"), desc: t("why.team.desc") },
-              { icon: Truck, title: t("why.delivery.title"), desc: t("why.delivery.desc") },
-              { icon: BarChart3, title: t("why.tracking.title"), desc: t("why.tracking.desc") },
-            ].map((item, i) => (
-              <motion.div
-                key={i}
-                whileHover={{ y: -5 }}
-                className="text-center p-8"
-              >
-                <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-6 hover:bg-primary/20 transition-colors">
-                  <item.icon className="w-8 h-8 text-primary" />
-                </div>
-                <h3 className="text-xl font-bold text-foreground mb-3">{item.title}</h3>
-                <p className="text-muted-foreground text-sm leading-relaxed">{item.desc}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </Section>
-
-      {/* How It Works */}
-      <Section className="py-24 relative z-10 bg-card/30">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <span className="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
-              {t("how.tag")}
-            </span>
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground">{t("how.title")}</h2>
+            <h2 className="text-3xl md:text-5xl font-bold text-foreground">{t("how.title")}</h2>
           </div>
           <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
             {[
-              { icon: UserPlus, step: "01", title: t("how.step1.title"), desc: t("how.step1.desc") },
-              { icon: QrCode, step: "02", title: t("how.step2.title"), desc: t("how.step2.desc") },
-              { icon: Send, step: "03", title: t("how.step3.title"), desc: t("how.step3.desc") },
+              { step: "01", title: t("how.step1.title"), desc: t("how.step1.desc") },
+              { step: "02", title: t("how.step2.title"), desc: t("how.step2.desc") },
+              { step: "03", title: t("how.step3.title"), desc: t("how.step3.desc") },
             ].map((item, i) => (
               <motion.div
                 key={i}
                 whileHover={{ y: -5 }}
-                className="relative glass rounded-2xl p-8 text-center hover:glow-box-cyan transition-all duration-500"
+                className="bg-card rounded-2xl p-8 border border-border text-center hover:shadow-lg transition-shadow duration-300"
               >
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold">
+                <div className="w-12 h-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-bold mx-auto mb-5">
                   {item.step}
-                </div>
-                <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4 mt-2">
-                  <item.icon className="w-7 h-7 text-primary" />
                 </div>
                 <h3 className="text-lg font-bold text-foreground mb-2">{item.title}</h3>
                 <p className="text-muted-foreground text-sm leading-relaxed">{item.desc}</p>
@@ -280,72 +341,94 @@ const Index = () => {
         </div>
       </Section>
 
-      {/* Testimonials */}
-      <Section className="py-24 relative z-10">
+      {/* ─── TESTIMONIALS CAROUSEL ─── */}
+      <Section className="py-20 bg-card">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <span className="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
-              {t("testimonials.tag")}
+          <div className="text-center mb-14">
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-border text-sm text-muted-foreground mb-6">
+              <Star className="w-3.5 h-3.5" /> {t("testimonials.tag")}
             </span>
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground">{t("testimonials.title")}</h2>
+            <h2 className="text-3xl md:text-5xl font-bold text-foreground">{t("testimonials.title")}</h2>
           </div>
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            {[1, 2, 3].map((i) => (
+
+          <div className="max-w-2xl mx-auto">
+            <AnimatePresence mode="wait">
               <motion.div
-                key={i}
-                whileHover={{ y: -5 }}
-                className="glass rounded-2xl p-8 hover:glow-box-cyan transition-all duration-500"
+                key={activeTestimonial}
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -50 }}
+                transition={{ duration: 0.3 }}
+                className="bg-background rounded-2xl border border-border p-8 md:p-10"
               >
-                <div className="flex gap-1 mb-4">
-                  {[...Array(5)].map((_, j) => (
-                    <Star key={j} className="w-4 h-4 text-primary fill-primary" />
-                  ))}
-                </div>
-                <p className="text-foreground text-sm leading-relaxed mb-6 italic">
-                  "{t(`testimonial.${i}.text` as any)}"
+                <div className="text-4xl text-primary/30 mb-4">"</div>
+                <p className="text-foreground text-lg leading-relaxed mb-6 italic">
+                  {testimonials[activeTestimonial].text}
                 </p>
-                <div>
-                  <p className="text-foreground font-semibold text-sm">{t(`testimonial.${i}.name` as any)}</p>
-                  <p className="text-muted-foreground text-xs">{t(`testimonial.${i}.city` as any)}</p>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-bold text-foreground">— {testimonials[activeTestimonial].name}</p>
+                    <p className="text-sm text-muted-foreground">{testimonials[activeTestimonial].city}</p>
+                  </div>
+                  <div className="flex gap-1">
+                    {[...Array(5)].map((_, j) => (
+                      <Star key={j} className="w-4 h-4 text-amber-400 fill-amber-400" />
+                    ))}
+                  </div>
                 </div>
               </motion.div>
-            ))}
+            </AnimatePresence>
+
+            <div className="flex justify-center gap-3 mt-6">
+              <button
+                onClick={() => setActiveTestimonial((prev) => (prev === 0 ? testimonials.length - 1 : prev - 1))}
+                className="w-10 h-10 rounded-full border border-border flex items-center justify-center hover:bg-muted transition-colors"
+              >
+                <ChevronLeft className="w-5 h-5 text-foreground" />
+              </button>
+              <button
+                onClick={() => setActiveTestimonial((prev) => (prev === testimonials.length - 1 ? 0 : prev + 1))}
+                className="w-10 h-10 rounded-full border border-border flex items-center justify-center hover:bg-muted transition-colors"
+              >
+                <ChevronRight className="w-5 h-5 text-foreground" />
+              </button>
+            </div>
           </div>
         </div>
       </Section>
 
-      {/* Footer */}
-      <footer id="contact" className="py-16 border-t border-border bg-card/50 relative z-10">
+      {/* ─── FOOTER ─── */}
+      <footer id="contact" className="py-16 bg-foreground text-background">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-4 gap-10 mb-12">
             <div>
               <div className="flex items-center gap-2 mb-4">
                 <Package className="w-6 h-6 text-primary" />
-                <span className="text-lg font-bold text-foreground">Cargo<span className="text-primary">Link</span></span>
+                <span className="text-lg font-bold">Cargo<span className="text-primary">Link</span></span>
               </div>
-              <p className="text-muted-foreground text-sm leading-relaxed">{t("footer.desc")}</p>
+              <p className="text-sm opacity-60 leading-relaxed">{t("footer.desc")}</p>
             </div>
             <div>
-              <h4 className="font-semibold text-foreground mb-4">{t("footer.quickLinks")}</h4>
+              <h4 className="font-semibold mb-4">{t("footer.quickLinks")}</h4>
               <div className="space-y-2">
-                <a href="#about" className="block text-sm text-muted-foreground hover:text-primary transition-colors">{t("nav.about")}</a>
-                <a href="#services" className="block text-sm text-muted-foreground hover:text-primary transition-colors">{t("nav.services")}</a>
-                <Link to="/signup" className="block text-sm text-muted-foreground hover:text-primary transition-colors">{t("nav.signup")}</Link>
+                <a href="#about" className="block text-sm opacity-60 hover:opacity-100 hover:text-primary transition-all">{t("nav.about")}</a>
+                <a href="#services" className="block text-sm opacity-60 hover:opacity-100 hover:text-primary transition-all">{t("nav.services")}</a>
+                <Link to="/signup" className="block text-sm opacity-60 hover:opacity-100 hover:text-primary transition-all">{t("nav.signup")}</Link>
               </div>
             </div>
             <div>
-              <h4 className="font-semibold text-foreground mb-4">{t("footer.contact")}</h4>
-              <div className="space-y-2 text-sm text-muted-foreground">
+              <h4 className="font-semibold mb-4">{t("footer.contact")}</h4>
+              <div className="space-y-2 text-sm opacity-60">
                 <p>+996 555 123 456</p>
                 <p>info@cargolink.kg</p>
                 <p>Bishkek, Kyrgyzstan</p>
               </div>
             </div>
             <div>
-              <h4 className="font-semibold text-foreground mb-4">{t("footer.newsletter")}</h4>
-              <p className="text-sm text-muted-foreground mb-3">{t("footer.newsletterDesc")}</p>
+              <h4 className="font-semibold mb-4">{t("footer.newsletter")}</h4>
+              <p className="text-sm opacity-60 mb-3">{t("footer.newsletterDesc")}</p>
               <div className="flex gap-2">
-                <Input placeholder={t("footer.emailPlaceholder")} className="bg-secondary border-border text-foreground text-sm" />
+                <Input placeholder={t("footer.emailPlaceholder")} className="bg-white/10 border-white/20 text-background placeholder:text-background/40 text-sm" />
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
@@ -356,8 +439,8 @@ const Index = () => {
               </div>
             </div>
           </div>
-          <div className="border-t border-border pt-6 text-center">
-            <p className="text-sm text-muted-foreground">© {new Date().getFullYear()} CargoLink. {t("footer.rights")}</p>
+          <div className="border-t border-white/10 pt-6 text-center">
+            <p className="text-sm opacity-40">© {new Date().getFullYear()} CargoLink. {t("footer.rights")}</p>
           </div>
         </div>
       </footer>
