@@ -150,7 +150,7 @@ export function Header() {
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.25 }}
-            className="md:hidden bg-white/95 backdrop-blur-lg border-t border-border overflow-hidden"
+            className="md:hidden bg-card/95 backdrop-blur-lg border-t border-border overflow-hidden"
           >
             <div className="px-4 py-3 space-y-1">
               {links.map((link) =>

@@ -477,8 +477,8 @@ const Index = () => {
               </div>
             </div>
           </div>
-          <div className="border-t border-white/10 pt-6 text-center">
-            <p className="text-sm opacity-40">© {new Date().getFullYear()} CargoLink. {t("footer.rights")}</p>
+          <div className="border-t border-border pt-6 text-center">
+            <p className="text-sm text-muted-foreground">© {new Date().getFullYear()} CargoLink. {t("footer.rights")}</p>
           </div>
         </div>
       </footer>
