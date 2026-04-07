@@ -193,7 +193,7 @@ const Index = () => {
               <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-border text-sm text-muted-foreground mb-6">
                 <Star className="w-3.5 h-3.5" /> {t("about.tag")}
               </span>
-              <h2 className="text-3xl md:text-5xl font-bold text-foreground leading-tight mb-6">{t("about.title")}</h2>
+              <h2 className="text-3xl md:text-5xl font-bold text-foreground leading-tight mb-6 font-heading">{t("about.title")}</h2>
               <p className="text-muted-foreground leading-relaxed mb-10">{t("about.desc")}</p>
 
               <div className="grid sm:grid-cols-2 gap-4">
