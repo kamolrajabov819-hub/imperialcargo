@@ -515,7 +515,8 @@ const Index = () => {
             </div>
           </div>
           <div className="border-t border-border pt-6 text-center">
-            <p className="text-sm text-muted-foreground">© {new Date().getFullYear()} CargoLink. {t("footer.rights")}</p>
+            <p className="text-sm text-muted-foreground">© {new Date().getFullYear()} ISU Cargo. {t("footer.rights")}</p>
+            <Link to="/admin" className="inline-block w-2 h-2 rounded-full bg-border/20 hover:bg-primary/30 transition-colors mt-2" />
           </div>
         </div>
       </footer>
