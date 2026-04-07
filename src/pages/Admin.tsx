@@ -68,6 +68,14 @@ export default function Admin() {
   const [newComment, setNewComment] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+  const [confirmedAnimId, setConfirmedAnimId] = useState<string | null>(null);
+
+  const handleConfirm = (id: string) => {
+    updateClient(id, { confirmed: true });
+    setConfirmedAnimId(id);
+    setTimeout(() => setConfirmedAnimId(null), 2000);
+    refresh();
+  };
 
   // Reset page when search changes
   useEffect(() => { setCurrentPage(1); }, [search]);
