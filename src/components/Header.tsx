@@ -2,7 +2,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "@/lib/i18n";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, Box } from "lucide-react";
+import { Menu, X } from "lucide-react";
+import { LogoIcon } from "./LogoIcon";
 import { useState, useEffect, useCallback } from "react";
 import { getCurrentUser } from "@/lib/mockData";
 
