@@ -140,18 +140,18 @@ const Index = () => {
               className="flex justify-between items-end"
             >
               {/* Left - Business Clients */}
-              <div className="bg-white rounded-2xl px-5 py-3 shadow-lg flex items-center gap-3">
+              <div className="bg-card rounded-2xl px-5 py-3 shadow-lg border border-border flex items-center gap-3">
                 <div className="flex -space-x-2">
                   {[
-                    "bg-gradient-to-br from-orange-400 to-orange-600",
+                    "bg-gradient-to-br from-primary/80 to-primary",
                     "bg-gradient-to-br from-blue-400 to-blue-600",
                     "bg-gradient-to-br from-emerald-400 to-emerald-600",
                   ].map((gradient, i) => (
-                    <div key={i} className={`w-8 h-8 rounded-full ${gradient} border-2 border-white flex items-center justify-center`}>
+                    <div key={i} className={`w-8 h-8 rounded-full ${gradient} border-2 border-card flex items-center justify-center`}>
                       <User className="w-4 h-4 text-white" />
                     </div>
                   ))}
-                  <div className="w-8 h-8 rounded-full bg-foreground border-2 border-white flex items-center justify-center text-[10px] font-bold text-white">
+                  <div className="w-8 h-8 rounded-full bg-muted border-2 border-card flex items-center justify-center text-[10px] font-bold text-foreground">
                     500+
                   </div>
                 </div>
@@ -159,7 +159,7 @@ const Index = () => {
               </div>
 
               {/* Right - Shipments */}
-              <div className="hidden md:flex bg-white rounded-2xl px-4 py-3 shadow-lg items-center gap-3">
+              <div className="hidden md:flex bg-card rounded-2xl px-4 py-3 shadow-lg border border-border items-center gap-3">
                 <div className="w-14 h-14 rounded-xl overflow-hidden">
                   <img src={heroBg} alt="Shipment" className="w-full h-full object-cover" />
                 </div>
