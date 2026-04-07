@@ -84,6 +84,22 @@ export default function Dashboard() {
           </div>
         </motion.div>
 
+        {/* Warning Banner */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
+          className="rounded-2xl p-6 mb-6 border-2 border-amber-500/40 bg-amber-500/10"
+        >
+          <div className="flex items-start gap-3">
+            <AlertTriangle className="w-6 h-6 text-amber-500 shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm text-foreground leading-relaxed mb-2">{t("dashboard.warning")}</p>
+              <p className="text-sm font-bold text-amber-400">{t("dashboard.warningImportant")}</p>
+            </div>
+          </div>
+        </motion.div>
+
         {/* Warehouse Address */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
