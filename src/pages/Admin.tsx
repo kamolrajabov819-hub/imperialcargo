@@ -173,7 +173,7 @@ export default function Admin() {
           className="w-full max-w-sm glass rounded-2xl p-8 glow-box-cyan"
         >
           <div className="flex items-center justify-center gap-2 mb-6">
-            <Box className="w-8 h-8 text-primary" />
+            <LogoIcon className="w-8 h-8 text-primary" />
             <span className="text-xl font-bold">ISU <span className="text-primary">Cargo</span></span>
           </div>
           <h2 className="text-xl font-bold text-foreground text-center mb-6">{t("admin.login")}</h2>
