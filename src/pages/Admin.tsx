@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/alert-dialog";
 
 import {
-  Search, Plus, Pencil, Trash2, Users, Settings, LogOut, Package,
+  Search, Plus, Pencil, Trash2, Users, Settings, LogOut, Box,
   BarChart3, Download, TrendingUp, MapPin, ShieldCheck, Menu, X, MessageSquare, Check,
   ChevronLeft, ChevronRight,
 } from "lucide-react";
@@ -172,7 +172,7 @@ export default function Admin() {
           className="w-full max-w-sm glass rounded-2xl p-8 glow-box-cyan"
         >
           <div className="flex items-center justify-center gap-2 mb-6">
-            <Package className="w-8 h-8 text-primary" />
+            <Box className="w-8 h-8 text-primary" />
             <span className="text-xl font-bold">ISU <span className="text-primary">Cargo</span></span>
           </div>
           <h2 className="text-xl font-bold text-foreground text-center mb-6">{t("admin.login")}</h2>
@@ -208,7 +208,7 @@ export default function Admin() {
     <>
       <div className="p-4 flex items-center justify-between border-b border-border">
         <div className="flex items-center gap-2">
-          <Package className="w-6 h-6 text-primary" />
+          <Box className="w-6 h-6 text-primary" />
           <span className="text-lg font-bold">ISU <span className="text-primary">Cargo</span></span>
         </div>
         <button onClick={() => setSidebarOpen(false)} className="md:hidden p-1 text-muted-foreground hover:text-foreground">

@@ -61,7 +61,7 @@ const translations = {
     "how.step1.title": "Make Your Order",
     "how.step1.desc": "Order from any marketplace in China — Taobao, 1688, Pinduoduo or others.",
     "how.step2.title": "Copy Warehouse Address",
-    "how.step2.desc": "Use your personal KGZ code as the delivery address at our China warehouse.",
+    "how.step2.desc": "Copy our warehouse address and use your personal KGZ code as the recipient ID. Enter this as the delivery address when placing your order on any marketplace.",
     "how.step3.title": "Track & Receive",
     "how.step3.desc": "Track your cargo in real-time and receive it in your city in Kyrgyzstan.",
 
@@ -115,6 +115,8 @@ const translations = {
     "dashboard.contactManager": "Contact Manager",
     "dashboard.contactTelegram": "Contact via Telegram",
     "dashboard.logout": "Log Out",
+    "dashboard.warning": "To prevent your parcels from getting lost, be sure to send a screenshot of the completed address and receive confirmation from our manager.",
+    "dashboard.warningImportant": "❗❗❗ Only after address confirmation ✅ does the Cargo bear responsibility for your parcels 📦",
 
     // Admin
     "admin.login": "Admin Login",
@@ -223,7 +225,7 @@ const translations = {
     "how.step1.title": "Сделайте заказ",
     "how.step1.desc": "Закажите с любого маркетплейса Китая — Taobao, 1688, Pinduoduo и других.",
     "how.step2.title": "Скопируйте адрес склада",
-    "how.step2.desc": "Используйте ваш персональный KGZ код как адрес доставки на наш склад в Китае.",
+    "how.step2.desc": "Скопируйте адрес нашего склада и укажите ваш персональный KGZ код как ID получателя. Введите это как адрес доставки при оформлении заказа на любом маркетплейсе.",
     "how.step3.title": "Отслеживайте и получайте",
     "how.step3.desc": "Отслеживайте груз в реальном времени и получите его в вашем городе в Кыргызстане.",
 
@@ -273,6 +275,8 @@ const translations = {
     "dashboard.contactManager": "Связаться с менеджером",
     "dashboard.contactTelegram": "Связаться в Telegram",
     "dashboard.logout": "Выйти",
+    "dashboard.warning": "Чтобы ваши посылки не потерялись, обязательно отправьте скрин заполненного адреса и получите подтверждение от нашего менеджера.",
+    "dashboard.warningImportant": "❗❗❗ Только после подтверждения ✅ адреса Карго несет ответственность за ваши посылки 📦",
 
     "admin.login": "Вход для админа",
     "admin.email": "Эл. почта",
@@ -378,7 +382,7 @@ const translations = {
     "how.step1.title": "Заказ бериңиз",
     "how.step1.desc": "Кытайдын каалаган маркетплейсинен заказ бериңиз — Taobao, 1688, Pinduoduo ж.б.",
     "how.step2.title": "Кампа дарегин көчүрүңүз",
-    "how.step2.desc": "Жеке KGZ кодуңузду Кытайдагы кампабызга жеткирүү дареги катары колдонуңуз.",
+    "how.step2.desc": "Биздин кампанын дарегин көчүрүп, жеке KGZ кодуңузду алуучунун ID катары көрсөтүңүз. Буну маркетплейсте заказ берүүдө жеткирүү дареги катары киргизиңиз.",
     "how.step3.title": "Көзөмөлдөп алыңыз",
     "how.step3.desc": "Жүгүңүздү реалдуу убакытта көзөмөлдөп, Кыргызстандагы шаарыңызда алыңыз.",
 
@@ -428,6 +432,8 @@ const translations = {
     "dashboard.contactManager": "Менеджер менен байланыш",
     "dashboard.contactTelegram": "Telegram аркылуу байланыш",
     "dashboard.logout": "Чыгуу",
+    "dashboard.warning": "Посылкаларыңыз жоголуп кетпеши үчүн, толтурулган даректин скриншотун жөнөтүп, менеджерибизден ырастоо алыңыз.",
+    "dashboard.warningImportant": "❗❗❗ Дарек ырасталгандан кийин гана ✅ Карго сиздин посылкаларыңыз үчүн жоопкерчилик тартат 📦",
 
     "admin.login": "Админ кирүү",
     "admin.email": "Электрондук почта",

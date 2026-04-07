@@ -2,7 +2,7 @@ import { motion, useInView, AnimatePresence } from "framer-motion";
 import { useTranslation } from "@/lib/i18n";
 import { Header } from "@/components/Header";
 import { ContactButtons } from "@/components/ContactButtons";
-import { ArrowRight, Package, Star, Mail, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, User, ShoppingCart, ClipboardCopy, Truck } from "lucide-react";
+import { ArrowRight, Box, Star, Mail, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, User, ShoppingCart, ClipboardCopy, Truck } from "lucide-react";
 import { Link } from "react-router-dom";
 import { getCurrentUser } from "@/lib/mockData";
 import { useRef, useEffect, useState } from "react";
@@ -203,14 +203,14 @@ const Index = () => {
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="glass-dark rounded-2xl p-6">
                   <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center mb-4">
-                    <Package className="w-5 h-5 text-primary" />
+                    <Box className="w-5 h-5 text-primary" />
                   </div>
                   <h3 className="text-lg font-bold text-white mb-2">{t("about.card1.title")}</h3>
                   <p className="text-sm text-white/70 leading-relaxed">{t("about.card1.desc")}</p>
                 </div>
                 <div className="bg-card rounded-2xl p-6 border border-border">
                   <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
-                    <Package className="w-5 h-5 text-primary" />
+                    <Box className="w-5 h-5 text-primary" />
                   </div>
                   <h3 className="text-lg font-bold text-foreground mb-2">{t("about.card2.title")}</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed">{t("about.card2.desc")}</p>
@@ -478,7 +478,7 @@ const Index = () => {
           <div className="grid md:grid-cols-4 gap-10 mb-12">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <Package className="w-6 h-6 text-primary" />
+                <Box className="w-6 h-6 text-primary" />
                 <span className="text-lg font-bold">ISU <span className="text-primary">Cargo</span></span>
               </div>
               <p className="text-sm text-muted-foreground leading-relaxed">{t("footer.desc")}</p>

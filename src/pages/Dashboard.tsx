@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "@/lib/i18n";
 import { Header } from "@/components/Header";
 import { getCurrentUser, logoutUser, getWarehouseString, getWarehouseAddress } from "@/lib/mockData";
-import { Copy, Check, Package, MapPin, Truck, LogOut, MessageCircle, Send } from "lucide-react"; // v2
+import { Copy, Check, Box, MapPin, Truck, LogOut, MessageCircle, Send, AlertTriangle } from "lucide-react";
 import { useState, useEffect } from "react";
 
 export default function Dashboard() {
@@ -65,7 +65,7 @@ export default function Dashboard() {
         >
           <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -translate-y-1/2 translate-x-1/2" />
           <div className="flex items-center gap-3 mb-6">
-            <Package className="w-6 h-6 text-primary" />
+            <Box className="w-6 h-6 text-primary" />
             <h2 className="text-lg font-semibold text-foreground">{t("dashboard.idCard")}</h2>
           </div>
           <p className="text-sm text-muted-foreground mb-1">{user.name}</p>
@@ -81,6 +81,22 @@ export default function Dashboard() {
               {codeCopied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
               {codeCopied ? t("dashboard.copied") : t("dashboard.copyCode")}
             </motion.button>
+          </div>
+        </motion.div>
+
+        {/* Warning Banner */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
+          className="rounded-2xl p-6 mb-6 border-2 border-amber-500/40 bg-amber-500/10"
+        >
+          <div className="flex items-start gap-3">
+            <AlertTriangle className="w-6 h-6 text-amber-500 shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm text-foreground leading-relaxed mb-2">{t("dashboard.warning")}</p>
+              <p className="text-sm font-bold text-amber-400">{t("dashboard.warningImportant")}</p>
+            </div>
           </div>
         </motion.div>
 
