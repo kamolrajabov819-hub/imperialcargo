@@ -105,8 +105,8 @@ export function Header() {
                   onClick={() => handleHashClick(link.to)}
                   className={`px-4 py-2 text-sm transition-colors rounded-full ${
                     isActive(link.to)
-                      ? "bg-white text-foreground font-medium shadow-sm"
-                      : "text-muted-foreground hover:text-foreground hover:bg-white/80"
+                      ? "bg-primary text-primary-foreground font-medium shadow-sm"
+                      : "text-muted-foreground hover:text-foreground hover:bg-secondary"
                   }`}
                 >
                   {link.label}
@@ -117,8 +117,8 @@ export function Header() {
                   to={link.to}
                   className={`px-4 py-2 text-sm transition-colors rounded-full ${
                     isActive(link.to)
-                      ? "bg-white text-foreground font-medium shadow-sm"
-                      : "text-muted-foreground hover:text-foreground hover:bg-white/80"
+                      ? "bg-primary text-primary-foreground font-medium shadow-sm"
+                      : "text-muted-foreground hover:text-foreground hover:bg-secondary"
                   }`}
                 >
                   {link.label}
