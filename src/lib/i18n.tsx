@@ -275,6 +275,8 @@ const translations = {
     "dashboard.contactManager": "Связаться с менеджером",
     "dashboard.contactTelegram": "Связаться в Telegram",
     "dashboard.logout": "Выйти",
+    "dashboard.warning": "Чтобы ваши посылки не потерялись, обязательно отправьте скрин заполненного адреса и получите подтверждение от нашего менеджера.",
+    "dashboard.warningImportant": "❗❗❗ Только после подтверждения ✅ адреса Карго несет ответственность за ваши посылки 📦",
 
     "admin.login": "Вход для админа",
     "admin.email": "Эл. почта",
