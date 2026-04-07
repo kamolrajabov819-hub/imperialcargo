@@ -2,7 +2,7 @@ import { motion, useInView, AnimatePresence } from "framer-motion";
 import { useTranslation } from "@/lib/i18n";
 import { Header } from "@/components/Header";
 import { ContactButtons } from "@/components/ContactButtons";
-import { ArrowRight, Package, Star, Mail, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, User, ShoppingCart, ClipboardCopy, Truck } from "lucide-react";
+import { ArrowRight, Box, Star, Mail, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, User, ShoppingCart, ClipboardCopy, Truck } from "lucide-react";
 import { Link } from "react-router-dom";
 import { getCurrentUser } from "@/lib/mockData";
 import { useRef, useEffect, useState } from "react";
