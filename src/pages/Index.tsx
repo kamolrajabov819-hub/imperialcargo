@@ -444,29 +444,29 @@ const Index = () => {
                 <Package className="w-6 h-6 text-primary" />
                 <span className="text-lg font-bold">Cargo<span className="text-primary">Link</span></span>
               </div>
-              <p className="text-sm opacity-60 leading-relaxed">{t("footer.desc")}</p>
+              <p className="text-sm text-muted-foreground leading-relaxed">{t("footer.desc")}</p>
             </div>
             <div>
-              <h4 className="font-semibold mb-4">{t("footer.quickLinks")}</h4>
+              <h4 className="font-semibold text-foreground mb-4">{t("footer.quickLinks")}</h4>
               <div className="space-y-2">
-                <a href="#about" className="block text-sm opacity-60 hover:opacity-100 hover:text-primary transition-all">{t("nav.about")}</a>
-                <a href="#services" className="block text-sm opacity-60 hover:opacity-100 hover:text-primary transition-all">{t("nav.services")}</a>
-                <Link to="/signup" className="block text-sm opacity-60 hover:opacity-100 hover:text-primary transition-all">{t("nav.signup")}</Link>
+                <a href="#about" className="block text-sm text-muted-foreground hover:text-primary transition-all">{t("nav.about")}</a>
+                <a href="#services" className="block text-sm text-muted-foreground hover:text-primary transition-all">{t("nav.services")}</a>
+                <Link to="/signup" className="block text-sm text-muted-foreground hover:text-primary transition-all">{t("nav.signup")}</Link>
               </div>
             </div>
             <div>
-              <h4 className="font-semibold mb-4">{t("footer.contact")}</h4>
-              <div className="space-y-2 text-sm opacity-60">
+              <h4 className="font-semibold text-foreground mb-4">{t("footer.contact")}</h4>
+              <div className="space-y-2 text-sm text-muted-foreground">
                 <p>+996 555 123 456</p>
                 <p>info@cargolink.kg</p>
                 <p>Bishkek, Kyrgyzstan</p>
               </div>
             </div>
             <div>
-              <h4 className="font-semibold mb-4">{t("footer.newsletter")}</h4>
-              <p className="text-sm opacity-60 mb-3">{t("footer.newsletterDesc")}</p>
+              <h4 className="font-semibold text-foreground mb-4">{t("footer.newsletter")}</h4>
+              <p className="text-sm text-muted-foreground mb-3">{t("footer.newsletterDesc")}</p>
               <div className="flex gap-2">
-                <Input placeholder={t("footer.emailPlaceholder")} className="bg-white/10 border-white/20 text-background placeholder:text-background/40 text-sm" />
+                <Input placeholder={t("footer.emailPlaceholder")} className="bg-secondary border-border text-foreground placeholder:text-muted-foreground text-sm" />
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
