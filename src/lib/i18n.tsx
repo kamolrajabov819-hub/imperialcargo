@@ -115,6 +115,8 @@ const translations = {
     "dashboard.contactManager": "Contact Manager",
     "dashboard.contactTelegram": "Contact via Telegram",
     "dashboard.logout": "Log Out",
+    "dashboard.warning": "To prevent your parcels from getting lost, be sure to send a screenshot of the completed address and receive confirmation from our manager.",
+    "dashboard.warningImportant": "❗❗❗ Only after address confirmation ✅ does the Cargo bear responsibility for your parcels 📦",
 
     // Admin
     "admin.login": "Admin Login",
