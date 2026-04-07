@@ -172,8 +172,7 @@ export default function Admin() {
           className="w-full max-w-sm glass rounded-2xl p-8 glow-box-cyan"
         >
           <div className="flex items-center justify-center gap-2 mb-6">
-            <Package className="w-6 h-6 text-primary" />
-            <span className="text-lg font-bold text-foreground">ISU <span className="text-primary">Cargo</span></span>
+            <img src={isuCargoLogo} alt="ISU Cargo" className="h-10 w-auto" />
           </div>
           <h2 className="text-xl font-bold text-foreground text-center mb-6">{t("admin.login")}</h2>
           {error && <p className="text-destructive text-sm text-center mb-4">{error}</p>}
