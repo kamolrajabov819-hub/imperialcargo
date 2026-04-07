@@ -366,7 +366,7 @@ const Index = () => {
               >
                 {/* Left: number + line */}
                 <div className="flex flex-col items-center">
-                  <div className="w-14 h-14 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-lg font-bold shrink-0 shadow-lg shadow-primary/30 animate-pulse-gold">
+                  <div className="w-10 h-10 md:w-14 md:h-14 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm md:text-lg font-bold shrink-0 shadow-lg shadow-primary/30 animate-pulse-gold">
                     {item.step}
                   </div>
                   {i < 2 && (
