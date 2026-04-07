@@ -348,21 +348,21 @@ const Index = () => {
           </div>
           <div className="max-w-3xl mx-auto space-y-0">
             {[
-              { step: "01", title: t("how.step1.title"), desc: t("how.step1.desc") },
-              { step: "02", title: t("how.step2.title"), desc: t("how.step2.desc") },
-              { step: "03", title: t("how.step3.title"), desc: t("how.step3.desc") },
+              { step: "01", title: t("how.step1.title"), desc: t("how.step1.desc"), icon: ShoppingCart },
+              { step: "02", title: t("how.step2.title"), desc: t("how.step2.desc"), icon: ClipboardCopy },
+              { step: "03", title: t("how.step3.title"), desc: t("how.step3.desc"), icon: Truck },
             ].map((item, i) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, x: -20 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.2 }}
+                transition={{ delay: i * 0.2, type: "spring", stiffness: 100 }}
                 className="flex gap-6 md:gap-10 relative"
               >
                 {/* Left: number + line */}
                 <div className="flex flex-col items-center">
-                  <div className="w-14 h-14 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-lg font-bold shrink-0 shadow-lg shadow-primary/30">
+                  <div className="w-14 h-14 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-lg font-bold shrink-0 shadow-lg shadow-primary/30 animate-pulse-gold">
                     {item.step}
                   </div>
                   {i < 2 && (
@@ -370,10 +370,40 @@ const Index = () => {
                   )}
                 </div>
                 {/* Right: card */}
-                <div className="bg-card rounded-2xl p-6 md:p-8 border border-border hover:border-primary/30 transition-colors duration-300 flex-1 mb-6">
-                  <h3 className="text-lg font-bold text-foreground mb-2">{item.title}</h3>
+                <motion.div
+                  whileHover={{ scale: 1.02, borderColor: 'hsl(43, 50%, 54%)' }}
+                  transition={{ duration: 0.2 }}
+                  className="bg-card rounded-2xl p-6 md:p-8 border border-border transition-shadow duration-300 hover:shadow-lg hover:shadow-primary/10 flex-1 mb-6"
+                >
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                      <item.icon className="w-5 h-5 text-primary" />
+                    </div>
+                    <h3 className="text-lg font-bold text-foreground">{item.title}</h3>
+                  </div>
                   <p className="text-muted-foreground text-sm leading-relaxed">{item.desc}</p>
-                </div>
+                  {/* Marketplace logos for step 1 */}
+                  {i === 0 && (
+                    <div className="flex flex-wrap gap-3 mt-4">
+                      {[
+                        { name: "Taobao", bg: "#FF6A00", text: "#fff" },
+                        { name: "1688", bg: "#FF6600", text: "#fff" },
+                        { name: "Pinduoduo", bg: "#E02E24", text: "#fff" },
+                        { name: "Dewu", bg: "#000000", text: "#fff" },
+                      ].map((platform) => (
+                        <motion.div
+                          key={platform.name}
+                          whileHover={{ scale: 1.1 }}
+                          className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold shadow-md"
+                          style={{ backgroundColor: platform.bg, color: platform.text }}
+                        >
+                          <ShoppingCart className="w-3 h-3" />
+                          {platform.name}
+                        </motion.div>
+                      ))}
+                    </div>
+                  )}
+                </motion.div>
               </motion.div>
             ))}
           </div>
