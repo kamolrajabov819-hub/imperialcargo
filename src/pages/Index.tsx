@@ -479,7 +479,7 @@ const Index = () => {
             <div>
               <div className="flex items-center gap-2 mb-4">
                 <Package className="w-6 h-6 text-primary" />
-                <span className="text-lg font-bold">Cargo<span className="text-primary">Link</span></span>
+                <span className="text-lg font-bold">ISU <span className="text-primary">Cargo</span></span>
               </div>
               <p className="text-sm text-muted-foreground leading-relaxed">{t("footer.desc")}</p>
             </div>
