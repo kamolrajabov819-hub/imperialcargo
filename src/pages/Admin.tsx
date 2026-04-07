@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/alert-dialog";
 
 import {
-  Search, Plus, Pencil, Trash2, Users, Settings, LogOut, Package,
+  Search, Plus, Pencil, Trash2, Users, Settings, LogOut, Box,
   BarChart3, Download, TrendingUp, MapPin, ShieldCheck, Menu, X, MessageSquare, Check,
   ChevronLeft, ChevronRight,
 } from "lucide-react";
