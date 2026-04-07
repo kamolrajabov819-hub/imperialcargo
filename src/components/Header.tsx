@@ -91,7 +91,7 @@ export function Header() {
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2">
           <span className="text-xl font-bold text-foreground italic">
-            Cargo<span className="text-primary">Link</span>
+            ISU <span className="text-primary">Cargo</span>
           </span>
         </Link>
 

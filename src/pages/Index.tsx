@@ -2,7 +2,7 @@ import { motion, useInView, AnimatePresence } from "framer-motion";
 import { useTranslation } from "@/lib/i18n";
 import { Header } from "@/components/Header";
 import { ContactButtons } from "@/components/ContactButtons";
-import { ArrowRight, Package, Star, Mail, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, User } from "lucide-react";
+import { ArrowRight, Package, Star, Mail, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, User, ShoppingCart, ClipboardCopy, Truck } from "lucide-react";
 import { Link } from "react-router-dom";
 import { getCurrentUser } from "@/lib/mockData";
 import { useRef, useEffect, useState } from "react";
@@ -99,10 +99,11 @@ const Index = () => {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 0.8 }}
-              className="text-4xl md:text-6xl lg:text-7xl font-bold text-white leading-[1.1] text-center max-w-5xl mx-auto mb-10"
+              className="text-4xl md:text-6xl lg:text-7xl font-bold text-white leading-[1.1] text-center max-w-5xl mx-auto mb-10 font-heading"
+              style={{ textShadow: '0 2px 20px rgba(0,0,0,0.8)' }}
             >
               {t("hero.title")}{" "}
-              <span className="text-primary">{t("hero.titleHighlight")}</span>
+              <span className="text-primary" style={{ textShadow: '0 2px 20px rgba(0,0,0,0.8), 0 0 40px rgba(201,168,76,0.3)' }}>{t("hero.titleHighlight")}</span>
             </motion.h1>
 
             {/* CTA buttons */}
@@ -192,7 +193,7 @@ const Index = () => {
               <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-border text-sm text-muted-foreground mb-6">
                 <Star className="w-3.5 h-3.5" /> {t("about.tag")}
               </span>
-              <h2 className="text-3xl md:text-5xl font-bold text-foreground leading-tight mb-6">{t("about.title")}</h2>
+              <h2 className="text-3xl md:text-5xl font-bold text-foreground leading-tight mb-6 font-heading">{t("about.title")}</h2>
               <p className="text-muted-foreground leading-relaxed mb-10">{t("about.desc")}</p>
 
               <div className="grid sm:grid-cols-2 gap-4">
@@ -248,7 +249,7 @@ const Index = () => {
               <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-border text-sm text-muted-foreground mb-6">
                 <Star className="w-3.5 h-3.5" /> {t("services.tag")}
               </span>
-              <h2 className="text-3xl md:text-5xl font-bold text-foreground leading-tight">{t("services.title")}</h2>
+              <h2 className="text-3xl md:text-5xl font-bold text-foreground leading-tight font-heading">{t("services.title")}</h2>
             </div>
             <p className="text-muted-foreground leading-relaxed self-end">{t("about.desc")}</p>
           </div>
@@ -311,7 +312,7 @@ const Index = () => {
             <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-border text-sm text-muted-foreground mb-6">
               <Star className="w-3.5 h-3.5" /> {t("why.tag")}
             </span>
-            <h2 className="text-3xl md:text-5xl font-bold text-foreground">{t("why.title")}</h2>
+            <h2 className="text-3xl md:text-5xl font-bold text-foreground font-heading">{t("why.title")}</h2>
           </div>
           <div className="grid md:grid-cols-3 gap-6">
             {[
@@ -343,25 +344,25 @@ const Index = () => {
             <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-border text-sm text-muted-foreground mb-6">
               <Star className="w-3.5 h-3.5" /> {t("how.tag")}
             </span>
-            <h2 className="text-3xl md:text-5xl font-bold text-foreground">{t("how.title")}</h2>
+            <h2 className="text-3xl md:text-5xl font-bold text-foreground font-heading">{t("how.title")}</h2>
           </div>
           <div className="max-w-3xl mx-auto space-y-0">
             {[
-              { step: "01", title: t("how.step1.title"), desc: t("how.step1.desc") },
-              { step: "02", title: t("how.step2.title"), desc: t("how.step2.desc") },
-              { step: "03", title: t("how.step3.title"), desc: t("how.step3.desc") },
+              { step: "01", title: t("how.step1.title"), desc: t("how.step1.desc"), icon: ShoppingCart },
+              { step: "02", title: t("how.step2.title"), desc: t("how.step2.desc"), icon: ClipboardCopy },
+              { step: "03", title: t("how.step3.title"), desc: t("how.step3.desc"), icon: Truck },
             ].map((item, i) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, x: -20 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.2 }}
+                transition={{ delay: i * 0.2, type: "spring", stiffness: 100 }}
                 className="flex gap-6 md:gap-10 relative"
               >
                 {/* Left: number + line */}
                 <div className="flex flex-col items-center">
-                  <div className="w-14 h-14 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-lg font-bold shrink-0 shadow-lg shadow-primary/30">
+                  <div className="w-14 h-14 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-lg font-bold shrink-0 shadow-lg shadow-primary/30 animate-pulse-gold">
                     {item.step}
                   </div>
                   {i < 2 && (
@@ -369,10 +370,40 @@ const Index = () => {
                   )}
                 </div>
                 {/* Right: card */}
-                <div className="bg-card rounded-2xl p-6 md:p-8 border border-border hover:border-primary/30 transition-colors duration-300 flex-1 mb-6">
-                  <h3 className="text-lg font-bold text-foreground mb-2">{item.title}</h3>
+                <motion.div
+                  whileHover={{ scale: 1.02, borderColor: 'hsl(43, 50%, 54%)' }}
+                  transition={{ duration: 0.2 }}
+                  className="bg-card rounded-2xl p-6 md:p-8 border border-border transition-shadow duration-300 hover:shadow-lg hover:shadow-primary/10 flex-1 mb-6"
+                >
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                      <item.icon className="w-5 h-5 text-primary" />
+                    </div>
+                    <h3 className="text-lg font-bold text-foreground">{item.title}</h3>
+                  </div>
                   <p className="text-muted-foreground text-sm leading-relaxed">{item.desc}</p>
-                </div>
+                  {/* Marketplace logos for step 1 */}
+                  {i === 0 && (
+                    <div className="flex flex-wrap gap-3 mt-4">
+                      {[
+                        { name: "Taobao", bg: "#FF6A00", text: "#fff" },
+                        { name: "1688", bg: "#FF6600", text: "#fff" },
+                        { name: "Pinduoduo", bg: "#E02E24", text: "#fff" },
+                        { name: "Dewu", bg: "#000000", text: "#fff" },
+                      ].map((platform) => (
+                        <motion.div
+                          key={platform.name}
+                          whileHover={{ scale: 1.1 }}
+                          className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold shadow-md"
+                          style={{ backgroundColor: platform.bg, color: platform.text }}
+                        >
+                          <ShoppingCart className="w-3 h-3" />
+                          {platform.name}
+                        </motion.div>
+                      ))}
+                    </div>
+                  )}
+                </motion.div>
               </motion.div>
             ))}
           </div>
@@ -386,7 +417,7 @@ const Index = () => {
             <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-border text-sm text-muted-foreground mb-6">
               <Star className="w-3.5 h-3.5" /> {t("testimonials.tag")}
             </span>
-            <h2 className="text-3xl md:text-5xl font-bold text-foreground">{t("testimonials.title")}</h2>
+            <h2 className="text-3xl md:text-5xl font-bold text-foreground font-heading">{t("testimonials.title")}</h2>
           </div>
 
           <div className="max-w-2xl mx-auto">

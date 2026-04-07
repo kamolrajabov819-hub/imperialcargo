@@ -167,7 +167,7 @@ export default function Admin() {
         >
           <div className="flex items-center justify-center gap-2 mb-6">
             <Package className="w-6 h-6 text-primary" />
-            <span className="text-lg font-bold text-foreground">Cargo<span className="text-primary">Link</span></span>
+            <span className="text-lg font-bold text-foreground">ISU <span className="text-primary">Cargo</span></span>
           </div>
           <h2 className="text-xl font-bold text-foreground text-center mb-6">{t("admin.login")}</h2>
           {error && <p className="text-destructive text-sm text-center mb-4">{error}</p>}
@@ -203,7 +203,7 @@ export default function Admin() {
       <div className="p-4 flex items-center justify-between border-b border-border">
         <div className="flex items-center gap-2">
           <Package className="w-5 h-5 text-primary" />
-          <span className="font-bold text-foreground">Cargo<span className="text-primary">Link</span></span>
+          <span className="font-bold text-foreground">ISU <span className="text-primary">Cargo</span></span>
         </div>
         <button onClick={() => setSidebarOpen(false)} className="md:hidden p-1 text-muted-foreground hover:text-foreground">
           <X className="w-5 h-5" />
@@ -502,12 +502,8 @@ export default function Admin() {
                         cx="50%"
                         cy="50%"
                         outerRadius={isMobile ? 60 : 80}
-                        label={isMobile ? false : ({ city, count, x, y }) => (
-                          <text x={x} y={y} fill="#1a1a2e" fontSize={14} fontWeight={600} textAnchor="middle" dominantBaseline="central">
-                            {`${city}: ${count}`}
-                          </text>
-                        )}
-                        labelLine={isMobile ? false : { stroke: "hsl(var(--muted-foreground))", strokeWidth: 1 }}
+                        label={false}
+                        labelLine={false}
                       >
                         {stats.clientsByCity.map((_, i) => (
                           <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
@@ -520,17 +516,14 @@ export default function Admin() {
                       />
                     </PieChart>
                   </ResponsiveContainer>
-                  {/* Legend for mobile */}
-                  {isMobile && (
-                    <div className="flex flex-wrap gap-2 mt-3 justify-center">
-                      {stats.clientsByCity.map((item, i) => (
-                        <div key={i} className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                          <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: CHART_COLORS[i % CHART_COLORS.length] }} />
-                          <span>{item.city}: {item.count}</span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                  <div className="flex flex-wrap gap-2 mt-3 justify-center">
+                    {stats.clientsByCity.map((item, i) => (
+                      <div key={i} className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                        <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: CHART_COLORS[i % CHART_COLORS.length] }} />
+                        <span>{item.city}: {item.count}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             </motion.div>
