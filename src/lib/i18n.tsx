@@ -61,7 +61,7 @@ const translations = {
     "how.step1.title": "Make Your Order",
     "how.step1.desc": "Order from any marketplace in China — Taobao, 1688, Pinduoduo or others.",
     "how.step2.title": "Copy Warehouse Address",
-    "how.step2.desc": "Use your personal KGZ code as the delivery address at our China warehouse.",
+    "how.step2.desc": "Copy our warehouse address and use your personal KGZ code as the recipient ID. Enter this as the delivery address when placing your order on any marketplace.",
     "how.step3.title": "Track & Receive",
     "how.step3.desc": "Track your cargo in real-time and receive it in your city in Kyrgyzstan.",
 
