@@ -83,8 +83,8 @@ export function Header() {
       transition={{ type: "spring", stiffness: 100 }}
       className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
         scrolled
-          ? "bg-white/80 backdrop-blur-lg shadow-sm"
-          : "bg-white/60 backdrop-blur-md"
+          ? "glass-strong shadow-lg shadow-black/20"
+          : "bg-card/60 backdrop-blur-md"
       }`}
     >
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
