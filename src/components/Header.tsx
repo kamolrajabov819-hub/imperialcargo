@@ -83,8 +83,8 @@ export function Header() {
       transition={{ type: "spring", stiffness: 100 }}
       className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
         scrolled
-          ? "bg-white/80 backdrop-blur-lg shadow-sm"
-          : "bg-white/60 backdrop-blur-md"
+          ? "glass-strong shadow-lg shadow-black/20"
+          : "bg-card/60 backdrop-blur-md"
       }`}
     >
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
@@ -105,8 +105,8 @@ export function Header() {
                   onClick={() => handleHashClick(link.to)}
                   className={`px-4 py-2 text-sm transition-colors rounded-full ${
                     isActive(link.to)
-                      ? "bg-white text-foreground font-medium shadow-sm"
-                      : "text-muted-foreground hover:text-foreground hover:bg-white/80"
+                      ? "bg-primary text-primary-foreground font-medium shadow-sm"
+                      : "text-muted-foreground hover:text-foreground hover:bg-secondary"
                   }`}
                 >
                   {link.label}
@@ -117,8 +117,8 @@ export function Header() {
                   to={link.to}
                   className={`px-4 py-2 text-sm transition-colors rounded-full ${
                     isActive(link.to)
-                      ? "bg-white text-foreground font-medium shadow-sm"
-                      : "text-muted-foreground hover:text-foreground hover:bg-white/80"
+                      ? "bg-primary text-primary-foreground font-medium shadow-sm"
+                      : "text-muted-foreground hover:text-foreground hover:bg-secondary"
                   }`}
                 >
                   {link.label}
@@ -150,7 +150,7 @@ export function Header() {
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.25 }}
-            className="md:hidden bg-white/95 backdrop-blur-lg border-t border-border overflow-hidden"
+            className="md:hidden bg-card/95 backdrop-blur-lg border-t border-border overflow-hidden"
           >
             <div className="px-4 py-3 space-y-1">
               {links.map((link) =>

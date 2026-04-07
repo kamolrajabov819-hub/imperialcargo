@@ -4,44 +4,44 @@
 
 @layer base {
   :root {
-    --background: 220 10% 82%;
-    --foreground: 220 20% 10%;
+    --background: 222 30% 14%;
+    --foreground: 40 20% 90%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 220 20% 10%;
+    --card: 222 25% 18%;
+    --card-foreground: 40 20% 90%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 220 20% 10%;
+    --popover: 222 25% 18%;
+    --popover-foreground: 40 20% 90%;
 
-    --primary: 24 95% 53%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 43 50% 54%;
+    --primary-foreground: 222 30% 10%;
 
-    --secondary: 220 15% 90%;
-    --secondary-foreground: 220 20% 10%;
+    --secondary: 222 20% 22%;
+    --secondary-foreground: 40 20% 90%;
 
-    --muted: 220 15% 92%;
-    --muted-foreground: 220 10% 45%;
+    --muted: 222 20% 25%;
+    --muted-foreground: 40 10% 55%;
 
-    --accent: 24 95% 53%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 43 50% 54%;
+    --accent-foreground: 222 30% 10%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 220 13% 87%;
-    --input: 220 13% 87%;
-    --ring: 24 95% 53%;
+    --border: 222 15% 25%;
+    --input: 222 15% 25%;
+    --ring: 43 50% 54%;
 
     --radius: 0.75rem;
 
-    --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 220 20% 10%;
-    --sidebar-primary: 24 95% 53%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 15% 95%;
-    --sidebar-accent-foreground: 220 20% 10%;
-    --sidebar-border: 220 13% 87%;
-    --sidebar-ring: 24 95% 53%;
+    --sidebar-background: 222 25% 16%;
+    --sidebar-foreground: 40 20% 90%;
+    --sidebar-primary: 43 50% 54%;
+    --sidebar-primary-foreground: 222 30% 10%;
+    --sidebar-accent: 222 20% 22%;
+    --sidebar-accent-foreground: 40 20% 90%;
+    --sidebar-border: 222 15% 25%;
+    --sidebar-ring: 43 50% 54%;
 
     --success: 145 63% 42%;
     --whatsapp: 142 70% 45%;
@@ -65,19 +65,19 @@
 
 @layer utilities {
   .glass {
-    background: hsl(0 0% 100% / 0.7);
+    background: hsl(222 25% 18% / 0.7);
     backdrop-filter: blur(20px);
-    border: 1px solid hsl(220 13% 87%);
+    border: 1px solid hsl(222 15% 25%);
   }
 
   .glass-strong {
-    background: hsl(0 0% 100% / 0.9);
+    background: hsl(222 25% 16% / 0.95);
     backdrop-filter: blur(30px);
-    border-bottom: 1px solid hsl(220 13% 87%);
+    border-bottom: 1px solid hsl(222 15% 25%);
   }
 
   .glass-dark {
-    background: hsl(220 20% 12% / 0.95);
-    color: hsl(0 0% 95%);
+    background: hsl(222 30% 12% / 0.95);
+    color: hsl(40 20% 90%);
   }
 }

@@ -140,18 +140,18 @@ const Index = () => {
               className="flex justify-between items-end"
             >
               {/* Left - Business Clients */}
-              <div className="bg-white rounded-2xl px-5 py-3 shadow-lg flex items-center gap-3">
+              <div className="bg-card rounded-2xl px-5 py-3 shadow-lg border border-border flex items-center gap-3">
                 <div className="flex -space-x-2">
                   {[
-                    "bg-gradient-to-br from-orange-400 to-orange-600",
+                    "bg-gradient-to-br from-primary/80 to-primary",
                     "bg-gradient-to-br from-blue-400 to-blue-600",
                     "bg-gradient-to-br from-emerald-400 to-emerald-600",
                   ].map((gradient, i) => (
-                    <div key={i} className={`w-8 h-8 rounded-full ${gradient} border-2 border-white flex items-center justify-center`}>
+                    <div key={i} className={`w-8 h-8 rounded-full ${gradient} border-2 border-card flex items-center justify-center`}>
                       <User className="w-4 h-4 text-white" />
                     </div>
                   ))}
-                  <div className="w-8 h-8 rounded-full bg-foreground border-2 border-white flex items-center justify-center text-[10px] font-bold text-white">
+                  <div className="w-8 h-8 rounded-full bg-muted border-2 border-card flex items-center justify-center text-[10px] font-bold text-foreground">
                     500+
                   </div>
                 </div>
@@ -159,7 +159,7 @@ const Index = () => {
               </div>
 
               {/* Right - Shipments */}
-              <div className="hidden md:flex bg-white rounded-2xl px-4 py-3 shadow-lg items-center gap-3">
+              <div className="hidden md:flex bg-card rounded-2xl px-4 py-3 shadow-lg border border-border items-center gap-3">
                 <div className="w-14 h-14 rounded-xl overflow-hidden">
                   <img src={heroBg} alt="Shipment" className="w-full h-full object-cover" />
                 </div>
@@ -215,7 +215,7 @@ const Index = () => {
 
             {/* Transfer card + truck image */}
             <div className="relative">
-              <div className="bg-gradient-to-br from-primary via-primary/80 to-orange-400 rounded-3xl p-6 md:p-8">
+              <div className="bg-gradient-to-br from-primary/30 via-primary/20 to-secondary rounded-3xl p-6 md:p-8 border border-primary/20">
                 <div className="bg-card rounded-2xl shadow-xl p-6 w-full max-w-xs mx-auto border border-border mb-6">
                   <p className="text-sm font-semibold text-foreground mb-3">Transfer From</p>
                   <div className="bg-muted rounded-xl p-3 mb-4">
@@ -345,7 +345,7 @@ const Index = () => {
             </span>
             <h2 className="text-3xl md:text-5xl font-bold text-foreground">{t("how.title")}</h2>
           </div>
-          <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+          <div className="max-w-3xl mx-auto space-y-0">
             {[
               { step: "01", title: t("how.step1.title"), desc: t("how.step1.desc") },
               { step: "02", title: t("how.step2.title"), desc: t("how.step2.desc") },
@@ -353,14 +353,26 @@ const Index = () => {
             ].map((item, i) => (
               <motion.div
                 key={i}
-                whileHover={{ y: -5 }}
-                className="bg-card rounded-2xl p-8 border border-border text-center hover:shadow-lg transition-shadow duration-300"
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.2 }}
+                className="flex gap-6 md:gap-10 relative"
               >
-                <div className="w-12 h-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-bold mx-auto mb-5">
-                  {item.step}
+                {/* Left: number + line */}
+                <div className="flex flex-col items-center">
+                  <div className="w-14 h-14 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-lg font-bold shrink-0 shadow-lg shadow-primary/30">
+                    {item.step}
+                  </div>
+                  {i < 2 && (
+                    <div className="w-0.5 h-full bg-gradient-to-b from-primary/50 to-border min-h-[60px]" />
+                  )}
                 </div>
-                <h3 className="text-lg font-bold text-foreground mb-2">{item.title}</h3>
-                <p className="text-muted-foreground text-sm leading-relaxed">{item.desc}</p>
+                {/* Right: card */}
+                <div className="bg-card rounded-2xl p-6 md:p-8 border border-border hover:border-primary/30 transition-colors duration-300 flex-1 mb-6">
+                  <h3 className="text-lg font-bold text-foreground mb-2">{item.title}</h3>
+                  <p className="text-muted-foreground text-sm leading-relaxed">{item.desc}</p>
+                </div>
               </motion.div>
             ))}
           </div>
@@ -424,7 +436,7 @@ const Index = () => {
       </Section>
 
       {/* ─── FOOTER ─── */}
-      <footer id="contact" className="py-16 bg-foreground text-background">
+      <footer id="contact" className="py-16 bg-card border-t border-border">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-4 gap-10 mb-12">
             <div>
@@ -432,29 +444,29 @@ const Index = () => {
                 <Package className="w-6 h-6 text-primary" />
                 <span className="text-lg font-bold">Cargo<span className="text-primary">Link</span></span>
               </div>
-              <p className="text-sm opacity-60 leading-relaxed">{t("footer.desc")}</p>
+              <p className="text-sm text-muted-foreground leading-relaxed">{t("footer.desc")}</p>
             </div>
             <div>
-              <h4 className="font-semibold mb-4">{t("footer.quickLinks")}</h4>
+              <h4 className="font-semibold text-foreground mb-4">{t("footer.quickLinks")}</h4>
               <div className="space-y-2">
-                <a href="#about" className="block text-sm opacity-60 hover:opacity-100 hover:text-primary transition-all">{t("nav.about")}</a>
-                <a href="#services" className="block text-sm opacity-60 hover:opacity-100 hover:text-primary transition-all">{t("nav.services")}</a>
-                <Link to="/signup" className="block text-sm opacity-60 hover:opacity-100 hover:text-primary transition-all">{t("nav.signup")}</Link>
+                <a href="#about" className="block text-sm text-muted-foreground hover:text-primary transition-all">{t("nav.about")}</a>
+                <a href="#services" className="block text-sm text-muted-foreground hover:text-primary transition-all">{t("nav.services")}</a>
+                <Link to="/signup" className="block text-sm text-muted-foreground hover:text-primary transition-all">{t("nav.signup")}</Link>
               </div>
             </div>
             <div>
-              <h4 className="font-semibold mb-4">{t("footer.contact")}</h4>
-              <div className="space-y-2 text-sm opacity-60">
+              <h4 className="font-semibold text-foreground mb-4">{t("footer.contact")}</h4>
+              <div className="space-y-2 text-sm text-muted-foreground">
                 <p>+996 555 123 456</p>
                 <p>info@cargolink.kg</p>
                 <p>Bishkek, Kyrgyzstan</p>
               </div>
             </div>
             <div>
-              <h4 className="font-semibold mb-4">{t("footer.newsletter")}</h4>
-              <p className="text-sm opacity-60 mb-3">{t("footer.newsletterDesc")}</p>
+              <h4 className="font-semibold text-foreground mb-4">{t("footer.newsletter")}</h4>
+              <p className="text-sm text-muted-foreground mb-3">{t("footer.newsletterDesc")}</p>
               <div className="flex gap-2">
-                <Input placeholder={t("footer.emailPlaceholder")} className="bg-white/10 border-white/20 text-background placeholder:text-background/40 text-sm" />
+                <Input placeholder={t("footer.emailPlaceholder")} className="bg-secondary border-border text-foreground placeholder:text-muted-foreground text-sm" />
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
@@ -465,8 +477,8 @@ const Index = () => {
               </div>
             </div>
           </div>
-          <div className="border-t border-white/10 pt-6 text-center">
-            <p className="text-sm opacity-40">© {new Date().getFullYear()} CargoLink. {t("footer.rights")}</p>
+          <div className="border-t border-border pt-6 text-center">
+            <p className="text-sm text-muted-foreground">© {new Date().getFullYear()} CargoLink. {t("footer.rights")}</p>
           </div>
         </div>
       </footer>
