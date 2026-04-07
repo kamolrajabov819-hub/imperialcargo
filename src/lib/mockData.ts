@@ -5,6 +5,7 @@ export interface Client {
   city: string;
   code: string;
   createdAt: string;
+  confirmed?: boolean;
 }
 
 const STORAGE_KEY = "cargolink-clients";
