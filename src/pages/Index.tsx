@@ -436,7 +436,7 @@ const Index = () => {
       </Section>
 
       {/* ─── FOOTER ─── */}
-      <footer id="contact" className="py-16 bg-foreground text-background">
+      <footer id="contact" className="py-16 bg-card border-t border-border">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-4 gap-10 mb-12">
             <div>
