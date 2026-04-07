@@ -388,7 +388,7 @@ const Index = () => {
                   <p className="text-muted-foreground text-sm leading-relaxed">{item.desc}</p>
                   {/* Marketplace logos for step 1 */}
                   {i === 0 && (
-                    <div className="flex flex-wrap items-center gap-4 mt-5">
+                    <div className="flex flex-wrap items-center gap-3 md:gap-4 mt-4 md:mt-5">
                       {[
                         { name: "Taobao", src: taobaoLogo },
                         { name: "1688", src: logo1688 },
