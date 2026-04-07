@@ -91,7 +91,7 @@ export function Header() {
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2">
-          <Box className="w-6 h-6 text-primary" />
+          <LogoIcon className="w-6 h-6 text-primary" />
           <span className="text-lg font-bold">ISU <span className="text-primary">Cargo</span></span>
         </Link>
 

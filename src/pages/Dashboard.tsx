@@ -66,7 +66,7 @@ export default function Dashboard() {
         >
           <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -translate-y-1/2 translate-x-1/2" />
           <div className="flex items-center gap-3 mb-6">
-            <Box className="w-6 h-6 text-primary" />
+            <LogoIcon className="w-6 h-6 text-primary" />
             <h2 className="text-lg font-semibold text-foreground">{t("dashboard.idCard")}</h2>
           </div>
           <p className="text-sm text-muted-foreground mb-1">{user.name}</p>

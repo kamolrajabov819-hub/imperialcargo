@@ -479,7 +479,7 @@ const Index = () => {
           <div className="grid md:grid-cols-4 gap-10 mb-12">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <Box className="w-6 h-6 text-primary" />
+                <LogoIcon className="w-6 h-6 text-primary" />
                 <span className="text-lg font-bold">ISU <span className="text-primary">Cargo</span></span>
               </div>
               <p className="text-sm text-muted-foreground leading-relaxed">{t("footer.desc")}</p>

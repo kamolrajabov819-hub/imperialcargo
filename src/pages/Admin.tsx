@@ -209,7 +209,7 @@ export default function Admin() {
     <>
       <div className="p-4 flex items-center justify-between border-b border-border">
         <div className="flex items-center gap-2">
-          <Box className="w-6 h-6 text-primary" />
+          <LogoIcon className="w-6 h-6 text-primary" />
           <span className="text-lg font-bold">ISU <span className="text-primary">Cargo</span></span>
         </div>
         <button onClick={() => setSidebarOpen(false)} className="md:hidden p-1 text-muted-foreground hover:text-foreground">
