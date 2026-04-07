@@ -393,7 +393,7 @@ export default function Admin() {
                               <button onClick={() => openEdit(c)} className="p-2 rounded-lg hover:bg-primary/10 text-primary transition-colors">
                                 <Pencil className="w-4 h-4" />
                               </button>
-                              <button onClick={() => handleDelete(c.id)} className="p-2 rounded-lg hover:bg-destructive/10 text-destructive transition-colors">
+                              <button onClick={() => setDeleteConfirmId(c.id)} className="p-2 rounded-lg hover:bg-destructive/10 text-destructive transition-colors">
                                 <Trash2 className="w-4 h-4" />
                               </button>
                             </div>
