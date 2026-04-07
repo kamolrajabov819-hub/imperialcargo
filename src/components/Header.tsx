@@ -2,7 +2,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "@/lib/i18n";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, Box } from "lucide-react";
+import { Menu, X } from "lucide-react";
+import { LogoIcon } from "./LogoIcon";
 import { useState, useEffect, useCallback } from "react";
 import { getCurrentUser } from "@/lib/mockData";
 
@@ -90,7 +91,7 @@ export function Header() {
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2">
-          <Box className="w-6 h-6 text-primary" />
+          <LogoIcon className="w-6 h-6 text-primary" />
           <span className="text-lg font-bold">ISU <span className="text-primary">Cargo</span></span>
         </Link>
 

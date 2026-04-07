@@ -20,10 +20,11 @@ import {
 } from "@/components/ui/alert-dialog";
 
 import {
-  Search, Plus, Pencil, Trash2, Users, Settings, LogOut, Box,
+  Search, Plus, Pencil, Trash2, Users, Settings, LogOut,
   BarChart3, Download, TrendingUp, MapPin, ShieldCheck, Menu, X, MessageSquare, Check,
-  ChevronLeft, ChevronRight,
+  ChevronLeft, ChevronRight, CheckCircle,
 } from "lucide-react";
+import { LogoIcon } from "@/components/LogoIcon";
 import { useNavigate } from "react-router-dom";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 
@@ -67,6 +68,14 @@ export default function Admin() {
   const [newComment, setNewComment] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+  const [confirmedAnimId, setConfirmedAnimId] = useState<string | null>(null);
+
+  const handleConfirm = (id: string) => {
+    updateClient(id, { confirmed: true });
+    setConfirmedAnimId(id);
+    setTimeout(() => setConfirmedAnimId(null), 2000);
+    refresh();
+  };
 
   // Reset page when search changes
   useEffect(() => { setCurrentPage(1); }, [search]);
@@ -172,7 +181,7 @@ export default function Admin() {
           className="w-full max-w-sm glass rounded-2xl p-8 glow-box-cyan"
         >
           <div className="flex items-center justify-center gap-2 mb-6">
-            <Box className="w-8 h-8 text-primary" />
+            <LogoIcon className="w-8 h-8 text-primary" />
             <span className="text-xl font-bold">ISU <span className="text-primary">Cargo</span></span>
           </div>
           <h2 className="text-xl font-bold text-foreground text-center mb-6">{t("admin.login")}</h2>
@@ -208,7 +217,7 @@ export default function Admin() {
     <>
       <div className="p-4 flex items-center justify-between border-b border-border">
         <div className="flex items-center gap-2">
-          <Box className="w-6 h-6 text-primary" />
+          <LogoIcon className="w-6 h-6 text-primary" />
           <span className="text-lg font-bold">ISU <span className="text-primary">Cargo</span></span>
         </div>
         <button onClick={() => setSidebarOpen(false)} className="md:hidden p-1 text-muted-foreground hover:text-foreground">
@@ -347,16 +356,40 @@ export default function Admin() {
                       <span>{c.phone}</span>
                       {c.city && <span>• {c.city}</span>}
                     </div>
-                    <div className="flex items-center gap-1 justify-end">
-                      <button onClick={() => openComments(c)} className="p-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors">
-                        <MessageSquare className="w-4 h-4" />
-                      </button>
-                      <button onClick={() => openEdit(c)} className="p-2 rounded-lg hover:bg-primary/10 text-primary transition-colors">
-                        <Pencil className="w-4 h-4" />
-                      </button>
-                      <button onClick={() => setDeleteConfirmId(c.id)} className="p-2 rounded-lg hover:bg-destructive/10 text-destructive transition-colors">
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                    <div className="flex items-center gap-1 justify-between">
+                      <AnimatePresence mode="wait">
+                        {c.confirmed ? (
+                          <motion.span
+                            key="confirmed"
+                            initial={confirmedAnimId === c.id ? { scale: 0, opacity: 0 } : {}}
+                            animate={{ scale: 1, opacity: 1 }}
+                            transition={{ type: "spring", stiffness: 300 }}
+                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-400 text-xs font-medium"
+                          >
+                            <CheckCircle className="w-3.5 h-3.5" /> Confirmed
+                          </motion.span>
+                        ) : (
+                          <motion.button
+                            key="confirm-btn"
+                            whileTap={{ scale: 0.9 }}
+                            onClick={() => handleConfirm(c.id)}
+                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-medium hover:bg-emerald-500/20 transition-colors"
+                          >
+                            <CheckCircle className="w-3.5 h-3.5" /> Confirm
+                          </motion.button>
+                        )}
+                      </AnimatePresence>
+                      <div className="flex items-center gap-1">
+                        <button onClick={() => openComments(c)} className="p-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors">
+                          <MessageSquare className="w-4 h-4" />
+                        </button>
+                        <button onClick={() => openEdit(c)} className="p-2 rounded-lg hover:bg-primary/10 text-primary transition-colors">
+                          <Pencil className="w-4 h-4" />
+                        </button>
+                        <button onClick={() => setDeleteConfirmId(c.id)} className="p-2 rounded-lg hover:bg-destructive/10 text-destructive transition-colors">
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
                     </div>
                   </motion.div>
                 ))}
@@ -376,6 +409,7 @@ export default function Admin() {
                         <TableHead className="text-muted-foreground">{t("admin.location")}</TableHead>
                         <TableHead className="text-muted-foreground">{t("admin.identityCode")}</TableHead>
                         <TableHead className="text-muted-foreground">{t("admin.date")}</TableHead>
+                        <TableHead className="text-muted-foreground">Status</TableHead>
                         <TableHead className="text-muted-foreground text-right">{t("admin.actions")}</TableHead>
                       </TableRow>
                     </TableHeader>
@@ -387,6 +421,30 @@ export default function Admin() {
                           <TableCell className="text-foreground">{c.city}</TableCell>
                           <TableCell className="text-primary font-mono font-bold">{c.code}</TableCell>
                           <TableCell className="text-muted-foreground">{c.createdAt}</TableCell>
+                          <TableCell>
+                            <AnimatePresence mode="wait">
+                              {c.confirmed ? (
+                                <motion.span
+                                  key="confirmed"
+                                  initial={confirmedAnimId === c.id ? { scale: 0, opacity: 0 } : {}}
+                                  animate={{ scale: 1, opacity: 1 }}
+                                  transition={{ type: "spring", stiffness: 300 }}
+                                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-400 text-xs font-medium"
+                                >
+                                  <CheckCircle className="w-3.5 h-3.5" /> Confirmed
+                                </motion.span>
+                              ) : (
+                                <motion.button
+                                  key="confirm-btn"
+                                  whileTap={{ scale: 0.9 }}
+                                  onClick={() => handleConfirm(c.id)}
+                                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-medium hover:bg-emerald-500/20 transition-colors"
+                                >
+                                  <CheckCircle className="w-3.5 h-3.5" /> Confirm
+                                </motion.button>
+                              )}
+                            </AnimatePresence>
+                          </TableCell>
                           <TableCell className="text-right">
                             <div className="flex items-center justify-end gap-1">
                               <button onClick={() => openComments(c)} className="p-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors">
