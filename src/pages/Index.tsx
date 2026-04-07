@@ -345,7 +345,7 @@ const Index = () => {
             </span>
             <h2 className="text-3xl md:text-5xl font-bold text-foreground">{t("how.title")}</h2>
           </div>
-          <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+          <div className="max-w-3xl mx-auto space-y-0">
             {[
               { step: "01", title: t("how.step1.title"), desc: t("how.step1.desc") },
               { step: "02", title: t("how.step2.title"), desc: t("how.step2.desc") },
@@ -353,14 +353,26 @@ const Index = () => {
             ].map((item, i) => (
               <motion.div
                 key={i}
-                whileHover={{ y: -5 }}
-                className="bg-card rounded-2xl p-8 border border-border text-center hover:shadow-lg transition-shadow duration-300"
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.2 }}
+                className="flex gap-6 md:gap-10 relative"
               >
-                <div className="w-12 h-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-bold mx-auto mb-5">
-                  {item.step}
+                {/* Left: number + line */}
+                <div className="flex flex-col items-center">
+                  <div className="w-14 h-14 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-lg font-bold shrink-0 shadow-lg shadow-primary/30">
+                    {item.step}
+                  </div>
+                  {i < 2 && (
+                    <div className="w-0.5 h-full bg-gradient-to-b from-primary/50 to-border min-h-[60px]" />
+                  )}
                 </div>
-                <h3 className="text-lg font-bold text-foreground mb-2">{item.title}</h3>
-                <p className="text-muted-foreground text-sm leading-relaxed">{item.desc}</p>
+                {/* Right: card */}
+                <div className="bg-card rounded-2xl p-6 md:p-8 border border-border hover:border-primary/30 transition-colors duration-300 flex-1 mb-6">
+                  <h3 className="text-lg font-bold text-foreground mb-2">{item.title}</h3>
+                  <p className="text-muted-foreground text-sm leading-relaxed">{item.desc}</p>
+                </div>
               </motion.div>
             ))}
           </div>
