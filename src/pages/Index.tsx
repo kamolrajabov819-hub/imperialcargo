@@ -362,7 +362,7 @@ const Index = () => {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.2, type: "spring", stiffness: 100 }}
-                className="flex gap-6 md:gap-10 relative"
+                className="flex gap-4 md:gap-6 lg:gap-10 relative"
               >
                 {/* Left: number + line */}
                 <div className="flex flex-col items-center">
