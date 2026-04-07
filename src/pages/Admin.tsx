@@ -20,10 +20,11 @@ import {
 } from "@/components/ui/alert-dialog";
 
 import {
-  Search, Plus, Pencil, Trash2, Users, Settings, LogOut, Box,
+  Search, Plus, Pencil, Trash2, Users, Settings, LogOut,
   BarChart3, Download, TrendingUp, MapPin, ShieldCheck, Menu, X, MessageSquare, Check,
-  ChevronLeft, ChevronRight,
+  ChevronLeft, ChevronRight, CheckCircle,
 } from "lucide-react";
+import { LogoIcon } from "@/components/LogoIcon";
 import { useNavigate } from "react-router-dom";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 
