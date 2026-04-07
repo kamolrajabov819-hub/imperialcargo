@@ -356,16 +356,40 @@ export default function Admin() {
                       <span>{c.phone}</span>
                       {c.city && <span>• {c.city}</span>}
                     </div>
-                    <div className="flex items-center gap-1 justify-end">
-                      <button onClick={() => openComments(c)} className="p-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors">
-                        <MessageSquare className="w-4 h-4" />
-                      </button>
-                      <button onClick={() => openEdit(c)} className="p-2 rounded-lg hover:bg-primary/10 text-primary transition-colors">
-                        <Pencil className="w-4 h-4" />
-                      </button>
-                      <button onClick={() => setDeleteConfirmId(c.id)} className="p-2 rounded-lg hover:bg-destructive/10 text-destructive transition-colors">
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                    <div className="flex items-center gap-1 justify-between">
+                      <AnimatePresence mode="wait">
+                        {c.confirmed ? (
+                          <motion.span
+                            key="confirmed"
+                            initial={confirmedAnimId === c.id ? { scale: 0, opacity: 0 } : {}}
+                            animate={{ scale: 1, opacity: 1 }}
+                            transition={{ type: "spring", stiffness: 300 }}
+                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-400 text-xs font-medium"
+                          >
+                            <CheckCircle className="w-3.5 h-3.5" /> Confirmed
+                          </motion.span>
+                        ) : (
+                          <motion.button
+                            key="confirm-btn"
+                            whileTap={{ scale: 0.9 }}
+                            onClick={() => handleConfirm(c.id)}
+                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-medium hover:bg-emerald-500/20 transition-colors"
+                          >
+                            <CheckCircle className="w-3.5 h-3.5" /> Confirm
+                          </motion.button>
+                        )}
+                      </AnimatePresence>
+                      <div className="flex items-center gap-1">
+                        <button onClick={() => openComments(c)} className="p-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors">
+                          <MessageSquare className="w-4 h-4" />
+                        </button>
+                        <button onClick={() => openEdit(c)} className="p-2 rounded-lg hover:bg-primary/10 text-primary transition-colors">
+                          <Pencil className="w-4 h-4" />
+                        </button>
+                        <button onClick={() => setDeleteConfirmId(c.id)} className="p-2 rounded-lg hover:bg-destructive/10 text-destructive transition-colors">
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
                     </div>
                   </motion.div>
                 ))}
