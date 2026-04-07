@@ -215,7 +215,7 @@ const Index = () => {
 
             {/* Transfer card + truck image */}
             <div className="relative">
-              <div className="bg-gradient-to-br from-primary via-primary/80 to-orange-400 rounded-3xl p-6 md:p-8">
+              <div className="bg-gradient-to-br from-primary/30 via-primary/20 to-secondary rounded-3xl p-6 md:p-8 border border-primary/20">
                 <div className="bg-card rounded-2xl shadow-xl p-6 w-full max-w-xs mx-auto border border-border mb-6">
                   <p className="text-sm font-semibold text-foreground mb-3">Transfer From</p>
                   <div className="bg-muted rounded-xl p-3 mb-4">
