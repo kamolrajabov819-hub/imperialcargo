@@ -1,68 +1,57 @@
 
 
-# Rebrand to ISU Cargo Color Palette + Redesign "How It Works" Section
+# Fix 5 Issues + Enhance Steps Section
 
-## 1. Color Palette Update (based on logo)
+## 1. Hero text visibility
+**`src/pages/Index.tsx` line 105** — Add text-shadow to the gold highlighted text so it stands out against the background image.
+```tsx
+<span className="text-primary" style={{ textShadow: '0 2px 20px rgba(0,0,0,0.8), 0 0 40px rgba(201,168,76,0.3)' }}>
+```
+Also add text-shadow to the parent h1 (line 102).
 
-The logo uses a **dark navy background** (#1A1A2E / ~222 30% 14%) with **gold/champagne accents** (#C9A84C / ~43 50% 54%). Current orange primary (#F97316) will shift to gold, and background will go dark navy.
+## 2. Change font to serious typography
+- **`index.html`** — Replace Rubik Google Font link with **Inter** (body) + **Playfair Display** (headings)
+- **`src/index.css`** — Update body `font-family` to `'Inter', system-ui, sans-serif`
+- **`tailwind.config.ts`** — Add `fontFamily: { heading: ['Playfair Display', 'serif'], body: ['Inter', 'sans-serif'] }`
+- Apply `font-heading` class to major headings in `Index.tsx` (hero h1, section titles)
 
-**Changes in `src/index.css`**:
-- `--background`: Dark navy → `222 30% 14%`
-- `--foreground`: Light cream → `40 20% 90%`
-- `--card`: Darker navy → `222 25% 18%`
-- `--card-foreground`: Light cream → `40 20% 90%`
-- `--primary`: Gold → `43 50% 54%`
-- `--primary-foreground`: Dark navy → `222 30% 10%`
-- `--secondary`: Muted navy → `222 20% 22%`
-- `--muted`: Muted navy → `222 20% 25%`
-- `--muted-foreground`: Faded cream → `40 10% 55%`
-- `--accent`: Gold (same as primary)
-- `--border`: Subtle navy border → `222 15% 25%`
-- `--input`: Same as border
-- `--ring`: Gold
-- `--popover`: Same as card
-- Update glass utilities for dark theme (glass-strong, glass backgrounds)
+## 3. Rebrand "CargoLink" → "ISU Cargo"
+- **`src/components/Header.tsx`** line 94 — `ISU <span className="text-primary">Cargo</span>`
+- **`src/pages/Admin.tsx`** lines 170, 206 — Same change
+- **`index.html`** — Update `<title>` and OG tags
 
-**Other files affected by palette**:
-- `src/components/ContactButtons.tsx` — Telegram button color stays #229ED9
-- `src/components/Header.tsx` — Glass header needs dark glass treatment
-- `src/pages/Login.tsx`, `src/pages/Signup.tsx` — Background gradients shift to navy/gold
-- `src/pages/Dashboard.tsx` — Status colors and cards adapt
-- `src/pages/Admin.tsx` — Dark theme cards
-- Footer in `Index.tsx` — Already dark-on-light, may need inversion
+## 4. Enhance "3 Simple Steps" with marketplace logos & animations
+**`src/pages/Index.tsx`** lines 339-380:
+- Add Lucide icons: `ShoppingCart` (step 1), `ClipboardCopy` (step 2), `Truck` (step 3)
+- In step 1 card, add a row of marketplace logo badges (Pinduoduo, Taobao, Dewu, 1688) as styled text/color badges with known brand colors (~40px rounded badges)
+- Add `whileHover={{ scale: 1.02, borderColor: 'hsl(43, 50%, 54%)' }}` on cards
+- Add `animate-pulse-gold` class on numbered circles
+- Staggered entrance with slight spring bounce
 
-## 2. "How It Works" Section Redesign
+**`src/index.css`** — Add keyframes:
+```css
+@keyframes pulse-gold {
+  0%, 100% { box-shadow: 0 0 0 0 hsl(43 50% 54% / 0.4); }
+  50% { box-shadow: 0 0 20px 4px hsl(43 50% 54% / 0.2); }
+}
+.animate-pulse-gold { animation: pulse-gold 3s ease-in-out infinite; }
+```
 
-Inspired by the reference image (numbered vertical steps with cards), redesign the 3-step section:
+Marketplace logos will be rendered as small colored badges with the platform name (brand-colored backgrounds): Taobao (orange #FF6A00), 1688 (orange #FF6600), Pinduoduo (red #E02E24), Dewu (black #000).
 
-**New layout**:
-- Vertical step layout (not horizontal grid on mobile)
-- Each step has a large numbered circle (gold on dark) on the left
-- Step content card on the right with title + description
-- A connecting vertical line between steps
-- On mobile: stacked vertically with number circles on left margin
-- Rounded cards with subtle gold border glow
-
-**Changes in `src/pages/Index.tsx`** (lines 339-368):
-- Replace the 3-column grid with a vertical timeline layout
-- Each step: left side has gold numbered circle with connecting line, right side has a card
-- Cards have dark glass styling with gold accents
-- Add copy-address style card for step 2 (showing the warehouse address with copy button, similar to the reference)
-
-**Changes in `src/lib/i18n.tsx`**:
-- Update step descriptions to be more action-oriented:
-  - Step 1: "Make your order" — order from marketplace
-  - Step 2: "Copy warehouse address" — use your ID code at the warehouse
-  - Step 3: "Track & receive" — track your cargo to Bishkek
+## 5. Fix pie chart labels on desktop
+**`src/pages/Admin.tsx`** lines 505-533:
+- Set `label={false}` always (remove the `isMobile` conditional)
+- Set `labelLine={false}` always
+- Remove the `isMobile &&` condition on the legend div so it always shows below
 
 ## Files Changed
 | File | Changes |
 |---|---|
-| `src/index.css` | Full color palette swap to dark navy + gold |
-| `src/pages/Index.tsx` | Redesign "How It Works" to vertical timeline with cards; adjust hero/footer for new palette |
-| `src/lib/i18n.tsx` | Update step descriptions (en/ru/kg) |
-| `src/pages/Login.tsx` | Adjust gradient backgrounds for dark navy theme |
-| `src/pages/Signup.tsx` | Adjust gradient backgrounds for dark navy theme |
-| `src/components/Header.tsx` | Dark glass header styling |
-| `tailwind.config.ts` | No changes needed — uses CSS vars |
+| `index.html` | Swap fonts to Inter + Playfair Display, title → ISU Cargo |
+| `src/index.css` | Font-family update, pulse-gold keyframe, heading font utility |
+| `tailwind.config.ts` | Add fontFamily config |
+| `src/pages/Index.tsx` | Hero text-shadow, steps section icons + marketplace badges + hover/glow animations, heading fonts |
+| `src/components/Header.tsx` | Logo → "ISU Cargo" |
+| `src/pages/Admin.tsx` | Logo → "ISU Cargo", pie chart always legend-below |
 
