@@ -312,7 +312,7 @@ const Index = () => {
             <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-border text-sm text-muted-foreground mb-6">
               <Star className="w-3.5 h-3.5" /> {t("why.tag")}
             </span>
-            <h2 className="text-3xl md:text-5xl font-bold text-foreground">{t("why.title")}</h2>
+            <h2 className="text-3xl md:text-5xl font-bold text-foreground font-heading">{t("why.title")}</h2>
           </div>
           <div className="grid md:grid-cols-3 gap-6">
             {[
