@@ -362,11 +362,11 @@ const Index = () => {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.2, type: "spring", stiffness: 100 }}
-                className="flex gap-6 md:gap-10 relative"
+                className="flex gap-4 md:gap-6 lg:gap-10 relative"
               >
                 {/* Left: number + line */}
                 <div className="flex flex-col items-center">
-                  <div className="w-14 h-14 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-lg font-bold shrink-0 shadow-lg shadow-primary/30 animate-pulse-gold">
+                  <div className="w-10 h-10 md:w-14 md:h-14 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm md:text-lg font-bold shrink-0 shadow-lg shadow-primary/30 animate-pulse-gold">
                     {item.step}
                   </div>
                   {i < 2 && (
@@ -377,7 +377,7 @@ const Index = () => {
                 <motion.div
                   whileHover={{ scale: 1.02, borderColor: 'hsl(43, 50%, 54%)' }}
                   transition={{ duration: 0.2 }}
-                  className="bg-card rounded-2xl p-6 md:p-8 border border-border transition-shadow duration-300 hover:shadow-lg hover:shadow-primary/10 flex-1 mb-6"
+                  className="bg-card rounded-2xl p-4 md:p-6 lg:p-8 border border-border transition-shadow duration-300 hover:shadow-lg hover:shadow-primary/10 flex-1 mb-4 md:mb-6"
                 >
                   <div className="flex items-center gap-3 mb-3">
                     <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
@@ -388,7 +388,7 @@ const Index = () => {
                   <p className="text-muted-foreground text-sm leading-relaxed">{item.desc}</p>
                   {/* Marketplace logos for step 1 */}
                   {i === 0 && (
-                    <div className="flex flex-wrap items-center gap-4 mt-5">
+                    <div className="flex flex-wrap items-center gap-3 md:gap-4 mt-4 md:mt-5">
                       {[
                         { name: "Taobao", src: taobaoLogo },
                         { name: "1688", src: logo1688 },
@@ -401,7 +401,7 @@ const Index = () => {
                           transition={{ type: "spring", stiffness: 300 }}
                           className="flex flex-col items-center gap-1.5"
                         >
-                          <div className="w-11 h-11 rounded-xl overflow-hidden bg-secondary border border-border shadow-md">
+                          <div className="w-9 h-9 md:w-11 md:h-11 rounded-xl overflow-hidden bg-secondary border border-border shadow-md">
                             <img src={platform.src} alt={platform.name} className="w-full h-full object-cover" />
                           </div>
                           <span className="text-[10px] text-muted-foreground font-medium">{platform.name}</span>
@@ -479,7 +479,7 @@ const Index = () => {
             <div>
               <div className="flex items-center gap-2 mb-4">
                 <Package className="w-6 h-6 text-primary" />
-                <span className="text-lg font-bold">Cargo<span className="text-primary">Link</span></span>
+                <span className="text-lg font-bold">ISU <span className="text-primary">Cargo</span></span>
               </div>
               <p className="text-sm text-muted-foreground leading-relaxed">{t("footer.desc")}</p>
             </div>
@@ -515,7 +515,8 @@ const Index = () => {
             </div>
           </div>
           <div className="border-t border-border pt-6 text-center">
-            <p className="text-sm text-muted-foreground">© {new Date().getFullYear()} CargoLink. {t("footer.rights")}</p>
+            <p className="text-sm text-muted-foreground">© {new Date().getFullYear()} ISU Cargo. {t("footer.rights")}</p>
+            <Link to="/admin" className="inline-block w-2 h-2 rounded-full bg-border/20 hover:bg-primary/30 transition-colors mt-2" />
           </div>
         </div>
       </footer>
