@@ -99,10 +99,11 @@ const Index = () => {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 0.8 }}
-              className="text-4xl md:text-6xl lg:text-7xl font-bold text-white leading-[1.1] text-center max-w-5xl mx-auto mb-10"
+              className="text-4xl md:text-6xl lg:text-7xl font-bold text-white leading-[1.1] text-center max-w-5xl mx-auto mb-10 font-heading"
+              style={{ textShadow: '0 2px 20px rgba(0,0,0,0.8)' }}
             >
               {t("hero.title")}{" "}
-              <span className="text-primary">{t("hero.titleHighlight")}</span>
+              <span className="text-primary" style={{ textShadow: '0 2px 20px rgba(0,0,0,0.8), 0 0 40px rgba(201,168,76,0.3)' }}>{t("hero.titleHighlight")}</span>
             </motion.h1>
 
             {/* CTA buttons */}
