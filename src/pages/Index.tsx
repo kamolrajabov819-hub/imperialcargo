@@ -203,7 +203,7 @@ const Index = () => {
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="glass-dark rounded-2xl p-6">
                   <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center mb-4">
-                    <Package className="w-5 h-5 text-primary" />
+                    <Box className="w-5 h-5 text-primary" />
                   </div>
                   <h3 className="text-lg font-bold text-white mb-2">{t("about.card1.title")}</h3>
                   <p className="text-sm text-white/70 leading-relaxed">{t("about.card1.desc")}</p>
