@@ -66,6 +66,7 @@ export default function Admin() {
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
 
   // Reset page when search changes
   useEffect(() => { setCurrentPage(1); }, [search]);
