@@ -5,6 +5,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
 import { getCurrentUser } from "@/lib/mockData";
+import isuCargoLogo from "@/assets/isu-cargo-logo.png";
 
 export function Header() {
   const { t } = useTranslation();
