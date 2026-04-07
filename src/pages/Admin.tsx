@@ -502,12 +502,8 @@ export default function Admin() {
                         cx="50%"
                         cy="50%"
                         outerRadius={isMobile ? 60 : 80}
-                        label={isMobile ? false : ({ city, count, x, y }) => (
-                          <text x={x} y={y} fill="#1a1a2e" fontSize={14} fontWeight={600} textAnchor="middle" dominantBaseline="central">
-                            {`${city}: ${count}`}
-                          </text>
-                        )}
-                        labelLine={isMobile ? false : { stroke: "hsl(var(--muted-foreground))", strokeWidth: 1 }}
+                        label={false}
+                        labelLine={false}
                       >
                         {stats.clientsByCity.map((_, i) => (
                           <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
@@ -520,17 +516,14 @@ export default function Admin() {
                       />
                     </PieChart>
                   </ResponsiveContainer>
-                  {/* Legend for mobile */}
-                  {isMobile && (
-                    <div className="flex flex-wrap gap-2 mt-3 justify-center">
-                      {stats.clientsByCity.map((item, i) => (
-                        <div key={i} className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                          <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: CHART_COLORS[i % CHART_COLORS.length] }} />
-                          <span>{item.city}: {item.count}</span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                  <div className="flex flex-wrap gap-2 mt-3 justify-center">
+                    {stats.clientsByCity.map((item, i) => (
+                      <div key={i} className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                        <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: CHART_COLORS[i % CHART_COLORS.length] }} />
+                        <span>{item.city}: {item.count}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             </motion.div>
