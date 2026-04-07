@@ -15,6 +15,11 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle,
 } from "@/components/ui/dialog";
 import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import isuCargoLogo from "@/assets/isu-cargo-logo.png";
+import {
   Search, Plus, Pencil, Trash2, Users, Settings, LogOut, Package,
   BarChart3, Download, TrendingUp, MapPin, ShieldCheck, Menu, X, MessageSquare, Check,
   ChevronLeft, ChevronRight,
@@ -61,6 +66,7 @@ export default function Admin() {
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
 
   // Reset page when search changes
   useEffect(() => { setCurrentPage(1); }, [search]);
@@ -166,8 +172,7 @@ export default function Admin() {
           className="w-full max-w-sm glass rounded-2xl p-8 glow-box-cyan"
         >
           <div className="flex items-center justify-center gap-2 mb-6">
-            <Package className="w-6 h-6 text-primary" />
-            <span className="text-lg font-bold text-foreground">ISU <span className="text-primary">Cargo</span></span>
+            <img src={isuCargoLogo} alt="ISU Cargo" className="h-10 w-auto" />
           </div>
           <h2 className="text-xl font-bold text-foreground text-center mb-6">{t("admin.login")}</h2>
           {error && <p className="text-destructive text-sm text-center mb-4">{error}</p>}
@@ -202,8 +207,7 @@ export default function Admin() {
     <>
       <div className="p-4 flex items-center justify-between border-b border-border">
         <div className="flex items-center gap-2">
-          <Package className="w-5 h-5 text-primary" />
-          <span className="font-bold text-foreground">ISU <span className="text-primary">Cargo</span></span>
+          <img src={isuCargoLogo} alt="ISU Cargo" className="h-8 w-auto" />
         </div>
         <button onClick={() => setSidebarOpen(false)} className="md:hidden p-1 text-muted-foreground hover:text-foreground">
           <X className="w-5 h-5" />
@@ -348,7 +352,7 @@ export default function Admin() {
                       <button onClick={() => openEdit(c)} className="p-2 rounded-lg hover:bg-primary/10 text-primary transition-colors">
                         <Pencil className="w-4 h-4" />
                       </button>
-                      <button onClick={() => handleDelete(c.id)} className="p-2 rounded-lg hover:bg-destructive/10 text-destructive transition-colors">
+                      <button onClick={() => setDeleteConfirmId(c.id)} className="p-2 rounded-lg hover:bg-destructive/10 text-destructive transition-colors">
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
@@ -389,7 +393,7 @@ export default function Admin() {
                               <button onClick={() => openEdit(c)} className="p-2 rounded-lg hover:bg-primary/10 text-primary transition-colors">
                                 <Pencil className="w-4 h-4" />
                               </button>
-                              <button onClick={() => handleDelete(c.id)} className="p-2 rounded-lg hover:bg-destructive/10 text-destructive transition-colors">
+                              <button onClick={() => setDeleteConfirmId(c.id)} className="p-2 rounded-lg hover:bg-destructive/10 text-destructive transition-colors">
                                 <Trash2 className="w-4 h-4" />
                               </button>
                             </div>
@@ -723,6 +727,32 @@ export default function Admin() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={!!deleteConfirmId} onOpenChange={(open) => !open && setDeleteConfirmId(null)}>
+        <AlertDialogContent className="glass border-border">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-foreground">Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Do you really want to delete this lead? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="bg-secondary text-foreground border-border hover:bg-muted">Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => {
+                if (deleteConfirmId) {
+                  handleDelete(deleteConfirmId);
+                  setDeleteConfirmId(null);
+                }
+              }}
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

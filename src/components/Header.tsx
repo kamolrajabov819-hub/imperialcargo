@@ -5,6 +5,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
 import { getCurrentUser } from "@/lib/mockData";
+import isuCargoLogo from "@/assets/isu-cargo-logo.png";
 
 export function Header() {
   const { t } = useTranslation();
@@ -90,9 +91,7 @@ export function Header() {
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2">
-          <span className="text-xl font-bold text-foreground italic">
-            ISU <span className="text-primary">Cargo</span>
-          </span>
+          <img src={isuCargoLogo} alt="ISU Cargo" className="h-10 w-auto" />
         </Link>
 
         {/* Desktop Nav */}

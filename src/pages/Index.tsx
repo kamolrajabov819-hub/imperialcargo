@@ -8,6 +8,10 @@ import { getCurrentUser } from "@/lib/mockData";
 import { useRef, useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import heroBg from "@/assets/hero-bg.jpg";
+import taobaoLogo from "@/assets/taobao.webp";
+import dewuLogo from "@/assets/dewu.jfif";
+import pinduoduoLogo from "@/assets/pinduoduo.jpg";
+import logo1688 from "@/assets/1688.jfif";
 import whyTeam from "@/assets/why-team.jpg";
 import whyDelivery from "@/assets/why-delivery.jpg";
 import whyTracking from "@/assets/why-tracking.jpg";
@@ -384,21 +388,23 @@ const Index = () => {
                   <p className="text-muted-foreground text-sm leading-relaxed">{item.desc}</p>
                   {/* Marketplace logos for step 1 */}
                   {i === 0 && (
-                    <div className="flex flex-wrap gap-3 mt-4">
+                    <div className="flex flex-wrap items-center gap-4 mt-5">
                       {[
-                        { name: "Taobao", bg: "#FF6A00", text: "#fff" },
-                        { name: "1688", bg: "#FF6600", text: "#fff" },
-                        { name: "Pinduoduo", bg: "#E02E24", text: "#fff" },
-                        { name: "Dewu", bg: "#000000", text: "#fff" },
+                        { name: "Taobao", src: taobaoLogo },
+                        { name: "1688", src: logo1688 },
+                        { name: "Pinduoduo", src: pinduoduoLogo },
+                        { name: "Dewu", src: dewuLogo },
                       ].map((platform) => (
                         <motion.div
                           key={platform.name}
-                          whileHover={{ scale: 1.1 }}
-                          className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold shadow-md"
-                          style={{ backgroundColor: platform.bg, color: platform.text }}
+                          whileHover={{ scale: 1.12, y: -2 }}
+                          transition={{ type: "spring", stiffness: 300 }}
+                          className="flex flex-col items-center gap-1.5"
                         >
-                          <ShoppingCart className="w-3 h-3" />
-                          {platform.name}
+                          <div className="w-11 h-11 rounded-xl overflow-hidden bg-secondary border border-border shadow-md">
+                            <img src={platform.src} alt={platform.name} className="w-full h-full object-cover" />
+                          </div>
+                          <span className="text-[10px] text-muted-foreground font-medium">{platform.name}</span>
                         </motion.div>
                       ))}
                     </div>
