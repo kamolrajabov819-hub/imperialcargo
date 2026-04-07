@@ -1,51 +1,38 @@
 
 
-# 3 Changes: Logo Icon, Steps Content, Dashboard Warning
+# 2 Changes: Globe+Plane Logo Icon, Lead Confirmation in Admin
 
-## 1. Change logo icon to a box/container style
+## 1. Replace logo icon with a custom Globe+Plane SVG
 
-The uploaded logo shows a cardboard box shape. Replace `Package` (which looks like a gift box) with `Box` from Lucide (open-top box icon, closer to the reference). Apply in all 6 locations:
+The uploaded image shows a globe with an airplane — no Lucide icon matches this. Create a reusable `LogoIcon` component (`src/components/LogoIcon.tsx`) rendering a custom SVG of a globe with a plane arc in the primary/gold color.
 
-**Files:**
-- **`src/components/Header.tsx`** line 93: `Package` → `Box`
-- **`src/pages/Admin.tsx`** lines 175, 211: same
-- **`src/pages/Index.tsx`** line 481: same (footer)
-- **`src/pages/Dashboard.tsx`** line 68: same
-- Update imports in all 4 files
+Replace all `Box` icon usages with `<LogoIcon />` in:
+- `src/components/Header.tsx` (line 93)
+- `src/pages/Admin.tsx` (lines 175, 211)
+- `src/pages/Index.tsx` (lines 206, 213, 481)
+- `src/pages/Dashboard.tsx` (line 68)
 
-## 2. Update "3 Simple Steps" descriptions to emphasize KGZ code + warehouse address
+The component accepts `className` for sizing (defaults to `w-6 h-6`).
 
-The step descriptions already mention this but need to be more explicit. Update translations:
+## 2. Add confirmation button to each lead in Admin
 
-**File: `src/lib/i18n.tsx`**
+**Data model** — add `confirmed` boolean to `Client` interface in `src/lib/mockData.ts`.
 
-**Step 2 descriptions** (all 3 languages) — make clearer that users must use their KGZ code AND the warehouse address as the delivery address:
-- EN: "Copy our warehouse address and use your personal KGZ code as the recipient ID. Enter this as the delivery address when placing your order on any marketplace."
-- RU: "Скопируйте адрес нашего склада и укажите ваш персональный KGZ код как ID получателя. Введите это как адрес доставки при оформлении заказа на любом маркетплейсе."
-- KG: "Биздин кампанын дарегин көчүрүп, жеке KGZ кодуңузду алуучунун ID катары көрсөтүңүз. Буну маркетплейсте заказ берүүдө жеткирүү дареги катары киргизиңиз."
-
-## 3. Add warning banner in Dashboard
-
-Add a prominent warning card between the Identity Card and Warehouse Address sections.
-
-**File: `src/pages/Dashboard.tsx`** (after line 85, before Warehouse Address):
-- Import `AlertTriangle` from lucide-react and `Alert` from shadcn
-- Add a warning card with amber/yellow styling containing the translated message
-- Use `⚠️` icon + bold text
-
-**File: `src/lib/i18n.tsx`** — add new keys:
-- `dashboard.warning`: "To prevent your parcels from getting lost, be sure to send a screenshot of the completed address and receive confirmation from our manager."
-- `dashboard.warningImportant`: "Only after address confirmation ✅ does the Cargo bear responsibility for your parcels 📦"
-- RU: "Чтобы ваши посылки не потерялись, обязательно отправьте скрин заполненного адреса и получите подтверждение от нашего менеджера."
-- RU important: "Только после подтверждения ✅ адреса Карго несет ответственность за ваши посылки 📦"
-- KG equivalents
+**Admin UI** (`src/pages/Admin.tsx`):
+- Add a `handleConfirm(id)` function that calls `updateClient(id, { confirmed: true })` and refreshes
+- Add state `confirmedAnimId` for triggering a brief green checkmark animation
+- **Mobile cards** (line 350): Add a confirm button (green `CheckCircle` icon) before edit/delete. When confirmed, show a green "Confirmed ✅" badge with a scale-in animation instead of the button
+- **Desktop table** (line 378): Add a "Status" column. Show confirm button or animated "Confirmed" badge
+- Use `framer-motion` `AnimatePresence` for the confirmation animation (scale + opacity transition)
+- Already mobile responsive via existing card/table split
 
 ## Files Changed
 | File | Changes |
 |---|---|
-| `src/components/Header.tsx` | `Package` → `Box` icon |
-| `src/pages/Admin.tsx` | `Package` → `Box` icon |
-| `src/pages/Index.tsx` | `Package` → `Box` icon in footer |
-| `src/pages/Dashboard.tsx` | `Package` → `Box` icon, add warning banner |
-| `src/lib/i18n.tsx` | Updated step 2 descriptions, added warning translations |
+| `src/components/LogoIcon.tsx` | New — custom globe+plane SVG component |
+| `src/components/Header.tsx` | `Box` → `LogoIcon` |
+| `src/pages/Admin.tsx` | `Box` → `LogoIcon`, confirm button + animation per lead |
+| `src/pages/Index.tsx` | `Box` → `LogoIcon` |
+| `src/pages/Dashboard.tsx` | `Box` → `LogoIcon` |
+| `src/lib/mockData.ts` | Add `confirmed` to Client interface |
 
