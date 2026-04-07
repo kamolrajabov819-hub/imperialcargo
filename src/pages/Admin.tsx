@@ -409,6 +409,7 @@ export default function Admin() {
                         <TableHead className="text-muted-foreground">{t("admin.location")}</TableHead>
                         <TableHead className="text-muted-foreground">{t("admin.identityCode")}</TableHead>
                         <TableHead className="text-muted-foreground">{t("admin.date")}</TableHead>
+                        <TableHead className="text-muted-foreground">Status</TableHead>
                         <TableHead className="text-muted-foreground text-right">{t("admin.actions")}</TableHead>
                       </TableRow>
                     </TableHeader>
@@ -420,6 +421,30 @@ export default function Admin() {
                           <TableCell className="text-foreground">{c.city}</TableCell>
                           <TableCell className="text-primary font-mono font-bold">{c.code}</TableCell>
                           <TableCell className="text-muted-foreground">{c.createdAt}</TableCell>
+                          <TableCell>
+                            <AnimatePresence mode="wait">
+                              {c.confirmed ? (
+                                <motion.span
+                                  key="confirmed"
+                                  initial={confirmedAnimId === c.id ? { scale: 0, opacity: 0 } : {}}
+                                  animate={{ scale: 1, opacity: 1 }}
+                                  transition={{ type: "spring", stiffness: 300 }}
+                                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-400 text-xs font-medium"
+                                >
+                                  <CheckCircle className="w-3.5 h-3.5" /> Confirmed
+                                </motion.span>
+                              ) : (
+                                <motion.button
+                                  key="confirm-btn"
+                                  whileTap={{ scale: 0.9 }}
+                                  onClick={() => handleConfirm(c.id)}
+                                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-medium hover:bg-emerald-500/20 transition-colors"
+                                >
+                                  <CheckCircle className="w-3.5 h-3.5" /> Confirm
+                                </motion.button>
+                              )}
+                            </AnimatePresence>
+                          </TableCell>
                           <TableCell className="text-right">
                             <div className="flex items-center justify-end gap-1">
                               <button onClick={() => openComments(c)} className="p-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors">
