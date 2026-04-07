@@ -401,7 +401,7 @@ const Index = () => {
                           transition={{ type: "spring", stiffness: 300 }}
                           className="flex flex-col items-center gap-1.5"
                         >
-                          <div className="w-11 h-11 rounded-xl overflow-hidden bg-secondary border border-border shadow-md">
+                          <div className="w-9 h-9 md:w-11 md:h-11 rounded-xl overflow-hidden bg-secondary border border-border shadow-md">
                             <img src={platform.src} alt={platform.name} className="w-full h-full object-cover" />
                           </div>
                           <span className="text-[10px] text-muted-foreground font-medium">{platform.name}</span>
