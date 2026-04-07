@@ -432,6 +432,8 @@ const translations = {
     "dashboard.contactManager": "Менеджер менен байланыш",
     "dashboard.contactTelegram": "Telegram аркылуу байланыш",
     "dashboard.logout": "Чыгуу",
+    "dashboard.warning": "Посылкаларыңыз жоголуп кетпеши үчүн, толтурулган даректин скриншотун жөнөтүп, менеджерибизден ырастоо алыңыз.",
+    "dashboard.warningImportant": "❗❗❗ Дарек ырасталгандан кийин гана ✅ Карго сиздин посылкаларыңыз үчүн жоопкерчилик тартат 📦",
 
     "admin.login": "Админ кирүү",
     "admin.email": "Электрондук почта",
