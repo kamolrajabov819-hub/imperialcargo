@@ -24,7 +24,7 @@ export function ContactButtons() {
       </motion.a>
 
       <motion.a
-        href="https://wa.me/77718191119"
+        href="https://wa.me/996705102772"
         target="_blank"
         rel="noopener noreferrer"
         initial={{ scale: 0 }}
