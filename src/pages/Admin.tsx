@@ -3,7 +3,7 @@ import { useState, useMemo, useEffect } from "react";
 import { useTranslation } from "@/lib/i18n";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import {
-  getClients, addClient, updateClient, deleteClient, type Client,
+  getClients, addClient, updateClient, deleteClient, type Client, type ClientStage, ALL_STAGES,
   getClientStats, exportClientsCSV, getWarehouseAddress, saveWarehouseAddress, DEFAULT_WAREHOUSE,
   getClientComments, addClientComment, deleteClientComment, type Comment,
 } from "@/lib/mockData";
@@ -18,18 +18,32 @@ import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from "@/components/ui/select";
 
 import {
   Search, Plus, Pencil, Trash2, Users, Settings, LogOut,
   BarChart3, Download, TrendingUp, MapPin, ShieldCheck, Menu, X, MessageSquare, Check,
-  ChevronLeft, ChevronRight, CheckCircle,
+  ChevronLeft, ChevronRight, CheckCircle, XCircle, Percent,
 } from "lucide-react";
 import { LogoIcon } from "@/components/LogoIcon";
 import { useNavigate } from "react-router-dom";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 
-const CHART_COLORS = ["hsl(185,100%,50%)", "hsl(185,80%,40%)", "hsl(185,60%,30%)", "hsl(200,80%,50%)", "hsl(160,70%,45%)", "hsl(220,70%,50%)"];
+const CHART_COLORS = ["hsl(185,100%,50%)", "hsl(185,80%,40%)", "hsl(185,60%,30%)", "hsl(200,80%,50%)", "hsl(160,70%,45%)", "hsl(220,70%,50%)", "hsl(45,90%,55%)", "hsl(0,70%,55%)"];
 const CLIENTS_PER_PAGE = 20;
+
+const STAGE_COLORS: Record<ClientStage, string> = {
+  new: "bg-blue-500/15 text-blue-400",
+  consultation: "bg-violet-500/15 text-violet-400",
+  awaiting_cargo: "bg-amber-500/15 text-amber-400",
+  cargo_received: "bg-cyan-500/15 text-cyan-400",
+  in_transit: "bg-indigo-500/15 text-indigo-400",
+  arrived: "bg-emerald-500/15 text-emerald-400",
+  completed: "bg-green-500/15 text-green-400",
+  cancelled: "bg-red-500/15 text-red-400",
+};
 
 function useIsMobile() {
   const [mobile, setMobile] = useState(window.innerWidth < 768);
@@ -51,6 +65,7 @@ export default function Admin() {
   const [error, setError] = useState("");
   const [clients, setClients] = useState<Client[]>([]);
   const [search, setSearch] = useState("");
+  const [stageFilter, setStageFilter] = useState<string>("all");
   const [tab, setTab] = useState<"clients" | "statistics" | "settings">("clients");
   const [addOpen, setAddOpen] = useState(false);
   const [editClient, setEditClient] = useState<Client | null>(null);
@@ -68,6 +83,7 @@ export default function Admin() {
   const [newComment, setNewComment] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+  const [confirmDialogId, setConfirmDialogId] = useState<string | null>(null);
   const [confirmedAnimId, setConfirmedAnimId] = useState<string | null>(null);
 
   const handleConfirm = (id: string) => {
@@ -77,8 +93,13 @@ export default function Admin() {
     refresh();
   };
 
-  // Reset page when search changes
-  useEffect(() => { setCurrentPage(1); }, [search]);
+  const handleStageChange = (id: string, stage: ClientStage) => {
+    updateClient(id, { stage });
+    refresh();
+  };
+
+  // Reset page when search/filter changes
+  useEffect(() => { setCurrentPage(1); }, [search, stageFilter]);
 
   const handleLogin = () => {
     if (email === "admin@cargolink.com" && password === "admin123") {
@@ -94,13 +115,12 @@ export default function Admin() {
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase();
-    return clients.filter(
-      (c) =>
-        c.name.toLowerCase().includes(q) ||
-        c.code.toLowerCase().includes(q) ||
-        c.phone.includes(q)
-    );
-  }, [clients, search]);
+    return clients.filter((c) => {
+      const matchesSearch = c.name.toLowerCase().includes(q) || c.code.toLowerCase().includes(q) || c.phone.includes(q);
+      const matchesStage = stageFilter === "all" || (c.stage || "new") === stageFilter;
+      return matchesSearch && matchesStage;
+    });
+  }, [clients, search, stageFilter]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / CLIENTS_PER_PAGE));
   const paginatedClients = filtered.slice((currentPage - 1) * CLIENTS_PER_PAGE, currentPage * CLIENTS_PER_PAGE);
@@ -171,6 +191,11 @@ export default function Admin() {
     if (commentClient) setComments(getClientComments(commentClient.id));
   };
 
+  const getStageName = (stage: ClientStage) => {
+    const key = `admin.stage.${stage}` as any;
+    return t(key);
+  };
+
   // Login screen
   if (!authed) {
     return (
@@ -212,7 +237,7 @@ export default function Admin() {
     );
   }
 
-  // Sidebar content (shared between desktop and mobile)
+  // Sidebar content
   const sidebarContent = (
     <>
       <div className="p-4 flex items-center justify-between border-b border-border">
@@ -271,12 +296,12 @@ export default function Admin() {
         )}
       </AnimatePresence>
 
-      {/* Desktop sidebar - always visible */}
+      {/* Desktop sidebar */}
       <aside className="hidden md:flex sticky top-0 left-0 h-screen w-60 bg-card border-r border-border flex-col z-30 shrink-0">
         {sidebarContent}
       </aside>
 
-      {/* Mobile sidebar - overlay drawer */}
+      {/* Mobile sidebar */}
       <AnimatePresence>
         {sidebarOpen && isMobile && (
           <motion.aside
@@ -308,31 +333,44 @@ export default function Admin() {
           {/* Clients Tab */}
           {tab === "clients" && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-              <div className="flex flex-col sm:flex-row gap-3 mb-4 md:mb-6">
-                <div className="flex-1 relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <Input
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    placeholder={t("admin.search")}
-                    className="pl-10 bg-secondary border-border text-foreground"
-                  />
+              <div className="flex flex-col gap-3 mb-4 md:mb-6">
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <div className="flex-1 relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <Input
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                      placeholder={t("admin.search")}
+                      className="pl-10 bg-secondary border-border text-foreground"
+                    />
+                  </div>
+                  <Select value={stageFilter} onValueChange={setStageFilter}>
+                    <SelectTrigger className="w-full sm:w-[180px] bg-secondary border-border text-foreground">
+                      <SelectValue placeholder={t("admin.allStages")} />
+                    </SelectTrigger>
+                    <SelectContent className="bg-card border-border">
+                      <SelectItem value="all">{t("admin.allStages")}</SelectItem>
+                      {ALL_STAGES.map((s) => (
+                        <SelectItem key={s} value={s}>{getStageName(s)}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => setAddOpen(true)}
+                    className="px-4 md:px-6 py-2 rounded-xl bg-primary text-primary-foreground font-medium flex items-center justify-center gap-2 whitespace-nowrap text-sm"
+                  >
+                    <Plus className="w-4 h-4" />
+                    {t("admin.addClient")}
+                  </motion.button>
                 </div>
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => setAddOpen(true)}
-                  className="px-4 md:px-6 py-2 rounded-xl bg-primary text-primary-foreground font-medium flex items-center justify-center gap-2 whitespace-nowrap text-sm"
-                >
-                  <Plus className="w-4 h-4" />
-                  {t("admin.addClient")}
-                </motion.button>
               </div>
 
               {/* Showing info */}
               {filtered.length > 0 && (
                 <p className="text-sm text-muted-foreground mb-3">
-                  Showing {showingFrom}–{showingTo} of {filtered.length} clients
+                  {t("admin.showing")} {showingFrom}–{showingTo} {t("admin.of")} {filtered.length} {t("admin.clients_lower")}
                 </p>
               )}
 
@@ -352,10 +390,25 @@ export default function Admin() {
                       </div>
                       <span className="text-primary font-mono font-bold text-sm shrink-0">{c.code}</span>
                     </div>
-                    <div className="flex items-center gap-3 text-sm text-muted-foreground mb-3">
+                    <div className="flex items-center gap-3 text-sm text-muted-foreground mb-2">
                       <span>{c.phone}</span>
                       {c.city && <span>• {c.city}</span>}
                     </div>
+
+                    {/* Stage select */}
+                    <div className="mb-3">
+                      <Select value={c.stage || "new"} onValueChange={(v) => handleStageChange(c.id, v as ClientStage)}>
+                        <SelectTrigger className="w-full h-8 text-xs bg-secondary border-border text-foreground">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="bg-card border-border">
+                          {ALL_STAGES.map((s) => (
+                            <SelectItem key={s} value={s} className="text-xs">{getStageName(s)}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
                     <div className="flex items-center gap-1 justify-between">
                       <AnimatePresence mode="wait">
                         {c.confirmed ? (
@@ -366,16 +419,16 @@ export default function Admin() {
                             transition={{ type: "spring", stiffness: 300 }}
                             className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-400 text-xs font-medium"
                           >
-                            <CheckCircle className="w-3.5 h-3.5" /> Confirmed
+                            <CheckCircle className="w-3.5 h-3.5" /> {t("admin.confirmed")}
                           </motion.span>
                         ) : (
                           <motion.button
                             key="confirm-btn"
                             whileTap={{ scale: 0.9 }}
-                            onClick={() => handleConfirm(c.id)}
+                            onClick={() => setConfirmDialogId(c.id)}
                             className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-medium hover:bg-emerald-500/20 transition-colors"
                           >
-                            <CheckCircle className="w-3.5 h-3.5" /> Confirm
+                            <CheckCircle className="w-3.5 h-3.5" /> {t("admin.confirm")}
                           </motion.button>
                         )}
                       </AnimatePresence>
@@ -394,7 +447,7 @@ export default function Admin() {
                   </motion.div>
                 ))}
                 {filtered.length === 0 && (
-                  <p className="text-center text-muted-foreground text-sm py-8">No clients found</p>
+                  <p className="text-center text-muted-foreground text-sm py-8">{t("admin.noClientsFound")}</p>
                 )}
               </div>
 
@@ -409,7 +462,8 @@ export default function Admin() {
                         <TableHead className="text-muted-foreground">{t("admin.location")}</TableHead>
                         <TableHead className="text-muted-foreground">{t("admin.identityCode")}</TableHead>
                         <TableHead className="text-muted-foreground">{t("admin.date")}</TableHead>
-                        <TableHead className="text-muted-foreground">Status</TableHead>
+                        <TableHead className="text-muted-foreground">{t("admin.stage")}</TableHead>
+                        <TableHead className="text-muted-foreground">{t("admin.status")}</TableHead>
                         <TableHead className="text-muted-foreground text-right">{t("admin.actions")}</TableHead>
                       </TableRow>
                     </TableHeader>
@@ -422,6 +476,18 @@ export default function Admin() {
                           <TableCell className="text-primary font-mono font-bold">{c.code}</TableCell>
                           <TableCell className="text-muted-foreground">{c.createdAt}</TableCell>
                           <TableCell>
+                            <Select value={c.stage || "new"} onValueChange={(v) => handleStageChange(c.id, v as ClientStage)}>
+                              <SelectTrigger className="h-7 w-[140px] text-xs bg-secondary border-border text-foreground">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent className="bg-card border-border">
+                                {ALL_STAGES.map((s) => (
+                                  <SelectItem key={s} value={s} className="text-xs">{getStageName(s)}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </TableCell>
+                          <TableCell>
                             <AnimatePresence mode="wait">
                               {c.confirmed ? (
                                 <motion.span
@@ -431,16 +497,16 @@ export default function Admin() {
                                   transition={{ type: "spring", stiffness: 300 }}
                                   className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-400 text-xs font-medium"
                                 >
-                                  <CheckCircle className="w-3.5 h-3.5" /> Confirmed
+                                  <CheckCircle className="w-3.5 h-3.5" /> {t("admin.confirmed")}
                                 </motion.span>
                               ) : (
                                 <motion.button
                                   key="confirm-btn"
                                   whileTap={{ scale: 0.9 }}
-                                  onClick={() => handleConfirm(c.id)}
+                                  onClick={() => setConfirmDialogId(c.id)}
                                   className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-medium hover:bg-emerald-500/20 transition-colors"
                                 >
-                                  <CheckCircle className="w-3.5 h-3.5" /> Confirm
+                                  <CheckCircle className="w-3.5 h-3.5" /> {t("admin.confirm")}
                                 </motion.button>
                               )}
                             </AnimatePresence>
@@ -513,7 +579,7 @@ export default function Admin() {
           {/* Statistics Tab */}
           {tab === "statistics" && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4 md:space-y-6">
-              {/* Stat Cards */}
+              {/* Stat Cards - Row 1 */}
               <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
                 {[
                   { label: t("admin.totalClients"), value: stats.total, icon: Users },
@@ -537,6 +603,52 @@ export default function Admin() {
                     <p className="text-[10px] md:text-xs text-muted-foreground mt-1 leading-tight">{card.label}</p>
                   </motion.div>
                 ))}
+              </div>
+
+              {/* Stat Cards - Row 2: New stats */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 md:gap-4">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 }}
+                  className="glass rounded-xl p-3 md:p-5"
+                >
+                  <div className="flex items-center gap-2 md:gap-3 mb-2">
+                    <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center">
+                      <Percent className="w-4 h-4 md:w-5 md:h-5 text-emerald-400" />
+                    </div>
+                  </div>
+                  <p className="text-xl md:text-2xl font-bold text-foreground">{stats.confirmedPercentage}%</p>
+                  <p className="text-[10px] md:text-xs text-muted-foreground mt-1 leading-tight">{t("admin.qualifiedLeads")}</p>
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5 }}
+                  className="glass rounded-xl p-3 md:p-5"
+                >
+                  <div className="flex items-center gap-2 md:gap-3 mb-2">
+                    <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-green-500/10 flex items-center justify-center">
+                      <CheckCircle className="w-4 h-4 md:w-5 md:h-5 text-green-400" />
+                    </div>
+                  </div>
+                  <p className="text-xl md:text-2xl font-bold text-foreground">{stats.completedCount}</p>
+                  <p className="text-[10px] md:text-xs text-muted-foreground mt-1 leading-tight">{t("admin.completedDeals")}</p>
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.6 }}
+                  className="glass rounded-xl p-3 md:p-5"
+                >
+                  <div className="flex items-center gap-2 md:gap-3 mb-2">
+                    <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-red-500/10 flex items-center justify-center">
+                      <XCircle className="w-4 h-4 md:w-5 md:h-5 text-red-400" />
+                    </div>
+                  </div>
+                  <p className="text-xl md:text-2xl font-bold text-foreground">{stats.cancelledCount}</p>
+                  <p className="text-[10px] md:text-xs text-muted-foreground mt-1 leading-tight">{t("admin.cancelledDeals")}</p>
+                </motion.div>
               </div>
 
               {/* Charts */}
@@ -589,6 +701,26 @@ export default function Admin() {
                     ))}
                   </div>
                 </div>
+              </div>
+
+              {/* Stage Distribution */}
+              <div className="glass rounded-xl p-4 md:p-6">
+                <h3 className="text-base md:text-lg font-semibold text-foreground mb-4">{t("admin.stageDistribution")}</h3>
+                <ResponsiveContainer width="100%" height={280}>
+                  <BarChart data={stats.stageDistribution.map((d) => ({ ...d, name: getStageName(d.stage) }))} layout="vertical">
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(240,10%,18%)" />
+                    <XAxis type="number" stroke="hsl(220,10%,55%)" fontSize={11} />
+                    <YAxis dataKey="name" type="category" stroke="hsl(220,10%,55%)" fontSize={10} width={isMobile ? 80 : 120} />
+                    <Tooltip
+                      contentStyle={{ background: "hsl(240,15%,8%)", border: "1px solid hsl(240,10%,18%)", borderRadius: "8px", color: "hsl(200,100%,95%)" }}
+                    />
+                    <Bar dataKey="count" radius={[0, 4, 4, 0]}>
+                      {stats.stageDistribution.map((_, i) => (
+                        <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
               </div>
             </motion.div>
           )}
@@ -755,7 +887,7 @@ export default function Admin() {
           </DialogHeader>
           <div className="flex-1 overflow-y-auto space-y-3 min-h-0">
             {comments.length === 0 && (
-              <p className="text-sm text-muted-foreground text-center py-4">No comments yet</p>
+              <p className="text-sm text-muted-foreground text-center py-4">{t("admin.noComments")}</p>
             )}
             {comments.map((c) => (
               <div key={c.id} className="bg-secondary rounded-lg p-3 flex items-start justify-between gap-2">
@@ -773,7 +905,7 @@ export default function Admin() {
             <Input
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
-              placeholder="Add a comment..."
+              placeholder={t("admin.addComment")}
               className="bg-secondary border-border text-foreground"
               onKeyDown={(e) => e.key === "Enter" && handleAddComment()}
             />
@@ -782,7 +914,7 @@ export default function Admin() {
               onClick={handleAddComment}
               className="px-4 py-2 rounded-xl bg-primary text-primary-foreground font-medium shrink-0"
             >
-              Add
+              {t("admin.add")}
             </motion.button>
           </div>
         </DialogContent>
@@ -792,13 +924,13 @@ export default function Admin() {
       <AlertDialog open={!!deleteConfirmId} onOpenChange={(open) => !open && setDeleteConfirmId(null)}>
         <AlertDialogContent className="glass border-border">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-foreground">Are you sure?</AlertDialogTitle>
+            <AlertDialogTitle className="text-foreground">{t("admin.deleteConfirm")}</AlertDialogTitle>
             <AlertDialogDescription>
-              Do you really want to delete this lead? This action cannot be undone.
+              {t("admin.deleteConfirmDesc")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="bg-secondary text-foreground border-border hover:bg-muted">Cancel</AlertDialogCancel>
+            <AlertDialogCancel className="bg-secondary text-foreground border-border hover:bg-muted">{t("admin.cancel")}</AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               onClick={() => {
@@ -808,7 +940,33 @@ export default function Admin() {
                 }
               }}
             >
-              Delete
+              {t("admin.delete")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Confirm Lead Dialog */}
+      <AlertDialog open={!!confirmDialogId} onOpenChange={(open) => !open && setConfirmDialogId(null)}>
+        <AlertDialogContent className="glass border-border">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-foreground">{t("admin.confirmLead")}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t("admin.confirmLeadDesc")}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="bg-secondary text-foreground border-border hover:bg-muted">{t("admin.cancel")}</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-emerald-600 text-white hover:bg-emerald-700"
+              onClick={() => {
+                if (confirmDialogId) {
+                  handleConfirm(confirmDialogId);
+                  setConfirmDialogId(null);
+                }
+              }}
+            >
+              {t("admin.confirm")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
