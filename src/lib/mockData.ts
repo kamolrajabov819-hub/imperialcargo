@@ -1,3 +1,5 @@
+export type ClientStage = "new" | "consultation" | "awaiting_cargo" | "cargo_received" | "in_transit" | "arrived" | "completed" | "cancelled";
+
 export interface Client {
   id: string;
   name: string;
@@ -6,6 +8,7 @@ export interface Client {
   code: string;
   createdAt: string;
   confirmed?: boolean;
+  stage?: ClientStage;
 }
 
 const STORAGE_KEY = "cargolink-clients";
@@ -21,14 +24,14 @@ export function getClients(): Client[] {
   const data = localStorage.getItem(STORAGE_KEY);
   if (data) return JSON.parse(data);
   const defaults: Client[] = [
-    { id: "1", name: "Айбек Сулайманов", phone: "+996555123456", city: "Bishkek", code: "KGZ-889241", createdAt: "2025-01-15" },
-    { id: "2", name: "Мария Петрова", phone: "+996700654321", city: "Osh", code: "KGZ-331072", createdAt: "2025-02-03" },
-    { id: "3", name: "Нурлан Алиев", phone: "+996550987654", city: "Jalal-Abad", code: "KGZ-554198", createdAt: "2025-03-20" },
-    { id: "4", name: "Гулназ Касымова", phone: "+996770112233", city: "Karakol", code: "KGZ-772610", createdAt: "2025-04-01" },
-    { id: "5", name: "Дмитрий Ким", phone: "+996555998877", city: "Bishkek", code: "KGZ-110385", createdAt: "2025-04-05" },
-    { id: "6", name: "Азамат Турдубаев", phone: "+996700111222", city: "Bishkek", code: "KGZ-445512", createdAt: "2025-01-28" },
-    { id: "7", name: "Елена Сидорова", phone: "+996555333444", city: "Osh", code: "KGZ-667788", createdAt: "2025-02-14" },
-    { id: "8", name: "Бакыт Жумабеков", phone: "+996770555666", city: "Naryn", code: "KGZ-991234", createdAt: "2025-03-05" },
+    { id: "1", name: "Айбек Сулайманов", phone: "+996555123456", city: "Bishkek", code: "KGZ-889241", createdAt: "2025-01-15", stage: "completed" },
+    { id: "2", name: "Мария Петрова", phone: "+996700654321", city: "Osh", code: "KGZ-331072", createdAt: "2025-02-03", stage: "in_transit" },
+    { id: "3", name: "Нурлан Алиев", phone: "+996550987654", city: "Jalal-Abad", code: "KGZ-554198", createdAt: "2025-03-20", stage: "consultation" },
+    { id: "4", name: "Гулназ Касымова", phone: "+996770112233", city: "Karakol", code: "KGZ-772610", createdAt: "2025-04-01", stage: "new" },
+    { id: "5", name: "Дмитрий Ким", phone: "+996555998877", city: "Bishkek", code: "KGZ-110385", createdAt: "2025-04-05", stage: "awaiting_cargo", confirmed: true },
+    { id: "6", name: "Азамат Турдубаев", phone: "+996700111222", city: "Bishkek", code: "KGZ-445512", createdAt: "2025-01-28", stage: "cargo_received" },
+    { id: "7", name: "Елена Сидорова", phone: "+996555333444", city: "Osh", code: "KGZ-667788", createdAt: "2025-02-14", stage: "arrived", confirmed: true },
+    { id: "8", name: "Бакыт Жумабеков", phone: "+996770555666", city: "Naryn", code: "KGZ-991234", createdAt: "2025-03-05", stage: "cancelled" },
   ];
   localStorage.setItem(STORAGE_KEY, JSON.stringify(defaults));
   return defaults;
@@ -41,6 +44,7 @@ export function addClient(client: Omit<Client, "id" | "code" | "createdAt">): Cl
     id: crypto.randomUUID(),
     code: generateCode(),
     createdAt: new Date().toISOString().split("T")[0],
+    stage: "new",
   };
   clients.push(newClient);
   localStorage.setItem(STORAGE_KEY, JSON.stringify(clients));
@@ -137,6 +141,8 @@ export function getWarehouseString(): string {
   return `${a.name}\n${a.line1}\n${a.line2}\n${a.city}, ${a.country} ${a.postal}\nTel: ${a.phone}`;
 }
 
+export const ALL_STAGES: ClientStage[] = ["new", "consultation", "awaiting_cargo", "cargo_received", "in_transit", "arrived", "completed", "cancelled"];
+
 // Statistics helpers
 export function getClientStats() {
   const clients = getClients();
@@ -164,6 +170,20 @@ export function getClientStats() {
 
   const clientsByCity = Object.entries(cityCount).map(([city, count]) => ({ city, count }));
 
+  // Stage distribution
+  const stageCount: Record<string, number> = {};
+  ALL_STAGES.forEach((s) => { stageCount[s] = 0; });
+  clients.forEach((c) => {
+    const stage = c.stage || "new";
+    stageCount[stage] = (stageCount[stage] || 0) + 1;
+  });
+  const stageDistribution = ALL_STAGES.map((stage) => ({ stage, count: stageCount[stage] || 0 }));
+
+  const confirmedCount = clients.filter((c) => c.confirmed).length;
+  const confirmedPercentage = clients.length > 0 ? Math.round((confirmedCount / clients.length) * 100) : 0;
+  const completedCount = clients.filter((c) => c.stage === "completed").length;
+  const cancelledCount = clients.filter((c) => c.stage === "cancelled").length;
+
   return {
     total: clients.length,
     newThisMonth,
@@ -171,12 +191,17 @@ export function getClientStats() {
     activeCodes: clients.length,
     registrationsByMonth,
     clientsByCity,
+    stageDistribution,
+    confirmedCount,
+    confirmedPercentage,
+    completedCount,
+    cancelledCount,
   };
 }
 
 export function exportClientsCSV(): string {
   const clients = getClients();
-  const header = "Name,Phone,City,Code,Date";
-  const rows = clients.map((c) => `"${c.name}","${c.phone}","${c.city}","${c.code}","${c.createdAt}"`);
+  const header = "Name,Phone,City,Code,Date,Stage,Confirmed";
+  const rows = clients.map((c) => `"${c.name}","${c.phone}","${c.city}","${c.code}","${c.createdAt}","${c.stage || "new"}","${c.confirmed ? "Yes" : "No"}"`);
   return [header, ...rows].join("\n");
 }

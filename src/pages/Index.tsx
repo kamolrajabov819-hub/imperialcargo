@@ -495,8 +495,8 @@ const Index = () => {
             <div>
               <h4 className="font-semibold text-foreground mb-4">{t("footer.contact")}</h4>
               <div className="space-y-2 text-sm text-muted-foreground">
-                <p>+996 555 123 456</p>
-                <p>info@cargolink.kg</p>
+                <p>+996 705 102 772</p>
+                <p>+996 773 339 966</p>
                 <p>Bishkek, Kyrgyzstan</p>
               </div>
             </div>
