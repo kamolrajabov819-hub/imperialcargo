@@ -4,22 +4,22 @@
 
 @layer base {
   :root {
-    --background: 0 0% 98%;
+    --background: 30 100% 97%;
     --foreground: 240 10% 10%;
 
-    --card: 0 0% 100%;
+    --card: 30 50% 99%;
     --card-foreground: 240 10% 10%;
 
-    --popover: 0 0% 100%;
+    --popover: 30 50% 99%;
     --popover-foreground: 240 10% 10%;
 
     --primary: 0 75% 45%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 0 0% 95%;
+    --secondary: 30 30% 94%;
     --secondary-foreground: 240 10% 10%;
 
-    --muted: 0 0% 93%;
+    --muted: 30 20% 91%;
     --muted-foreground: 240 5% 45%;
 
     --accent: 0 75% 45%;
@@ -28,19 +28,19 @@
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 90%;
-    --input: 0 0% 90%;
+    --border: 30 20% 88%;
+    --input: 30 20% 88%;
     --ring: 0 75% 45%;
 
     --radius: 0.75rem;
 
-    --sidebar-background: 0 0% 97%;
+    --sidebar-background: 30 40% 96%;
     --sidebar-foreground: 240 10% 10%;
     --sidebar-primary: 0 75% 45%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 95%;
+    --sidebar-accent: 30 30% 94%;
     --sidebar-accent-foreground: 240 10% 10%;
-    --sidebar-border: 0 0% 90%;
+    --sidebar-border: 30 20% 88%;
     --sidebar-ring: 0 75% 45%;
 
     --success: 145 63% 42%;
@@ -72,17 +72,31 @@
   animation: pulse-red 3s ease-in-out infinite;
 }
 
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  animation: marquee 20s linear infinite;
+}
+
+@keyframes gradient-pulse {
+  0%, 100% { background-position: 0% 0%; }
+  50% { background-position: 0% 100%; }
+}
+
 @layer utilities {
   .glass {
-    background: hsl(0 0% 100% / 0.8);
+    background: hsl(30 50% 99% / 0.8);
     backdrop-filter: blur(20px);
-    border: 1px solid hsl(0 0% 90%);
+    border: 1px solid hsl(30 20% 88%);
   }
 
   .glass-strong {
-    background: hsl(0 0% 100% / 0.95);
+    background: hsl(30 50% 99% / 0.95);
     backdrop-filter: blur(30px);
-    border-bottom: 1px solid hsl(0 0% 90%);
+    border-bottom: 1px solid hsl(30 20% 88%);
   }
 
   .glass-dark {
