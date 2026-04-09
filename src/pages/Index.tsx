@@ -392,9 +392,9 @@ const Index = () => {
                     <div className="flex flex-wrap items-center gap-3 md:gap-4 mt-4 md:mt-5">
                       {[
                         { name: "Taobao", src: taobaoLogo },
-                        { name: "Pinduoduo", src: pinduoduoLogo },
                         { name: "Dewu", src: dewuLogo },
                         { name: "1688", src: logo1688 },
+                        { name: "Pinduoduo", src: pinduoduoLogo },
                       ].map((platform) => (
                         <motion.div
                           key={platform.name}
@@ -480,7 +480,7 @@ const Index = () => {
             <div>
               <div className="flex items-center gap-2 mb-4">
                 <LogoIcon className="w-6 h-6 text-primary" />
-                <span className="text-lg font-bold">ISU <span className="text-primary">Cargo</span></span>
+                <span className="text-lg font-bold">Imperial <span className="text-primary">Cargo</span></span>
               </div>
               <p className="text-sm text-muted-foreground leading-relaxed">{t("footer.desc")}</p>
             </div>
@@ -516,7 +516,7 @@ const Index = () => {
             </div>
           </div>
           <div className="border-t border-border pt-6 text-center">
-            <p className="text-sm text-muted-foreground">© {new Date().getFullYear()} ISU Cargo. {t("footer.rights")}</p>
+            <p className="text-sm text-muted-foreground">© {new Date().getFullYear()} Imperial Cargo. {t("footer.rights")}</p>
             <Link to="/admin" className="inline-block w-2 h-2 rounded-full bg-border/20 hover:bg-primary/30 transition-colors mt-2" />
           </div>
         </div>
