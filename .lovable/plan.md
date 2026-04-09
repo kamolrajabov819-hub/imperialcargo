@@ -1,89 +1,72 @@
 
 
-# 6 Changes: Phone Input Fix, Statistics Mobile, Tooltip Fix, CSV Export, Marketplace Names, Imperial Cargo Rebrand
+# 4 Changes: Lighter Color Palette, New Dragon SVG Logo, Add Photos/Life, Fix Yellow Hovers
 
-## 1. Fix PhoneInput border overflow
+## 1. Lighten the color palette — white + red harmony
 
-The phone input country selector button and text input don't align properly. The button has `border border-r-0` and the input has its own border, but they lack a shared container constraint.
+The current palette is very dark (background 6% lightness, cards 10%). Shift to a **light theme** with white/off-white backgrounds and red accents:
 
-**`src/components/PhoneInput.tsx`**: Wrap the button+input in a container with `overflow-hidden rounded-md border border-input` and remove individual borders from button and input. Set button to `border-0 border-r border-input` and input to `border-0 rounded-none`.
+**`src/index.css`**:
+- `--background`: `0 0% 98%` (near white)
+- `--foreground`: `240 10% 10%` (dark text)
+- `--card`: `0 0% 100%` (white cards)
+- `--card-foreground`: `240 10% 10%`
+- `--popover`: `0 0% 100%`
+- `--secondary`: `0 0% 95%` (light gray)
+- `--secondary-foreground`: `240 10% 10%`
+- `--muted`: `0 0% 93%` (soft gray)
+- `--muted-foreground`: `240 5% 45%`
+- `--border`: `0 0% 90%`
+- `--input`: `0 0% 90%`
+- `--primary`: keep `0 75% 45%` (deep red)
+- `--accent`: `0 75% 45%` (change from gold to red — fixes yellow hover issue)
+- `--accent-foreground`: `0 0% 100%`
+- `--ring`: `0 75% 45%` (red instead of gold)
+- Sidebar colors: similar light shift
+- Update glass utilities for light backgrounds (white/90% alpha instead of dark)
+- `glass-dark` → dark overlay style for cards on images (keep dark)
+- `glow-box-cyan` → red glow
+- `pulse-gold` → `pulse-red` with red glow
 
-## 2. Fix statistics mobile responsiveness
+## 2. Replace logo SVG with uploaded dragon
 
-The second row of stat cards uses `grid-cols-2 sm:grid-cols-3` leaving the 3rd card (Cancelled) alone on mobile looking odd.
+The uploaded SVG is 2894 lines — too complex to inline as a React component. Copy it to `src/assets/imperial-logo.svg` and use it as an `<img>` tag.
 
-**`src/pages/Admin.tsx`** (lines 609): Change row 2 grid to `grid-cols-3` always (3 cards fit at smaller sizes with reduced padding). Reduce text sizes for mobile. Make chart containers scroll horizontally on very small screens if needed.
+**Files**:
+- Copy `user-uploads://photo_2026-04-09_18-25-12.svg` → `src/assets/imperial-logo.svg`
+- **`src/components/LogoIcon.tsx`**: Replace SVG paths with `<img src={logoSvg} />` imported from assets
+- All existing `<LogoIcon className="w-6 h-6" />` usages continue working (Header, Admin, Dashboard, Index footer)
 
-## 3. Fix chart tooltip text visibility
+## 3. Add liveliness — photos & visual energy
 
-Tooltip `contentStyle` has white-ish text but the stage distribution bar chart tooltip uses default label/item colors that blend into dark background.
+**`src/pages/Index.tsx`**:
+- **Partner logos section**: Add subtle background gradient and slight animation (fade-in slide)
+- **About section**: Add a parallax-like effect on the truck image card
+- **Services accordion**: Add icons with colored backgrounds per service, subtle gradient overlays
+- **Testimonials**: Add auto-rotation (every 5s) with pause on hover
+- **Footer**: Add a subtle gradient top border instead of plain border
+- **Overall**: Add more varied section backgrounds — alternate between white and very light gray (`bg-secondary/50`) for visual rhythm
 
-**`src/pages/Admin.tsx`** (lines 714-716): Add `itemStyle` and `labelStyle` with white text color to the stage distribution tooltip (same pattern as pie chart tooltip at line 690). Also apply to registrations chart tooltip.
+## 4. Fix yellow/gold hover states → use red
 
-## 4. Improve CSV export with proper encoding and Stage/Confirmed columns
+The gold accent (`43 80% 55%`) is used for hovers throughout. Change to red-based hovers:
 
-Current `exportClientsCSV()` produces garbled Cyrillic in Excel because it lacks BOM. Also missing Stage and Confirmed columns.
+**`src/index.css`**: `--accent` and `--ring` → red (see step 1)
 
-**`src/lib/mockData.ts`**: Add UTF-8 BOM (`\uFEFF`) prefix to CSV output. Header: `Name,Phone,City,Code,Date,Stage,Confirmed`. Already has Stage/Confirmed but verify format.
+**`src/pages/Index.tsx`**:
+- Line 379: Step card `whileHover` borderColor from `hsl(43, 50%, 54%)` → `hsl(0, 75%, 45%)`
+- Line 67-68: `pulse-gold` animation on step circles → change to `pulse-red` or just use `shadow-primary/30`
+- Footer hover links: already `hover:text-primary` (red) — good
 
-**`src/pages/Admin.tsx`**: When creating the download blob, use `text/csv;charset=utf-8` and ensure the BOM is included.
+**`src/components/Header.tsx`**: Nav hover states already use `hover:bg-secondary` — these will naturally adapt with the lighter palette
 
-## 5. Fix marketplace platform names to match logos
-
-Current order after last edit: Taobao, Pinduoduo, Dewu, 1688. But the actual logo files are mapped wrong. Correct mapping per user's photo:
-- `taobaoLogo` → "Taobao"
-- `dewuLogo` → "Dewu" (was showing as Pinduoduo)
-- `logo1688` → "1688" (was showing as Dewu)  
-- `pinduoduoLogo` → "Pinduoduo" (was showing as 1688)
-
-**`src/pages/Index.tsx`** (lines 394-397): Fix to:
-```
-{ name: "Taobao", src: taobaoLogo },
-{ name: "Dewu", src: dewuLogo },
-{ name: "1688", src: logo1688 },
-{ name: "Pinduoduo", src: pinduoduoLogo },
-```
-
-## 6. Rebrand to "Imperial Cargo" with dragon logo and red/gold color scheme
-
-The uploaded logo shows "Imperial Cargo" with a red/gold Chinese dragon on dark background.
-
-### 6a. New color scheme (`src/index.css`)
-- **Primary**: Deep red `0 75% 45%` (dragon red)
-- **Accent**: Gold `43 80% 55%`
-- **Background**: Very dark `240 15% 6%` (near black like the logo)
-- **Card**: Dark `240 12% 10%`
-- **Foreground**: Warm gold-white `40 20% 90%`
-- **Ring/focus**: Gold
-- Update glass utilities to match darker tones
-
-### 6b. Dragon SVG logo (`src/components/LogoIcon.tsx`)
-Replace globe+plane SVG with a stylized dragon silhouette in red/gold. Simplified Chinese dragon coil shape that works at small sizes (w-6 h-6).
-
-### 6c. Update brand name everywhere
-- **`src/components/Header.tsx`**: "ISU Cargo" → "Imperial" + "Cargo" (with primary color on "Cargo" or use gold)
-- **`src/pages/Admin.tsx`**: Same name change (lines 175, 211)
-- **`src/pages/Index.tsx`**: Footer (line 483), copyright (line 519)
-- **`src/pages/Dashboard.tsx`**: Identity card area
-- **`index.html`**: `<title>` tag
-
-### 6d. Update chart colors (`src/pages/Admin.tsx`)
-Change `CHART_COLORS` from cyan-based to red/gold palette matching new brand.
-
-### 6e. Update CSS animations
-- `pulse-gold` keyframe: keep gold or shift to red glow
-- `glow-box-cyan` references → update to gold/red glow
+**`tailwind.config.ts`**: No changes needed (colors reference CSS vars)
 
 ## Files Changed
 | File | Changes |
 |---|---|
-| `src/components/PhoneInput.tsx` | Fix border alignment |
-| `src/pages/Admin.tsx` | Statistics mobile grid, tooltip fix, chart colors, brand name |
-| `src/lib/mockData.ts` | CSV BOM fix |
-| `src/pages/Index.tsx` | Fix marketplace names, brand name |
-| `src/components/LogoIcon.tsx` | Dragon SVG |
-| `src/components/Header.tsx` | "Imperial Cargo" name |
-| `src/pages/Dashboard.tsx` | Brand name |
-| `src/index.css` | Red/gold/dark color scheme |
-| `index.html` | Title update |
+| `src/index.css` | Light white+red palette, updated glass utilities, pulse-red animation |
+| `src/assets/imperial-logo.svg` | New — copied from uploaded SVG |
+| `src/components/LogoIcon.tsx` | Use imported SVG image instead of inline paths |
+| `src/pages/Index.tsx` | Fix gold hover → red, add testimonial auto-rotation, visual enhancements |
 
