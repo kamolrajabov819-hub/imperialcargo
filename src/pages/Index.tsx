@@ -21,7 +21,7 @@ const serviceImages = [
   "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=400&q=80",
   "https://images.unsplash.com/photo-1553413077-190dd305871c?w=400&q=80",
   "https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=400&q=80",
-  "https://images.unsplash.com/photo-1494412574643-ff11b0a5eb95?w=400&q=80",
+  whyTracking,
 ];
 
 function AnimatedCounter({ end, suffix = "" }: { end: number; suffix?: string }) {
