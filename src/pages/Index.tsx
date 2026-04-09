@@ -440,9 +440,9 @@ const Index = () => {
                     <div className="flex flex-wrap items-center gap-3 md:gap-4 mt-4 md:mt-5">
                       {[
                         { name: "Taobao", src: taobaoLogo },
-                        { name: "Dewu", src: dewuLogo },
                         { name: "1688", src: logo1688 },
                         { name: "Pinduoduo", src: pinduoduoLogo },
+                        { name: "Dewu", src: dewuLogo },
                       ].map((platform) => (
                         <motion.div
                           key={platform.name}
