@@ -190,11 +190,20 @@ const Index = () => {
       </section>
 
       {/* ─── PARTNER LOGOS ─── */}
-      <Section className="py-8 border-b border-border bg-card">
+      <Section className="py-8 border-b border-border bg-secondary/50">
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-center gap-10 flex-wrap opacity-40">
-            {["DHL", "FedEx", "Maersk", "COSCO", "SF Express", "Cainiao"].map((name) => (
-              <span key={name} className="text-lg font-bold text-foreground tracking-wider">{name}</span>
+          <div className="flex items-center justify-center gap-10 flex-wrap opacity-50">
+            {["DHL", "FedEx", "Maersk", "COSCO", "SF Express", "Cainiao"].map((name, i) => (
+              <motion.span
+                key={name}
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="text-lg font-bold text-foreground tracking-wider"
+              >
+                {name}
+              </motion.span>
             ))}
           </div>
         </div>
@@ -437,7 +446,7 @@ const Index = () => {
             <h2 className="text-3xl md:text-5xl font-bold text-foreground font-heading">{t("testimonials.title")}</h2>
           </div>
 
-          <div className="max-w-2xl mx-auto">
+          <div className="max-w-2xl mx-auto" onMouseEnter={() => setTestimonialPaused(true)} onMouseLeave={() => setTestimonialPaused(false)}>
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeTestimonial}
