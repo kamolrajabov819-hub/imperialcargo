@@ -210,7 +210,7 @@ const Index = () => {
       </Section>
 
       {/* ─── ABOUT ─── */}
-      <Section id="about" className="py-20 bg-card">
+      <Section id="about" className="py-20 bg-background">
         <div className="container mx-auto px-4">
           <div className="grid lg:grid-cols-2 gap-16 items-start">
             <div>
@@ -493,7 +493,7 @@ const Index = () => {
       </Section>
 
       {/* ─── FOOTER ─── */}
-      <footer id="contact" className="py-16 bg-card border-t border-border">
+      <footer id="contact" className="py-16 bg-card border-t-2 border-primary/20" style={{ borderImage: 'linear-gradient(to right, hsl(0 75% 45% / 0.3), hsl(0 75% 45% / 0.1)) 1' }}>
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-4 gap-10 mb-12">
             <div>
