@@ -2,7 +2,7 @@ import { motion, useInView, AnimatePresence } from "framer-motion";
 import { useTranslation } from "@/lib/i18n";
 import { Header } from "@/components/Header";
 import { ContactButtons } from "@/components/ContactButtons";
-import { ArrowRight, Star, Mail, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, User, ShoppingCart, ClipboardCopy, Truck } from "lucide-react";
+import { ArrowRight, Star, Mail, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, User, ShoppingCart, ClipboardCopy, Truck, Ship, Warehouse, Package } from "lucide-react";
 import { LogoIcon } from "@/components/LogoIcon";
 import { Link } from "react-router-dom";
 import { getCurrentUser } from "@/lib/mockData";
@@ -17,12 +17,7 @@ import whyTeam from "@/assets/why-team.jpg";
 import whyDelivery from "@/assets/why-delivery.jpg";
 import whyTracking from "@/assets/why-tracking.jpg";
 
-const serviceImages = [
-  "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=400&q=80",
-  "https://images.unsplash.com/photo-1553413077-190dd305871c?w=400&q=80",
-  "https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=400&q=80",
-  "https://images.unsplash.com/photo-1494412574643-ff11b0a5eb95?w=400&q=80",
-];
+const serviceIcons = [Ship, Warehouse, Truck, Package];
 
 function AnimatedCounter({ end, suffix = "" }: { end: number; suffix?: string }) {
   const [count, setCount] = useState(0);
@@ -335,8 +330,8 @@ const Index = () => {
                       >
                         <div className="px-8 pb-6 pl-20 flex gap-6 items-start">
                           <p className="text-white/70 leading-relaxed max-w-lg flex-1">{svc.desc}</p>
-                          <div className="hidden md:block w-40 h-28 rounded-xl overflow-hidden shrink-0">
-                            <img src={serviceImages[i]} alt={svc.title} className="w-full h-full object-cover" loading="lazy" />
+                          <div className="hidden md:flex w-40 h-28 rounded-xl overflow-hidden shrink-0 bg-gradient-to-br from-primary/20 to-primary/5 items-center justify-center">
+                            {(() => { const Icon = serviceIcons[i]; return <Icon className="w-12 h-12 text-primary/60" />; })()}
                           </div>
                         </div>
                       </motion.div>

@@ -54,7 +54,7 @@ export function PhoneInput({ value, onChange, className }: PhoneInputProps) {
 
   return (
     <div className={`relative ${className || ""}`}>
-      <div className="flex overflow-hidden rounded-md border border-input">
+      <div className="flex overflow-hidden rounded-md border border-input focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 ring-offset-background">
         <button
           type="button"
           onClick={() => setOpen(!open)}
@@ -69,7 +69,7 @@ export function PhoneInput({ value, onChange, className }: PhoneInputProps) {
           value={displayValue}
           onChange={handleDigitChange}
           placeholder={country.format.replace(/X/g, "0")}
-          className="flex-1 h-10 bg-background px-3 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 md:text-sm"
+          className="flex-1 h-10 bg-background px-3 py-2 text-base placeholder:text-muted-foreground focus-visible:outline-none md:text-sm"
         />
       </div>
       {open && (
