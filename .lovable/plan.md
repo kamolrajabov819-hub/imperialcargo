@@ -1,72 +1,56 @@
 
 
-# 4 Changes: Lighter Color Palette, New Dragon SVG Logo, Add Photos/Life, Fix Yellow Hovers
+# 2 Changes: Warm Background Color Palette + More Animation & Photos
 
-## 1. Lighten the color palette — white + red harmony
+## 1. Warm cream background color palette
 
-The current palette is very dark (background 6% lightness, cards 10%). Shift to a **light theme** with white/off-white backgrounds and red accents:
+The current `#fafafa` (0 0% 98%) is too stark white. Switch to a warm cream inspired by the Motta Weddings reference (`#fff5e8` = warm peach-cream).
 
-**`src/index.css`**:
-- `--background`: `0 0% 98%` (near white)
-- `--foreground`: `240 10% 10%` (dark text)
-- `--card`: `0 0% 100%` (white cards)
-- `--card-foreground`: `240 10% 10%`
-- `--popover`: `0 0% 100%`
-- `--secondary`: `0 0% 95%` (light gray)
-- `--secondary-foreground`: `240 10% 10%`
-- `--muted`: `0 0% 93%` (soft gray)
-- `--muted-foreground`: `240 5% 45%`
-- `--border`: `0 0% 90%`
-- `--input`: `0 0% 90%`
-- `--primary`: keep `0 75% 45%` (deep red)
-- `--accent`: `0 75% 45%` (change from gold to red — fixes yellow hover issue)
-- `--accent-foreground`: `0 0% 100%`
-- `--ring`: `0 75% 45%` (red instead of gold)
-- Sidebar colors: similar light shift
-- Update glass utilities for light backgrounds (white/90% alpha instead of dark)
-- `glass-dark` → dark overlay style for cards on images (keep dark)
-- `glow-box-cyan` → red glow
-- `pulse-gold` → `pulse-red` with red glow
+**`src/index.css`** — update CSS variables:
+- `--background`: `30 100% 97%` (≈ `#fff5e8`, warm cream)
+- `--card`: `30 50% 99%` (slightly warmer white for cards)
+- `--secondary`: `30 30% 94%` (warm light gray)
+- `--muted`: `30 20% 91%` (warm muted)
+- `--border`: `30 20% 88%` (warm border)
+- `--input`: `30 20% 88%`
+- `--sidebar-background`: `30 40% 96%`
+- `--sidebar-accent`: `30 30% 94%`
+- `--sidebar-border`: `30 20% 88%`
+- Keep `--primary` deep red, `--accent` red, `--foreground` dark
+- Update `glass` and `glass-strong` utilities to use warm tones (`hsl(30 50% 99% / 0.8)`)
 
-## 2. Replace logo SVG with uploaded dragon
-
-The uploaded SVG is 2894 lines — too complex to inline as a React component. Copy it to `src/assets/imperial-logo.svg` and use it as an `<img>` tag.
-
-**Files**:
-- Copy `user-uploads://photo_2026-04-09_18-25-12.svg` → `src/assets/imperial-logo.svg`
-- **`src/components/LogoIcon.tsx`**: Replace SVG paths with `<img src={logoSvg} />` imported from assets
-- All existing `<LogoIcon className="w-6 h-6" />` usages continue working (Header, Admin, Dashboard, Index footer)
-
-## 3. Add liveliness — photos & visual energy
+## 2. More animations and photos
 
 **`src/pages/Index.tsx`**:
-- **Partner logos section**: Add subtle background gradient and slight animation (fade-in slide)
-- **About section**: Add a parallax-like effect on the truck image card
-- **Services accordion**: Add icons with colored backgrounds per service, subtle gradient overlays
-- **Testimonials**: Add auto-rotation (every 5s) with pause on hover
-- **Footer**: Add a subtle gradient top border instead of plain border
-- **Overall**: Add more varied section backgrounds — alternate between white and very light gray (`bg-secondary/50`) for visual rhythm
 
-## 4. Fix yellow/gold hover states → use red
+### 2a. Partner logos — add horizontal scroll animation
+Replace static flex with a marquee-style infinite scroll using CSS animation. Duplicate the logo list and animate with `translateX`.
 
-The gold accent (`43 80% 55%`) is used for hovers throughout. Change to red-based hovers:
+### 2b. About section — staggered card entrance
+Add `whileInView` with stagger delay to the two info cards (glass-dark and bg-card).
 
-**`src/index.css`**: `--accent` and `--ring` → red (see step 1)
+### 2c. Services — add Unsplash cargo/logistics images
+When a service accordion opens, show a relevant image alongside the description. Use free Unsplash URLs:
+- Cargo: `https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=400` (shipping containers)
+- Warehouse: `https://images.unsplash.com/photo-1553413077-190dd305871c?w=400` (warehouse)
+- Freight: `https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=400` (freight truck)
+- Supply chain: `https://images.unsplash.com/photo-1494412574643-ff11b0a5eb95?w=400` (logistics)
 
-**`src/pages/Index.tsx`**:
-- Line 379: Step card `whileHover` borderColor from `hsl(43, 50%, 54%)` → `hsl(0, 75%, 45%)`
-- Line 67-68: `pulse-gold` animation on step circles → change to `pulse-red` or just use `shadow-primary/30`
-- Footer hover links: already `hover:text-primary` (red) — good
+### 2d. Why Choose Us — add floating animation
+Add `animate={{ y: [0, -8, 0] }}` with different durations per card for a subtle float effect.
 
-**`src/components/Header.tsx`**: Nav hover states already use `hover:bg-secondary` — these will naturally adapt with the lighter palette
+### 2e. Steps section — add connecting line animation
+Animate the vertical connector line with a gradient that pulses downward using CSS.
 
-**`tailwind.config.ts`**: No changes needed (colors reference CSS vars)
+### 2f. Testimonials — add parallax dots/shapes
+Add decorative floating shapes (circles, dots) around the testimonial card with `animate-float`.
+
+### 2g. Footer — add hover animations on links
+Add underline-on-hover effect to footer links using the `.story-link` pattern.
 
 ## Files Changed
 | File | Changes |
 |---|---|
-| `src/index.css` | Light white+red palette, updated glass utilities, pulse-red animation |
-| `src/assets/imperial-logo.svg` | New — copied from uploaded SVG |
-| `src/components/LogoIcon.tsx` | Use imported SVG image instead of inline paths |
-| `src/pages/Index.tsx` | Fix gold hover → red, add testimonial auto-rotation, visual enhancements |
+| `src/index.css` | Warm cream palette, marquee animation keyframe |
+| `src/pages/Index.tsx` | Service images, floating cards, marquee logos, decorative elements |
 
