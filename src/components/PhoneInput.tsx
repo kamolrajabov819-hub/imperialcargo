@@ -35,7 +35,6 @@ export function PhoneInput({ value, onChange, className }: PhoneInputProps) {
   const [countryIdx, setCountryIdx] = useState(0);
   const country = COUNTRIES[countryIdx];
 
-  // Extract local digits from value (strip country code)
   const localDigits = value.replace(/\D/g, "").slice(country.code.replace("+", "").length);
 
   const handleDigitChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -54,23 +53,25 @@ export function PhoneInput({ value, onChange, className }: PhoneInputProps) {
   const displayValue = localDigits ? formatDigits(localDigits, country.format) : "";
 
   return (
-    <div className={`relative flex ${className || ""}`}>
-      <button
-        type="button"
-        onClick={() => setOpen(!open)}
-        className="flex items-center gap-1 px-3 py-2 rounded-l-md border border-r-0 border-input bg-secondary text-foreground text-sm shrink-0"
-      >
-        <span className="text-lg">{country.flag}</span>
-        <span className="text-xs text-muted-foreground">{country.code}</span>
-        <ChevronDown className="w-3 h-3 text-muted-foreground" />
-      </button>
-      <input
-        type="tel"
-        value={displayValue}
-        onChange={handleDigitChange}
-        placeholder={country.format.replace(/X/g, "0")}
-        className="flex-1 h-10 rounded-r-md border border-input bg-background px-3 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 md:text-sm"
-      />
+    <div className={`relative ${className || ""}`}>
+      <div className="flex overflow-hidden rounded-md border border-input">
+        <button
+          type="button"
+          onClick={() => setOpen(!open)}
+          className="flex items-center gap-1 px-3 py-2 border-r border-input bg-secondary text-foreground text-sm shrink-0"
+        >
+          <span className="text-lg">{country.flag}</span>
+          <span className="text-xs text-muted-foreground">{country.code}</span>
+          <ChevronDown className="w-3 h-3 text-muted-foreground" />
+        </button>
+        <input
+          type="tel"
+          value={displayValue}
+          onChange={handleDigitChange}
+          placeholder={country.format.replace(/X/g, "0")}
+          className="flex-1 h-10 bg-background px-3 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 md:text-sm"
+        />
+      </div>
       {open && (
         <div className="absolute top-full left-0 mt-1 w-64 bg-popover border border-border rounded-lg shadow-lg z-50 overflow-hidden">
           {COUNTRIES.map((c, i) => (

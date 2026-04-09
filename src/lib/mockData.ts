@@ -201,7 +201,10 @@ export function getClientStats() {
 
 export function exportClientsCSV(): string {
   const clients = getClients();
-  const header = "Name,Phone,City,Code,Date,Stage,Confirmed";
-  const rows = clients.map((c) => `"${c.name}","${c.phone}","${c.city}","${c.code}","${c.createdAt}","${c.stage || "new"}","${c.confirmed ? "Yes" : "No"}"`);
-  return [header, ...rows].join("\n");
+  const sep = ",";
+  const header = ["Name", "Phone", "City", "Code", "Date", "Stage", "Confirmed"].join(sep);
+  const rows = clients.map((c) =>
+    [`"${c.name}"`, `"${c.phone}"`, `"${c.city}"`, `"${c.code}"`, `"${c.createdAt}"`, `"${c.stage || "new"}"`, `"${c.confirmed ? "Yes" : "No"}"`].join(sep)
+  );
+  return "\uFEFF" + [header, ...rows].join("\r\n");
 }

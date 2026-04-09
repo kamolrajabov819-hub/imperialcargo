@@ -31,7 +31,7 @@ import { LogoIcon } from "@/components/LogoIcon";
 import { useNavigate } from "react-router-dom";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 
-const CHART_COLORS = ["hsl(185,100%,50%)", "hsl(185,80%,40%)", "hsl(185,60%,30%)", "hsl(200,80%,50%)", "hsl(160,70%,45%)", "hsl(220,70%,50%)", "hsl(45,90%,55%)", "hsl(0,70%,55%)"];
+const CHART_COLORS = ["hsl(0,75%,45%)", "hsl(43,80%,55%)", "hsl(0,60%,35%)", "hsl(43,60%,45%)", "hsl(0,50%,55%)", "hsl(20,70%,50%)", "hsl(43,90%,60%)", "hsl(0,40%,30%)"];
 const CLIENTS_PER_PAGE = 20;
 
 const STAGE_COLORS: Record<ClientStage, string> = {
@@ -162,7 +162,7 @@ export default function Admin() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "cargolink-clients.csv";
+    a.download = "imperial-cargo-clients.csv";
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -207,7 +207,7 @@ export default function Admin() {
         >
           <div className="flex items-center justify-center gap-2 mb-6">
             <LogoIcon className="w-8 h-8 text-primary" />
-            <span className="text-xl font-bold">ISU <span className="text-primary">Cargo</span></span>
+            <span className="text-xl font-bold">Imperial <span className="text-primary">Cargo</span></span>
           </div>
           <h2 className="text-xl font-bold text-foreground text-center mb-6">{t("admin.login")}</h2>
           {error && <p className="text-destructive text-sm text-center mb-4">{error}</p>}
@@ -243,7 +243,7 @@ export default function Admin() {
       <div className="p-4 flex items-center justify-between border-b border-border">
         <div className="flex items-center gap-2">
           <LogoIcon className="w-6 h-6 text-primary" />
-          <span className="text-lg font-bold">ISU <span className="text-primary">Cargo</span></span>
+          <span className="text-lg font-bold">Imperial <span className="text-primary">Cargo</span></span>
         </div>
         <button onClick={() => setSidebarOpen(false)} className="md:hidden p-1 text-muted-foreground hover:text-foreground">
           <X className="w-5 h-5" />
@@ -606,7 +606,7 @@ export default function Admin() {
               </div>
 
               {/* Stat Cards - Row 2: New stats */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 md:gap-4">
+              <div className="grid grid-cols-3 gap-2 md:gap-4">
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -661,9 +661,11 @@ export default function Admin() {
                       <XAxis dataKey="month" stroke="hsl(220,10%,55%)" fontSize={11} />
                       <YAxis stroke="hsl(220,10%,55%)" fontSize={11} />
                       <Tooltip
-                        contentStyle={{ background: "hsl(240,15%,8%)", border: "1px solid hsl(240,10%,18%)", borderRadius: "8px", color: "hsl(200,100%,95%)" }}
+                        contentStyle={{ background: "hsl(240,15%,8%)", border: "1px solid hsl(240,10%,18%)", borderRadius: "8px", color: "#fff" }}
+                        itemStyle={{ color: "#fff" }}
+                        labelStyle={{ color: "#fff" }}
                       />
-                      <Bar dataKey="count" fill="hsl(185,100%,50%)" radius={[4, 4, 0, 0]} />
+                      <Bar dataKey="count" fill="hsl(0,75%,45%)" radius={[4, 4, 0, 0]} />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
@@ -712,7 +714,9 @@ export default function Admin() {
                     <XAxis type="number" stroke="hsl(220,10%,55%)" fontSize={11} />
                     <YAxis dataKey="name" type="category" stroke="hsl(220,10%,55%)" fontSize={10} width={isMobile ? 80 : 120} />
                     <Tooltip
-                      contentStyle={{ background: "hsl(240,15%,8%)", border: "1px solid hsl(240,10%,18%)", borderRadius: "8px", color: "hsl(200,100%,95%)" }}
+                      contentStyle={{ background: "hsl(240,15%,8%)", border: "1px solid hsl(240,10%,18%)", borderRadius: "8px", color: "#fff" }}
+                      itemStyle={{ color: "#fff" }}
+                      labelStyle={{ color: "#fff" }}
                     />
                     <Bar dataKey="count" radius={[0, 4, 4, 0]}>
                       {stats.stageDistribution.map((_, i) => (

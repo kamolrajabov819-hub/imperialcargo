@@ -92,7 +92,7 @@ export function Header() {
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2">
           <LogoIcon className="w-6 h-6 text-primary" />
-          <span className="text-lg font-bold">ISU <span className="text-primary">Cargo</span></span>
+          <span className="text-lg font-bold">Imperial <span className="text-primary">Cargo</span></span>
         </Link>
 
         {/* Desktop Nav */}
