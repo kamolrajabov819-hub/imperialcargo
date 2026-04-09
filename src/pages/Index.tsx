@@ -75,6 +75,15 @@ const Index = () => {
     { text: t("testimonial.3.text" as any), name: t("testimonial.3.name" as any), city: t("testimonial.3.city" as any) },
   ];
 
+  // Auto-rotate testimonials
+  useEffect(() => {
+    if (testimonialPaused) return;
+    const timer = setInterval(() => {
+      setActiveTestimonial((prev) => (prev === testimonials.length - 1 ? 0 : prev + 1));
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [testimonialPaused, testimonials.length]);
+
   return (
     <div className="min-h-screen bg-background overflow-hidden">
       <Header />
