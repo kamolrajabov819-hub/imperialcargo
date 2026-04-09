@@ -1,70 +1,89 @@
 
 
-# 5 Changes: Contact Numbers, Confirm Dialog, CRM Stages, New Statistics, Translations
+# 6 Changes: Phone Input Fix, Statistics Mobile, Tooltip Fix, CSV Export, Marketplace Names, Imperial Cargo Rebrand
 
-## 1. Update contact numbers and WhatsApp links
+## 1. Fix PhoneInput border overflow
 
-**`src/pages/Index.tsx`** (footer, lines 498-499): Replace `+996 555 123 456` and `info@cargolink.kg` with `+996 705 102 772` and `+996 773 339 966`.
+The phone input country selector button and text input don't align properly. The button has `border border-r-0` and the input has its own border, but they lack a shared container constraint.
 
-**`src/components/ContactButtons.tsx`** (line 27): Change WhatsApp link from `https://wa.me/77718191119` to `https://wa.me/996705102772`.
+**`src/components/PhoneInput.tsx`**: Wrap the button+input in a container with `overflow-hidden rounded-md border border-input` and remove individual borders from button and input. Set button to `border-0 border-r border-input` and input to `border-0 rounded-none`.
 
-## 2. Add confirmation dialog for confirming leads
+## 2. Fix statistics mobile responsiveness
 
-Same pattern as the delete dialog. When admin clicks "Confirm" on a lead, show an AlertDialog asking "Are you sure you want to confirm this lead?" with Cancel/Confirm buttons.
+The second row of stat cards uses `grid-cols-2 sm:grid-cols-3` leaving the 3rd card (Cancelled) alone on mobile looking odd.
 
-**`src/pages/Admin.tsx`**:
-- Add `confirmDialogId` state (similar to `deleteConfirmId`)
-- Replace direct `handleConfirm(c.id)` calls (mobile line 375, desktop line 440) with `setConfirmDialogId(c.id)`
-- Add a new AlertDialog at the bottom (after delete dialog) with green Confirm button that calls `handleConfirm(confirmDialogId)`
+**`src/pages/Admin.tsx`** (lines 609): Change row 2 grid to `grid-cols-3` always (3 cards fit at smaller sizes with reduced padding). Reduce text sizes for mobile. Make chart containers scroll horizontally on very small screens if needed.
 
-## 3. Add CRM stages to client data model
+## 3. Fix chart tooltip text visibility
 
-**`src/lib/mockData.ts`**:
-- Add `stage` field to `Client` interface with type union: `"new" | "consultation" | "awaiting_cargo" | "cargo_received" | "in_transit" | "arrived" | "completed" | "cancelled"`
-- Default to `"new"` in `addClient()`
+Tooltip `contentStyle` has white-ish text but the stage distribution bar chart tooltip uses default label/item colors that blend into dark background.
 
-**`src/pages/Admin.tsx`**:
-- Add a stage dropdown (Select component) in both mobile cards and desktop table
-- Admin can change stage per client via `updateClient(id, { stage: newStage })`
-- Show colored badge for each stage
-- Add a stage filter dropdown at the top (next to search)
+**`src/pages/Admin.tsx`** (lines 714-716): Add `itemStyle` and `labelStyle` with white text color to the stage distribution tooltip (same pattern as pie chart tooltip at line 690). Also apply to registrations chart tooltip.
 
-## 4. Add new statistics based on stages
+## 4. Improve CSV export with proper encoding and Stage/Confirmed columns
 
-**`src/lib/mockData.ts`** — extend `getClientStats()` to return:
-- `stageDistribution`: count per stage
-- `confirmedCount` / `confirmedPercentage`: qualified leads %
-- `completedCount` / `cancelledCount`: success vs lost
+Current `exportClientsCSV()` produces garbled Cyrillic in Excel because it lacks BOM. Also missing Stage and Confirmed columns.
 
-**`src/pages/Admin.tsx`** (statistics tab):
-- Add new stat cards: "Qualified Leads %", "Completed", "Cancelled"
-- Add a stage distribution chart (horizontal bar or pie)
+**`src/lib/mockData.ts`**: Add UTF-8 BOM (`\uFEFF`) prefix to CSV output. Header: `Name,Phone,City,Code,Date,Stage,Confirmed`. Already has Stage/Confirmed but verify format.
 
-## 5. Translations and mobile responsiveness
+**`src/pages/Admin.tsx`**: When creating the download blob, use `text/csv;charset=utf-8` and ensure the BOM is included.
 
-**`src/lib/i18n.tsx`** — add keys for all 3 languages:
-- Stage names: `admin.stage.new`, `admin.stage.consultation`, `admin.stage.awaiting_cargo`, `admin.stage.cargo_received`, `admin.stage.in_transit`, `admin.stage.arrived`, `admin.stage.completed`, `admin.stage.cancelled`
-- `admin.confirmLead` / `admin.confirmLeadDesc`: "Are you sure you want to confirm this lead?"
-- `admin.confirmed` / `admin.confirm`: "Confirmed" / "Confirm"
-- `admin.stage`: "Stage"
-- `admin.qualifiedLeads`: "Qualified Leads"
-- `admin.completedDeals`: "Completed"
-- `admin.cancelledDeals`: "Cancelled"
-- `admin.stageDistribution`: "Stage Distribution"
-- Translate existing untranslated strings: "Showing X–Y of Z clients", "No clients found", "No comments yet", "Add a comment...", "Add", delete/confirm dialog texts
+## 5. Fix marketplace platform names to match logos
 
-**Mobile responsiveness**:
-- Stage select in mobile cards: full-width below the status badge
-- Stage filter dropdown: stacks below search on mobile
-- New stat cards: 2-column grid on mobile (already pattern)
-- Stage distribution chart: single column on mobile
+Current order after last edit: Taobao, Pinduoduo, Dewu, 1688. But the actual logo files are mapped wrong. Correct mapping per user's photo:
+- `taobaoLogo` → "Taobao"
+- `dewuLogo` → "Dewu" (was showing as Pinduoduo)
+- `logo1688` → "1688" (was showing as Dewu)  
+- `pinduoduoLogo` → "Pinduoduo" (was showing as 1688)
+
+**`src/pages/Index.tsx`** (lines 394-397): Fix to:
+```
+{ name: "Taobao", src: taobaoLogo },
+{ name: "Dewu", src: dewuLogo },
+{ name: "1688", src: logo1688 },
+{ name: "Pinduoduo", src: pinduoduoLogo },
+```
+
+## 6. Rebrand to "Imperial Cargo" with dragon logo and red/gold color scheme
+
+The uploaded logo shows "Imperial Cargo" with a red/gold Chinese dragon on dark background.
+
+### 6a. New color scheme (`src/index.css`)
+- **Primary**: Deep red `0 75% 45%` (dragon red)
+- **Accent**: Gold `43 80% 55%`
+- **Background**: Very dark `240 15% 6%` (near black like the logo)
+- **Card**: Dark `240 12% 10%`
+- **Foreground**: Warm gold-white `40 20% 90%`
+- **Ring/focus**: Gold
+- Update glass utilities to match darker tones
+
+### 6b. Dragon SVG logo (`src/components/LogoIcon.tsx`)
+Replace globe+plane SVG with a stylized dragon silhouette in red/gold. Simplified Chinese dragon coil shape that works at small sizes (w-6 h-6).
+
+### 6c. Update brand name everywhere
+- **`src/components/Header.tsx`**: "ISU Cargo" → "Imperial" + "Cargo" (with primary color on "Cargo" or use gold)
+- **`src/pages/Admin.tsx`**: Same name change (lines 175, 211)
+- **`src/pages/Index.tsx`**: Footer (line 483), copyright (line 519)
+- **`src/pages/Dashboard.tsx`**: Identity card area
+- **`index.html`**: `<title>` tag
+
+### 6d. Update chart colors (`src/pages/Admin.tsx`)
+Change `CHART_COLORS` from cyan-based to red/gold palette matching new brand.
+
+### 6e. Update CSS animations
+- `pulse-gold` keyframe: keep gold or shift to red glow
+- `glow-box-cyan` references → update to gold/red glow
 
 ## Files Changed
 | File | Changes |
 |---|---|
-| `src/pages/Index.tsx` | Update footer contact numbers |
-| `src/components/ContactButtons.tsx` | WhatsApp number update |
-| `src/lib/mockData.ts` | Add `stage` to Client, extend stats |
-| `src/pages/Admin.tsx` | Confirm dialog, stage dropdown, stage filter, new stats, translations |
-| `src/lib/i18n.tsx` | All new translation keys in EN/RU/KG |
+| `src/components/PhoneInput.tsx` | Fix border alignment |
+| `src/pages/Admin.tsx` | Statistics mobile grid, tooltip fix, chart colors, brand name |
+| `src/lib/mockData.ts` | CSV BOM fix |
+| `src/pages/Index.tsx` | Fix marketplace names, brand name |
+| `src/components/LogoIcon.tsx` | Dragon SVG |
+| `src/components/Header.tsx` | "Imperial Cargo" name |
+| `src/pages/Dashboard.tsx` | Brand name |
+| `src/index.css` | Red/gold/dark color scheme |
+| `index.html` | Title update |
 
