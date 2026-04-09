@@ -377,7 +377,7 @@ const Index = () => {
                 </div>
                 {/* Right: card */}
                 <motion.div
-                  whileHover={{ scale: 1.02, borderColor: 'hsl(43, 50%, 54%)' }}
+                  whileHover={{ scale: 1.02, borderColor: 'hsl(0, 75%, 45%)' }}
                   transition={{ duration: 0.2 }}
                   className="bg-card rounded-2xl p-4 md:p-6 lg:p-8 border border-border transition-shadow duration-300 hover:shadow-lg hover:shadow-primary/10 flex-1 mb-4 md:mb-6"
                 >
