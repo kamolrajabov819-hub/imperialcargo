@@ -60,6 +60,7 @@ const Index = () => {
   const user = getCurrentUser();
   const [openService, setOpenService] = useState<number | null>(null);
   const [activeTestimonial, setActiveTestimonial] = useState(0);
+  const [testimonialPaused, setTestimonialPaused] = useState(false);
 
   const services = [
     { title: t("services.cargo.title"), desc: t("services.cargo.desc") },
@@ -73,6 +74,15 @@ const Index = () => {
     { text: t("testimonial.2.text" as any), name: t("testimonial.2.name" as any), city: t("testimonial.2.city" as any) },
     { text: t("testimonial.3.text" as any), name: t("testimonial.3.name" as any), city: t("testimonial.3.city" as any) },
   ];
+
+  // Auto-rotate testimonials
+  useEffect(() => {
+    if (testimonialPaused) return;
+    const timer = setInterval(() => {
+      setActiveTestimonial((prev) => (prev === testimonials.length - 1 ? 0 : prev + 1));
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [testimonialPaused, testimonials.length]);
 
   return (
     <div className="min-h-screen bg-background overflow-hidden">
@@ -180,18 +190,27 @@ const Index = () => {
       </section>
 
       {/* ─── PARTNER LOGOS ─── */}
-      <Section className="py-8 border-b border-border bg-card">
+      <Section className="py-8 border-b border-border bg-secondary/50">
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-center gap-10 flex-wrap opacity-40">
-            {["DHL", "FedEx", "Maersk", "COSCO", "SF Express", "Cainiao"].map((name) => (
-              <span key={name} className="text-lg font-bold text-foreground tracking-wider">{name}</span>
+          <div className="flex items-center justify-center gap-10 flex-wrap opacity-50">
+            {["DHL", "FedEx", "Maersk", "COSCO", "SF Express", "Cainiao"].map((name, i) => (
+              <motion.span
+                key={name}
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="text-lg font-bold text-foreground tracking-wider"
+              >
+                {name}
+              </motion.span>
             ))}
           </div>
         </div>
       </Section>
 
       {/* ─── ABOUT ─── */}
-      <Section id="about" className="py-20 bg-card">
+      <Section id="about" className="py-20 bg-background">
         <div className="container mx-auto px-4">
           <div className="grid lg:grid-cols-2 gap-16 items-start">
             <div>
@@ -376,7 +395,7 @@ const Index = () => {
                 </div>
                 {/* Right: card */}
                 <motion.div
-                  whileHover={{ scale: 1.02, borderColor: 'hsl(43, 50%, 54%)' }}
+                  whileHover={{ scale: 1.02, borderColor: 'hsl(0, 75%, 45%)' }}
                   transition={{ duration: 0.2 }}
                   className="bg-card rounded-2xl p-4 md:p-6 lg:p-8 border border-border transition-shadow duration-300 hover:shadow-lg hover:shadow-primary/10 flex-1 mb-4 md:mb-6"
                 >
@@ -427,7 +446,7 @@ const Index = () => {
             <h2 className="text-3xl md:text-5xl font-bold text-foreground font-heading">{t("testimonials.title")}</h2>
           </div>
 
-          <div className="max-w-2xl mx-auto">
+          <div className="max-w-2xl mx-auto" onMouseEnter={() => setTestimonialPaused(true)} onMouseLeave={() => setTestimonialPaused(false)}>
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeTestimonial}
@@ -474,7 +493,7 @@ const Index = () => {
       </Section>
 
       {/* ─── FOOTER ─── */}
-      <footer id="contact" className="py-16 bg-card border-t border-border">
+      <footer id="contact" className="py-16 bg-card border-t-2 border-primary/20" style={{ borderImage: 'linear-gradient(to right, hsl(0 75% 45% / 0.3), hsl(0 75% 45% / 0.1)) 1' }}>
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-4 gap-10 mb-12">
             <div>
