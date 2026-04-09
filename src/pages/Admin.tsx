@@ -657,13 +657,13 @@ export default function Admin() {
                   <h3 className="text-base md:text-lg font-semibold text-foreground mb-4">{t("admin.registrationsByMonth")}</h3>
                   <ResponsiveContainer width="100%" height={220}>
                     <BarChart data={stats.registrationsByMonth}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(240,10%,18%)" />
-                      <XAxis dataKey="month" stroke="hsl(220,10%,55%)" fontSize={11} />
-                      <YAxis stroke="hsl(220,10%,55%)" fontSize={11} />
+                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(0,0%,88%)" />
+                      <XAxis dataKey="month" stroke="hsl(0,0%,40%)" fontSize={11} />
+                      <YAxis stroke="hsl(0,0%,40%)" fontSize={11} />
                       <Tooltip
-                        contentStyle={{ background: "hsl(240,15%,8%)", border: "1px solid hsl(240,10%,18%)", borderRadius: "8px", color: "#fff" }}
-                        itemStyle={{ color: "#fff" }}
-                        labelStyle={{ color: "#fff" }}
+                        contentStyle={{ background: "#fff", border: "1px solid hsl(0,10%,88%)", borderRadius: "8px", color: "#222" }}
+                        itemStyle={{ color: "#222" }}
+                        labelStyle={{ color: "#222" }}
                       />
                       <Bar dataKey="count" fill="hsl(0,75%,45%)" radius={[4, 4, 0, 0]} />
                     </BarChart>
@@ -688,9 +688,9 @@ export default function Admin() {
                         ))}
                       </Pie>
                       <Tooltip
-                        contentStyle={{ background: "hsl(240,15%,8%)", border: "1px solid hsl(240,10%,18%)", borderRadius: "8px", color: "hsl(200,100%,95%)" }}
-                        itemStyle={{ color: "hsl(200,100%,95%)" }}
-                        labelStyle={{ color: "hsl(200,100%,95%)" }}
+                        contentStyle={{ background: "#fff", border: "1px solid hsl(0,10%,88%)", borderRadius: "8px", color: "#222" }}
+                        itemStyle={{ color: "#222" }}
+                        labelStyle={{ color: "#222" }}
                       />
                     </PieChart>
                   </ResponsiveContainer>
@@ -710,13 +710,13 @@ export default function Admin() {
                 <h3 className="text-base md:text-lg font-semibold text-foreground mb-4">{t("admin.stageDistribution")}</h3>
                 <ResponsiveContainer width="100%" height={280}>
                   <BarChart data={stats.stageDistribution.map((d) => ({ ...d, name: getStageName(d.stage) }))} layout="vertical">
-                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(240,10%,18%)" />
-                    <XAxis type="number" stroke="hsl(220,10%,55%)" fontSize={11} />
-                    <YAxis dataKey="name" type="category" stroke="hsl(220,10%,55%)" fontSize={10} width={isMobile ? 80 : 120} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(0,0%,88%)" />
+                    <XAxis type="number" stroke="hsl(0,0%,40%)" fontSize={11} />
+                    <YAxis dataKey="name" type="category" stroke="hsl(0,0%,40%)" fontSize={10} width={isMobile ? 80 : 120} />
                     <Tooltip
-                      contentStyle={{ background: "hsl(240,15%,8%)", border: "1px solid hsl(240,10%,18%)", borderRadius: "8px", color: "#fff" }}
-                      itemStyle={{ color: "#fff" }}
-                      labelStyle={{ color: "#fff" }}
+                      contentStyle={{ background: "#fff", border: "1px solid hsl(0,10%,88%)", borderRadius: "8px", color: "#222" }}
+                      itemStyle={{ color: "#222" }}
+                      labelStyle={{ color: "#222" }}
                     />
                     <Bar dataKey="count" radius={[0, 4, 4, 0]}>
                       {stats.stageDistribution.map((_, i) => (
