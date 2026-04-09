@@ -60,6 +60,7 @@ const Index = () => {
   const user = getCurrentUser();
   const [openService, setOpenService] = useState<number | null>(null);
   const [activeTestimonial, setActiveTestimonial] = useState(0);
+  const [testimonialPaused, setTestimonialPaused] = useState(false);
 
   const services = [
     { title: t("services.cargo.title"), desc: t("services.cargo.desc") },
