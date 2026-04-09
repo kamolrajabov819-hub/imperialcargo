@@ -17,6 +17,13 @@ import whyTeam from "@/assets/why-team.jpg";
 import whyDelivery from "@/assets/why-delivery.jpg";
 import whyTracking from "@/assets/why-tracking.jpg";
 
+const serviceImages = [
+  "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=400&q=80",
+  "https://images.unsplash.com/photo-1553413077-190dd305871c?w=400&q=80",
+  "https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=400&q=80",
+  "https://images.unsplash.com/photo-1494412574643-ff11b0a5eb95?w=400&q=80",
+];
+
 function AnimatedCounter({ end, suffix = "" }: { end: number; suffix?: string }) {
   const [count, setCount] = useState(0);
   const ref = useRef<HTMLSpanElement>(null);
@@ -55,6 +62,8 @@ function Section({ children, className = "", id }: { children: React.ReactNode; 
   );
 }
 
+const partnerNames = ["DHL", "FedEx", "Maersk", "COSCO", "SF Express", "Cainiao"];
+
 const Index = () => {
   const { t } = useTranslation();
   const user = getCurrentUser();
@@ -91,13 +100,11 @@ const Index = () => {
 
       {/* ─── HERO ─── */}
       <section className="relative min-h-screen flex items-center px-4 md:px-8 pt-20 pb-8">
-        {/* Rounded hero container */}
         <div className="relative w-full max-w-[1400px] mx-auto rounded-3xl overflow-hidden min-h-[85vh] flex items-end md:items-center">
           <img src={heroBg} alt="Cargo truck on highway" className="absolute inset-0 w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-black/10" />
 
           <div className="relative z-10 w-full px-6 md:px-12 py-10">
-            {/* Badge */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -109,7 +116,6 @@ const Index = () => {
               </span>
             </motion.div>
 
-            {/* Main heading */}
             <motion.h1
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
@@ -121,7 +127,6 @@ const Index = () => {
               <span className="text-primary" style={{ textShadow: '0 2px 20px rgba(0,0,0,0.8), 0 0 40px rgba(201,168,76,0.3)' }}>{t("hero.titleHighlight")}</span>
             </motion.h1>
 
-            {/* CTA buttons */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -148,14 +153,12 @@ const Index = () => {
               </a>
             </motion.div>
 
-            {/* Bottom stat chips */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.9 }}
               className="flex justify-between items-end"
             >
-              {/* Left - Business Clients */}
               <div className="bg-card rounded-2xl px-5 py-3 shadow-lg border border-border flex items-center gap-3">
                 <div className="flex -space-x-2">
                   {[
@@ -174,7 +177,6 @@ const Index = () => {
                 <div className="text-sm font-semibold text-foreground">{t("hero.stat.clients")}</div>
               </div>
 
-              {/* Right - Shipments */}
               <div className="hidden md:flex bg-card rounded-2xl px-4 py-3 shadow-lg border border-border items-center gap-3">
                 <div className="w-14 h-14 rounded-xl overflow-hidden">
                   <img src={heroBg} alt="Shipment" className="w-full h-full object-cover" />
@@ -189,22 +191,20 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ─── PARTNER LOGOS ─── */}
-      <Section className="py-8 border-b border-border bg-secondary/50">
+      {/* ─── PARTNER LOGOS — Marquee ─── */}
+      <Section className="py-8 border-b border-border bg-secondary/50 overflow-hidden">
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-center gap-10 flex-wrap opacity-50">
-            {["DHL", "FedEx", "Maersk", "COSCO", "SF Express", "Cainiao"].map((name, i) => (
-              <motion.span
-                key={name}
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="text-lg font-bold text-foreground tracking-wider"
-              >
-                {name}
-              </motion.span>
-            ))}
+          <div className="relative overflow-hidden">
+            <div className="flex animate-marquee whitespace-nowrap">
+              {[...partnerNames, ...partnerNames].map((name, i) => (
+                <span
+                  key={`${name}-${i}`}
+                  className="text-lg font-bold text-foreground/40 tracking-wider mx-10 inline-block"
+                >
+                  {name}
+                </span>
+              ))}
+            </div>
           </div>
         </div>
       </Section>
@@ -221,26 +221,43 @@ const Index = () => {
               <p className="text-muted-foreground leading-relaxed mb-10">{t("about.desc")}</p>
 
               <div className="grid sm:grid-cols-2 gap-4">
-                <div className="glass-dark rounded-2xl p-6">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.1 }}
+                  className="glass-dark rounded-2xl p-6"
+                >
                   <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center mb-4">
                     <LogoIcon className="w-5 h-5 text-primary" />
                   </div>
                   <h3 className="text-lg font-bold text-white mb-2">{t("about.card1.title")}</h3>
                   <p className="text-sm text-white/70 leading-relaxed">{t("about.card1.desc")}</p>
-                </div>
-                <div className="bg-card rounded-2xl p-6 border border-border">
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.3 }}
+                  className="bg-card rounded-2xl p-6 border border-border"
+                >
                   <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
                     <LogoIcon className="w-5 h-5 text-primary" />
                   </div>
                   <h3 className="text-lg font-bold text-foreground mb-2">{t("about.card2.title")}</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed">{t("about.card2.desc")}</p>
-                </div>
+                </motion.div>
               </div>
             </div>
 
-            {/* Transfer card + truck image */}
             <div className="relative">
-              <div className="bg-gradient-to-br from-primary/30 via-primary/20 to-secondary rounded-3xl p-6 md:p-8 border border-primary/20">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6 }}
+                className="bg-gradient-to-br from-primary/30 via-primary/20 to-secondary rounded-3xl p-6 md:p-8 border border-primary/20"
+              >
                 <div className="bg-card rounded-2xl shadow-xl p-6 w-full max-w-xs mx-auto border border-border mb-6">
                   <p className="text-sm font-semibold text-foreground mb-3">Transfer From</p>
                   <div className="bg-muted rounded-xl p-3 mb-4">
@@ -259,14 +276,14 @@ const Index = () => {
                 <div className="rounded-2xl overflow-hidden">
                   <img src={heroBg} alt="Cargo truck" className="w-full h-48 object-cover rounded-2xl" />
                 </div>
-              </div>
+              </motion.div>
             </div>
           </div>
         </div>
       </Section>
 
       {/* ─── SERVICES ACCORDION ─── */}
-      <Section id="services" className="py-20 bg-background">
+      <Section id="services" className="py-20 bg-secondary/30">
         <div className="container mx-auto px-4">
           <div className="grid lg:grid-cols-2 gap-12 items-start mb-12">
             <div>
@@ -294,7 +311,7 @@ const Index = () => {
                     className="w-full flex items-center justify-between px-8 py-6 text-left"
                   >
                     <div className="flex items-center gap-6">
-                      <span className={`text-lg font-bold ${isOpen ? "text-primary" : "text-primary"}`}>
+                      <span className="text-lg font-bold text-primary">
                         {String(i + 1).padStart(2, "0")}.
                       </span>
                       <span className={`text-xl font-bold ${isOpen ? "text-white" : "text-foreground"}`}>
@@ -316,8 +333,11 @@ const Index = () => {
                         transition={{ duration: 0.3 }}
                         className="overflow-hidden"
                       >
-                        <div className="px-8 pb-6 pl-20">
-                          <p className="text-white/70 leading-relaxed max-w-lg">{svc.desc}</p>
+                        <div className="px-8 pb-6 pl-20 flex gap-6 items-start">
+                          <p className="text-white/70 leading-relaxed max-w-lg flex-1">{svc.desc}</p>
+                          <div className="hidden md:block w-40 h-28 rounded-xl overflow-hidden shrink-0">
+                            <img src={serviceImages[i]} alt={svc.title} className="w-full h-full object-cover" loading="lazy" />
+                          </div>
                         </div>
                       </motion.div>
                     )}
@@ -330,7 +350,7 @@ const Index = () => {
       </Section>
 
       {/* ─── WHY CHOOSE US — Image Cards ─── */}
-      <Section className="py-20 bg-card">
+      <Section className="py-20 bg-background">
         <div className="container mx-auto px-4">
           <div className="text-center mb-14">
             <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-border text-sm text-muted-foreground mb-6">
@@ -347,6 +367,11 @@ const Index = () => {
               <motion.div
                 key={i}
                 whileHover={{ y: -8 }}
+                animate={{ y: [0, -8, 0] }}
+                transition={{ 
+                  y: { duration: 4 + i * 0.5, repeat: Infinity, ease: "easeInOut" },
+                  hover: { duration: 0.2 }
+                }}
                 className="relative group rounded-2xl overflow-hidden aspect-[4/5] cursor-pointer"
               >
                 <img src={card.img} alt={card.title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
@@ -362,7 +387,7 @@ const Index = () => {
       </Section>
 
       {/* ─── HOW IT WORKS ─── */}
-      <Section className="py-20 bg-background">
+      <Section className="py-20 bg-secondary/30">
         <div className="container mx-auto px-4">
           <div className="text-center mb-14">
             <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-border text-sm text-muted-foreground mb-6">
@@ -384,16 +409,21 @@ const Index = () => {
                 transition={{ delay: i * 0.2, type: "spring", stiffness: 100 }}
                 className="flex gap-4 md:gap-6 lg:gap-10 relative"
               >
-                {/* Left: number + line */}
                 <div className="flex flex-col items-center">
                   <div className="w-10 h-10 md:w-14 md:h-14 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm md:text-lg font-bold shrink-0 shadow-lg shadow-primary/30 animate-pulse-gold">
                     {item.step}
                   </div>
                   {i < 2 && (
-                    <div className="w-0.5 h-full bg-gradient-to-b from-primary/50 to-border min-h-[60px]" />
+                    <div 
+                      className="w-0.5 h-full min-h-[60px]"
+                      style={{ 
+                        background: 'linear-gradient(to bottom, hsl(0 75% 45% / 0.5), hsl(30 20% 88%))',
+                        backgroundSize: '100% 200%',
+                        animation: 'gradient-pulse 3s ease-in-out infinite'
+                      }}
+                    />
                   )}
                 </div>
-                {/* Right: card */}
                 <motion.div
                   whileHover={{ scale: 1.02, borderColor: 'hsl(0, 75%, 45%)' }}
                   transition={{ duration: 0.2 }}
@@ -406,7 +436,6 @@ const Index = () => {
                     <h3 className="text-lg font-bold text-foreground">{item.title}</h3>
                   </div>
                   <p className="text-muted-foreground text-sm leading-relaxed">{item.desc}</p>
-                  {/* Marketplace logos for step 1 */}
                   {i === 0 && (
                     <div className="flex flex-wrap items-center gap-3 md:gap-4 mt-4 md:mt-5">
                       {[
@@ -437,8 +466,27 @@ const Index = () => {
       </Section>
 
       {/* ─── TESTIMONIALS CAROUSEL ─── */}
-      <Section className="py-20 bg-card">
-        <div className="container mx-auto px-4">
+      <Section className="py-20 bg-background relative">
+        {/* Decorative floating shapes */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <motion.div
+            animate={{ y: [0, -15, 0], x: [0, 5, 0] }}
+            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute top-20 left-10 w-16 h-16 rounded-full bg-primary/5"
+          />
+          <motion.div
+            animate={{ y: [0, 10, 0], x: [0, -8, 0] }}
+            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute bottom-20 right-10 w-24 h-24 rounded-full bg-primary/5"
+          />
+          <motion.div
+            animate={{ y: [0, -10, 0] }}
+            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute top-1/2 right-1/4 w-8 h-8 rounded-full bg-primary/10"
+          />
+        </div>
+
+        <div className="container mx-auto px-4 relative z-10">
           <div className="text-center mb-14">
             <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-border text-sm text-muted-foreground mb-6">
               <Star className="w-3.5 h-3.5" /> {t("testimonials.tag")}
@@ -454,7 +502,7 @@ const Index = () => {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -50 }}
                 transition={{ duration: 0.3 }}
-                className="bg-background rounded-2xl border border-border p-8 md:p-10"
+                className="bg-card rounded-2xl border border-border p-8 md:p-10 shadow-lg"
               >
                 <div className="text-4xl text-primary/30 mb-4">"</div>
                 <p className="text-foreground text-lg leading-relaxed mb-6 italic">
@@ -477,15 +525,15 @@ const Index = () => {
             <div className="flex justify-center gap-3 mt-6">
               <button
                 onClick={() => setActiveTestimonial((prev) => (prev === 0 ? testimonials.length - 1 : prev - 1))}
-                className="w-10 h-10 rounded-full border border-border flex items-center justify-center hover:bg-muted transition-colors"
+                className="w-10 h-10 rounded-full border border-border flex items-center justify-center hover:bg-primary hover:text-primary-foreground hover:border-primary transition-colors"
               >
-                <ChevronLeft className="w-5 h-5 text-foreground" />
+                <ChevronLeft className="w-5 h-5" />
               </button>
               <button
                 onClick={() => setActiveTestimonial((prev) => (prev === testimonials.length - 1 ? 0 : prev + 1))}
-                className="w-10 h-10 rounded-full border border-border flex items-center justify-center hover:bg-muted transition-colors"
+                className="w-10 h-10 rounded-full border border-border flex items-center justify-center hover:bg-primary hover:text-primary-foreground hover:border-primary transition-colors"
               >
-                <ChevronRight className="w-5 h-5 text-foreground" />
+                <ChevronRight className="w-5 h-5" />
               </button>
             </div>
           </div>
@@ -505,7 +553,7 @@ const Index = () => {
             </div>
             <div>
               <h4 className="font-semibold text-foreground mb-4">{t("footer.quickLinks")}</h4>
-              <div className="space-y-2">
+              <div className="space-y-2 story-link">
                 <a href="#about" className="block text-sm text-muted-foreground hover:text-primary transition-all">{t("nav.about")}</a>
                 <a href="#services" className="block text-sm text-muted-foreground hover:text-primary transition-all">{t("nav.services")}</a>
                 <Link to="/signup" className="block text-sm text-muted-foreground hover:text-primary transition-all">{t("nav.signup")}</Link>
