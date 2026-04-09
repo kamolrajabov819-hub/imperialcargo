@@ -1,56 +1,33 @@
 
 
-# 2 Changes: Warm Background Color Palette + More Animation & Photos
+# 3 Fixes: Service Images, Phone Input Borders, Darker Cream Background
 
-## 1. Warm cream background color palette
+## 1. Fix service section images not loading
 
-The current `#fafafa` (0 0% 98%) is too stark white. Switch to a warm cream inspired by the Motta Weddings reference (`#fff5e8` = warm peach-cream).
+The Unsplash URLs are likely blocked or slow. The `alt` text is showing instead of images (screenshot shows broken image icon + alt text). Replace external Unsplash URLs with inline placeholder gradients or use local asset imports. Since no local photos exist, use colored gradient placeholders with relevant icons instead — they'll always render.
 
-**`src/index.css`** — update CSS variables:
-- `--background`: `30 100% 97%` (≈ `#fff5e8`, warm cream)
-- `--card`: `30 50% 99%` (slightly warmer white for cards)
-- `--secondary`: `30 30% 94%` (warm light gray)
-- `--muted`: `30 20% 91%` (warm muted)
-- `--border`: `30 20% 88%` (warm border)
-- `--input`: `30 20% 88%`
-- `--sidebar-background`: `30 40% 96%`
-- `--sidebar-accent`: `30 30% 94%`
-- `--sidebar-border`: `30 20% 88%`
-- Keep `--primary` deep red, `--accent` red, `--foreground` dark
-- Update `glass` and `glass-strong` utilities to use warm tones (`hsl(30 50% 99% / 0.8)`)
+**`src/pages/Index.tsx`** (lines 20-25): Replace `serviceImages` array with gradient backgrounds using div+icon instead of `<img>` tags. In the accordion content (line 338-340), replace `<img>` with a styled div containing a relevant Lucide icon (Ship, Warehouse, Truck, Package) on a gradient background.
 
-## 2. More animations and photos
+## 2. Fix phone input — add full visible border
 
-**`src/pages/Index.tsx`**:
+Photo shows the input field has a red top border but no visible full border. The input inside the container lacks its own visible border styling since the container handles it. The issue is the `focus-visible:ring` on the input creates a partial red outline that looks like only a top border.
 
-### 2a. Partner logos — add horizontal scroll animation
-Replace static flex with a marquee-style infinite scroll using CSS animation. Duplicate the logo list and animate with `translateX`.
+**`src/components/PhoneInput.tsx`** (line 72): Remove `ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2` from the input. Instead, add focus styling to the parent container div using a focus-within approach: `focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2` on line 57's container div.
 
-### 2b. About section — staggered card entrance
-Add `whileInView` with stagger delay to the two info cards (glass-dark and bg-card).
+## 3. Make background darker/creamier
 
-### 2c. Services — add Unsplash cargo/logistics images
-When a service accordion opens, show a relevant image alongside the description. Use free Unsplash URLs:
-- Cargo: `https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=400` (shipping containers)
-- Warehouse: `https://images.unsplash.com/photo-1553413077-190dd305871c?w=400` (warehouse)
-- Freight: `https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=400` (freight truck)
-- Supply chain: `https://images.unsplash.com/photo-1494412574643-ff11b0a5eb95?w=400` (logistics)
+Current `--background: 30 100% 97%` is still too light. Darken slightly to `30 60% 93%` (a richer, warmer cream — less washed out).
 
-### 2d. Why Choose Us — add floating animation
-Add `animate={{ y: [0, -8, 0] }}` with different durations per card for a subtle float effect.
-
-### 2e. Steps section — add connecting line animation
-Animate the vertical connector line with a gradient that pulses downward using CSS.
-
-### 2f. Testimonials — add parallax dots/shapes
-Add decorative floating shapes (circles, dots) around the testimonial card with `animate-float`.
-
-### 2g. Footer — add hover animations on links
-Add underline-on-hover effect to footer links using the `.story-link` pattern.
+**`src/index.css`**:
+- `--background`: `30 60% 93%` (darker warm cream)
+- `--card`: `30 40% 97%` (slightly lighter than bg for contrast)
+- `--secondary`: `30 30% 89%` (darker warm gray)
+- `--muted`: `30 20% 86%`
 
 ## Files Changed
 | File | Changes |
 |---|---|
-| `src/index.css` | Warm cream palette, marquee animation keyframe |
-| `src/pages/Index.tsx` | Service images, floating cards, marquee logos, decorative elements |
+| `src/pages/Index.tsx` | Replace broken Unsplash images with icon+gradient placeholders |
+| `src/components/PhoneInput.tsx` | Move focus ring to container, clean input borders |
+| `src/index.css` | Darken cream background values |
 
