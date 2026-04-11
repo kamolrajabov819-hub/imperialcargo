@@ -1,33 +1,38 @@
 
 
-# 3 Fixes: Service Images, Phone Input Borders, Darker Cream Background
+# 4 Changes: Why Choose Us Photos, Service Photo Fix, Mobile Responsive Services, Remove Marketplace Names
 
-## 1. Fix service section images not loading
+## 1. Update "Why Choose Us" section photos
 
-The Unsplash URLs are likely blocked or slow. The `alt` text is showing instead of images (screenshot shows broken image icon + alt text). Replace external Unsplash URLs with inline placeholder gradients or use local asset imports. Since no local photos exist, use colored gradient placeholders with relevant icons instead — they'll always render.
+Copy the 4 uploaded user images into `src/assets/`. Then update the image references on lines 373-376:
 
-**`src/pages/Index.tsx`** (lines 20-25): Replace `serviceImages` array with gradient backgrounds using div+icon instead of `<img>` tags. In the accordion content (line 338-340), replace `<img>` with a styled div containing a relevant Lucide icon (Ship, Warehouse, Truck, Package) on a gradient background.
+- **Expert Team** (currently `whyTeam`): change to uploaded photo 4 (`pexels-artempodrez-5025496.jpg`) — people loading boxes
+- **Reliable Delivery** (currently `whyDelivery`): change to uploaded photo 3 (`pexels-billow926-2948812-4515030.jpg`) — airport cargo
+- **Smart Tracking** (currently `whyTracking`): change to uploaded photo 1 (`close-up-man-holding-smartphone.jpg`) — man with phone
 
-## 2. Fix phone input — add full visible border
+## 2. Fix services section 3rd part photo (duplicate of 4th)
 
-Photo shows the input field has a red top border but no visible full border. The input inside the container lacks its own visible border styling since the container handles it. The issue is the `focus-visible:ring` on the input creates a partial red outline that looks like only a top border.
+Line 20: `serviceImages` currently uses `whyTracking` for both index 2 and 3. Replace index 2 (3rd service — "Purchase of goods without commission") with the uploaded photo 2 (`pexels-shuaizhi-tian-485596-20882742.jpg` — trucks). This gives each service a unique image.
 
-**`src/components/PhoneInput.tsx`** (line 72): Remove `ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2` from the input. Instead, add focus styling to the parent container div using a focus-within approach: `focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2` on line 57's container div.
+Updated array:
+```
+const serviceImages = [whyDelivery, whyTeam, truckPhoto, whyTracking];
+```
 
-## 3. Make background darker/creamier
+## 3. Make services section mobile responsive — show photos on mobile
 
-Current `--background: 30 100% 97%` is still too light. Darken slightly to `30 60% 93%` (a richer, warmer cream — less washed out).
+Line 349: The service images have `hidden md:block` which hides them on mobile. Change to always visible with responsive sizing:
+- Remove `hidden md:block`
+- On mobile: show image below text (stack vertically with `flex-col` on small screens, `flex-row` on md+)
+- Adjust image size for mobile: `w-full h-40 md:w-40 md:h-28`
 
-**`src/index.css`**:
-- `--background`: `30 60% 93%` (darker warm cream)
-- `--card`: `30 40% 97%` (slightly lighter than bg for contrast)
-- `--secondary`: `30 30% 89%` (darker warm gray)
-- `--muted`: `30 20% 86%`
+## 4. Remove marketplace names from How It Works
+
+Line 467: Delete the `<span>` element showing `platform.name` text below each logo. Keep the logo images intact.
 
 ## Files Changed
 | File | Changes |
 |---|---|
-| `src/pages/Index.tsx` | Replace broken Unsplash images with icon+gradient placeholders |
-| `src/components/PhoneInput.tsx` | Move focus ring to container, clean input borders |
-| `src/index.css` | Darken cream background values |
+| `src/pages/Index.tsx` | Update why-choose-us images, fix service image array, make services mobile-responsive, remove marketplace name labels |
+| `src/assets/` | Copy 4 uploaded photos into assets |
 
