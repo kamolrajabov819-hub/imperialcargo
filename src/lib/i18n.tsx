@@ -40,8 +40,8 @@ const translations = {
     "services.cargo.desc": "Door-to-door cargo delivery from China to Kyrgyzstan with full tracking and insurance coverage.",
     "services.warehouse.title": "Warehouse Storage",
     "services.warehouse.desc": "Secure warehouse facilities in Yiwu, China with consolidation and repackaging services.",
-    "services.freight.title": "Freight Forwarding",
-    "services.freight.desc": "Expert freight forwarding services handling customs clearance and documentation.",
+    "services.freight.title": "Purchase of Goods Without Commission",
+    "services.freight.desc": "We help you purchase goods from any Chinese marketplace without any commission fees. Just tell us what you need.",
     "services.supply.title": "Supply Chain Management",
     "services.supply.desc": "End-to-end supply chain solutions from sourcing to final delivery at your doorstep.",
 
@@ -233,8 +233,8 @@ const translations = {
     "services.cargo.desc": "Доставка от двери до двери из Китая в Кыргызстан с полным отслеживанием и страхованием.",
     "services.warehouse.title": "Складское хранение",
     "services.warehouse.desc": "Безопасные склады в Иу, Китай с услугами консолидации и переупаковки.",
-    "services.freight.title": "Экспедирование грузов",
-    "services.freight.desc": "Профессиональные услуги экспедирования с таможенным оформлением.",
+    "services.freight.title": "Покупка товаров без комиссии",
+    "services.freight.desc": "Мы поможем купить товары с любой китайской площадки без комиссии. Просто скажите, что вам нужно.",
     "services.supply.title": "Управление цепочкой поставок",
     "services.supply.desc": "Комплексные решения от поиска товара до финальной доставки.",
 
@@ -417,8 +417,8 @@ const translations = {
     "services.cargo.desc": "Кытайдан Кыргызстанга толук көзөмөлдөө жана камсыздандыруу менен жүк жеткирүү.",
     "services.warehouse.title": "Кампа сактоо",
     "services.warehouse.desc": "Иу, Кытайдагы коопсуз кампа объекттери, консолидация жана кайра таңгактоо кызматтары.",
-    "services.freight.title": "Жүк экспедициясы",
-    "services.freight.desc": "Бажы тариздөө жана документация менен кесипкөй экспедиция кызматтары.",
+    "services.freight.title": "Комиссиясыз товар сатып алуу",
+    "services.freight.desc": "Кытайдын каалаган аянтчасынан комиссиясыз товар сатып алууга жардам берабиз.",
     "services.supply.title": "Жеткирүү чынжырын башкаруу",
     "services.supply.desc": "Товар издөөдөн баштап акыркы жеткирүүгө чейинки комплекстүү чечимдер.",
 
