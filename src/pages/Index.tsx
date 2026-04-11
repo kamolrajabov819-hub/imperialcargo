@@ -16,8 +16,9 @@ import logo1688 from "@/assets/1688.jfif";
 import whyTeam from "@/assets/why-team.jpg";
 import whyDelivery from "@/assets/why-delivery.jpg";
 import whyTracking from "@/assets/why-tracking.jpg";
+import serviceTruck from "@/assets/service-truck.jpg";
 
-const serviceImages = [whyDelivery, whyTeam, whyTracking, whyTracking];
+const serviceImages = [whyDelivery, whyTeam, serviceTruck, whyTracking];
 
 function AnimatedCounter({ end, suffix = "" }: { end: number; suffix?: string }) {
   const [count, setCount] = useState(0);
@@ -344,9 +345,9 @@ const Index = () => {
                         transition={{ duration: 0.3 }}
                         className="overflow-hidden"
                       >
-                        <div className="px-8 pb-6 pl-20 flex gap-6 items-start">
+                        <div className="px-8 pb-6 pl-6 md:pl-20 flex flex-col md:flex-row gap-4 md:gap-6 items-start">
                           <p className="text-white/70 leading-relaxed max-w-lg flex-1">{svc.desc}</p>
-                          <div className="hidden md:block w-40 h-28 rounded-xl overflow-hidden shrink-0">
+                          <div className="w-full h-40 md:w-40 md:h-28 rounded-xl overflow-hidden shrink-0">
                             <img src={serviceImages[i]} alt={svc.title} className="w-full h-full object-cover" loading="lazy" />
                           </div>
                         </div>
@@ -464,7 +465,7 @@ const Index = () => {
                           <div className="w-9 h-9 md:w-11 md:h-11 rounded-xl overflow-hidden bg-secondary border border-border shadow-md">
                             <img src={platform.src} alt={platform.name} className="w-full h-full object-cover" />
                           </div>
-                          <span className="text-[10px] text-muted-foreground font-medium">{platform.name}</span>
+                          
                         </motion.div>
                       ))}
                     </div>
