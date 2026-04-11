@@ -17,12 +17,7 @@ import whyTeam from "@/assets/why-team.jpg";
 import whyDelivery from "@/assets/why-delivery.jpg";
 import whyTracking from "@/assets/why-tracking.jpg";
 
-const serviceImages = [
-  "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=400&q=80",
-  "https://images.unsplash.com/photo-1553413077-190dd305871c?w=400&q=80",
-  "https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=400&q=80",
-  whyTracking,
-];
+const serviceImages = [whyDelivery, whyTeam, whyTracking, whyTracking];
 
 function AnimatedCounter({ end, suffix = "" }: { end: number; suffix?: string }) {
   const [count, setCount] = useState(0);
@@ -62,7 +57,7 @@ function Section({ children, className = "", id }: { children: React.ReactNode; 
   );
 }
 
-const partnerNames = ["DHL", "FedEx", "Maersk", "COSCO", "SF Express", "Cainiao"];
+
 
 const Index = () => {
   const { t } = useTranslation();
@@ -191,23 +186,6 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ─── PARTNER LOGOS — Marquee ─── */}
-      <Section className="py-8 border-b border-border bg-secondary/50 overflow-hidden">
-        <div className="container mx-auto px-4">
-          <div className="relative overflow-hidden">
-            <div className="flex animate-marquee whitespace-nowrap">
-              {[...partnerNames, ...partnerNames].map((name, i) => (
-                <span
-                  key={`${name}-${i}`}
-                  className="text-lg font-bold text-foreground/40 tracking-wider mx-10 inline-block"
-                >
-                  {name}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-      </Section>
 
       {/* ─── ABOUT ─── */}
       <Section id="about" className="py-20 bg-background">
@@ -256,23 +234,56 @@ const Index = () => {
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6 }}
-                className="bg-gradient-to-br from-primary/30 via-primary/20 to-secondary rounded-3xl p-6 md:p-8 border border-primary/20"
+                className="bg-gradient-to-br from-primary/20 via-card to-secondary rounded-3xl p-6 md:p-8 border border-primary/15 shadow-2xl"
               >
-                <div className="bg-card rounded-2xl shadow-xl p-6 w-full max-w-xs mx-auto border border-border mb-6">
-                  <p className="text-sm font-semibold text-foreground mb-3">Transfer From</p>
+                {/* Status Badge */}
+                <div className="flex justify-center mb-4">
+                  <motion.div
+                    animate={{ opacity: [0.7, 1, 0.7] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                    className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-green-500/15 border border-green-500/30"
+                  >
+                    <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                    <span className="text-xs font-semibold text-green-600">In Transit</span>
+                  </motion.div>
+                </div>
+
+                <motion.div
+                  animate={{ boxShadow: ["0 0 0 0 hsla(var(--primary), 0)", "0 0 20px 4px hsla(var(--primary), 0.15)", "0 0 0 0 hsla(var(--primary), 0)"] }}
+                  transition={{ duration: 3, repeat: Infinity }}
+                  className="bg-card rounded-2xl shadow-xl p-6 w-full max-w-xs mx-auto border border-border mb-5"
+                >
+                  <p className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-primary" /> Transfer From
+                  </p>
                   <div className="bg-muted rounded-xl p-3 mb-4">
-                    <p className="text-primary text-sm font-mono font-bold">kf145721457ad</p>
-                    <p className="text-xs text-muted-foreground">Yiwu, China</p>
+                    <p className="text-primary text-sm font-mono font-bold tracking-wider">KGZ-784523</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">Yiwu, China</p>
                   </div>
                   <div className="flex justify-center mb-4">
-                    <div className="w-8 h-8 rounded-full border border-border flex items-center justify-center text-muted-foreground text-xs">↕</div>
+                    <motion.div
+                      animate={{ y: [0, -3, 0] }}
+                      transition={{ duration: 1.5, repeat: Infinity }}
+                      className="w-9 h-9 rounded-full bg-primary/10 border border-primary/30 flex items-center justify-center text-primary text-sm font-bold"
+                    >
+                      ↕
+                    </motion.div>
                   </div>
-                  <p className="text-sm font-semibold text-foreground mb-3">Transfer To</p>
+                  <p className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-primary" /> Transfer To
+                  </p>
                   <div className="bg-muted rounded-xl p-3">
-                    <p className="text-primary text-sm font-mono font-bold">eilm1452145klm</p>
-                    <p className="text-xs text-muted-foreground">Bishkek, Kyrgyzstan</p>
+                    <p className="text-primary text-sm font-mono font-bold tracking-wider">KGZ-331048</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">Bishkek, Kyrgyzstan</p>
                   </div>
+                </motion.div>
+
+                {/* Estimated Delivery */}
+                <div className="text-center mb-5">
+                  <p className="text-xs text-muted-foreground">Estimated Delivery</p>
+                  <p className="text-sm font-bold text-foreground">7-12 Business Days</p>
                 </div>
+
                 <div className="rounded-2xl overflow-hidden">
                   <img src={heroBg} alt="Cargo truck" className="w-full h-48 object-cover rounded-2xl" />
                 </div>
@@ -440,9 +451,9 @@ const Index = () => {
                     <div className="flex flex-wrap items-center gap-3 md:gap-4 mt-4 md:mt-5">
                       {[
                         { name: "Taobao", src: taobaoLogo },
-                        { name: "1688", src: logo1688 },
                         { name: "Pinduoduo", src: pinduoduoLogo },
                         { name: "Dewu", src: dewuLogo },
+                        { name: "1688", src: logo1688 },
                       ].map((platform) => (
                         <motion.div
                           key={platform.name}
