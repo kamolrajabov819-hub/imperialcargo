@@ -8,7 +8,7 @@ export function ContactButtons() {
   return (
     <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-3 items-end">
       <motion.a
-        href="https://t.me/sultanb19"
+        href="https://t.me/+996502505506"
         target="_blank"
         rel="noopener noreferrer"
         initial={{ scale: 0 }}
@@ -24,7 +24,7 @@ export function ContactButtons() {
       </motion.a>
 
       <motion.a
-        href="https://wa.me/996705102772"
+        href="https://wa.me/996502505506"
         target="_blank"
         rel="noopener noreferrer"
         initial={{ scale: 0 }}
