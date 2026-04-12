@@ -1,3 +1,5 @@
+import { supabase } from "@/integrations/supabase/client";
+
 export type ClientStage = "new" | "consultation" | "awaiting_cargo" | "cargo_received" | "in_transit" | "arrived" | "completed" | "cancelled";
 
 export interface Client {
@@ -11,54 +13,68 @@ export interface Client {
   stage?: ClientStage;
 }
 
-const STORAGE_KEY = "cargolink-clients";
+export interface Comment {
+  id: string;
+  clientId: string;
+  text: string;
+  createdAt: string;
+}
+
 const USER_KEY = "cargolink-current-user";
-const WAREHOUSE_KEY = "cargolink-warehouse";
 
 export function generateCode(): string {
   const digits = Math.floor(100000 + Math.random() * 900000);
   return `KGZ-${digits}`;
 }
 
-export function getClients(): Client[] {
-  const data = localStorage.getItem(STORAGE_KEY);
-  if (data) return JSON.parse(data);
-  const defaults: Client[] = [
-    { id: "1", name: "Айбек Сулайманов", phone: "+996555123456", city: "Bishkek", code: "KGZ-889241", createdAt: "2025-01-15", stage: "completed" },
-    { id: "2", name: "Мария Петрова", phone: "+996700654321", city: "Osh", code: "KGZ-331072", createdAt: "2025-02-03", stage: "in_transit" },
-    { id: "3", name: "Нурлан Алиев", phone: "+996550987654", city: "Jalal-Abad", code: "KGZ-554198", createdAt: "2025-03-20", stage: "consultation" },
-    { id: "4", name: "Гулназ Касымова", phone: "+996770112233", city: "Karakol", code: "KGZ-772610", createdAt: "2025-04-01", stage: "new" },
-    { id: "5", name: "Дмитрий Ким", phone: "+996555998877", city: "Bishkek", code: "KGZ-110385", createdAt: "2025-04-05", stage: "awaiting_cargo", confirmed: true },
-    { id: "6", name: "Азамат Турдубаев", phone: "+996700111222", city: "Bishkek", code: "KGZ-445512", createdAt: "2025-01-28", stage: "cargo_received" },
-    { id: "7", name: "Елена Сидорова", phone: "+996555333444", city: "Osh", code: "KGZ-667788", createdAt: "2025-02-14", stage: "arrived", confirmed: true },
-    { id: "8", name: "Бакыт Жумабеков", phone: "+996770555666", city: "Naryn", code: "KGZ-991234", createdAt: "2025-03-05", stage: "cancelled" },
-  ];
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(defaults));
-  return defaults;
-}
-
-export function addClient(client: Omit<Client, "id" | "code" | "createdAt">): Client {
-  const clients = getClients();
-  const newClient: Client = {
-    ...client,
-    id: crypto.randomUUID(),
-    code: generateCode(),
-    createdAt: new Date().toISOString().split("T")[0],
-    stage: "new",
+// Map DB row to Client interface
+function mapClient(row: any): Client {
+  return {
+    id: row.id,
+    name: row.name,
+    phone: row.phone,
+    city: row.city,
+    code: row.code,
+    createdAt: row.created_at ? row.created_at.split("T")[0] : "",
+    confirmed: row.confirmed,
+    stage: row.stage as ClientStage,
   };
-  clients.push(newClient);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(clients));
-  return newClient;
 }
 
-export function updateClient(id: string, updates: Partial<Client>): void {
-  const clients = getClients().map((c) => (c.id === id ? { ...c, ...updates } : c));
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(clients));
+export async function getClients(): Promise<Client[]> {
+  const { data, error } = await supabase.from("clients").select("*").order("created_at", { ascending: false });
+  if (error) { console.error("getClients error:", error); return []; }
+  return (data || []).map(mapClient);
 }
 
-export function deleteClient(id: string): void {
-  const clients = getClients().filter((c) => c.id !== id);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(clients));
+export async function addClient(client: Omit<Client, "id" | "code" | "createdAt">): Promise<Client | null> {
+  const code = generateCode();
+  const { data, error } = await supabase.from("clients").insert({
+    name: client.name,
+    phone: client.phone,
+    city: client.city || "",
+    code,
+    stage: "new" as any,
+    confirmed: false,
+  }).select().single();
+  if (error) { console.error("addClient error:", error); return null; }
+  return mapClient(data);
+}
+
+export async function updateClient(id: string, updates: Partial<Client>): Promise<void> {
+  const dbUpdates: any = {};
+  if (updates.name !== undefined) dbUpdates.name = updates.name;
+  if (updates.phone !== undefined) dbUpdates.phone = updates.phone;
+  if (updates.city !== undefined) dbUpdates.city = updates.city;
+  if (updates.confirmed !== undefined) dbUpdates.confirmed = updates.confirmed;
+  if (updates.stage !== undefined) dbUpdates.stage = updates.stage;
+  const { error } = await supabase.from("clients").update(dbUpdates).eq("id", id);
+  if (error) console.error("updateClient error:", error);
+}
+
+export async function deleteClient(id: string): Promise<void> {
+  const { error } = await supabase.from("clients").delete().eq("id", id);
+  if (error) console.error("deleteClient error:", error);
 }
 
 export function setCurrentUser(client: Client): void {
@@ -74,11 +90,15 @@ export function logoutUser(): void {
   localStorage.removeItem(USER_KEY);
 }
 
-export function findClientByNameAndPhone(name: string, phone: string): Client | null {
-  const clients = getClients();
+export async function findClientByNameAndPhone(name: string, phone: string): Promise<Client | null> {
   const trimName = name.trim().toLowerCase();
   const trimPhone = phone.replace(/\s+/g, "");
-  return clients.find((c) => c.name.toLowerCase().trim() === trimName && c.phone.replace(/\s+/g, "") === trimPhone) || null;
+  const { data, error } = await supabase.from("clients").select("*");
+  if (error || !data) return null;
+  const found = data.find(
+    (c: any) => c.name.toLowerCase().trim() === trimName && c.phone.replace(/\s+/g, "") === trimPhone
+  );
+  return found ? mapClient(found) : null;
 }
 
 export const DEFAULT_WAREHOUSE = {
@@ -91,92 +111,90 @@ export const DEFAULT_WAREHOUSE = {
   phone: "+86 579 8523 4567",
 };
 
-export function getWarehouseAddress() {
-  const data = localStorage.getItem(WAREHOUSE_KEY);
-  return data ? JSON.parse(data) : { ...DEFAULT_WAREHOUSE };
-}
-
-export function saveWarehouseAddress(address: typeof DEFAULT_WAREHOUSE): void {
-  localStorage.setItem(WAREHOUSE_KEY, JSON.stringify(address));
-}
-
-// Comment types and storage
-const COMMENTS_KEY = "cargolink-comments";
-
-export interface Comment {
-  id: string;
-  clientId: string;
-  text: string;
-  createdAt: string;
-}
-
-export function getClientComments(clientId: string): Comment[] {
-  const data = localStorage.getItem(COMMENTS_KEY);
-  const all: Comment[] = data ? JSON.parse(data) : [];
-  return all.filter((c) => c.clientId === clientId).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
-}
-
-export function addClientComment(clientId: string, text: string): Comment {
-  const data = localStorage.getItem(COMMENTS_KEY);
-  const all: Comment[] = data ? JSON.parse(data) : [];
-  const comment: Comment = {
-    id: crypto.randomUUID(),
-    clientId,
-    text,
-    createdAt: new Date().toISOString(),
+export async function getWarehouseAddress() {
+  const { data, error } = await supabase.from("warehouse_settings").select("*").limit(1).single();
+  if (error || !data) return { ...DEFAULT_WAREHOUSE };
+  return {
+    name: data.name,
+    line1: data.line1,
+    line2: data.line2,
+    city: data.city,
+    country: data.country,
+    postal: data.postal,
+    phone: data.phone,
   };
-  all.push(comment);
-  localStorage.setItem(COMMENTS_KEY, JSON.stringify(all));
-  return comment;
 }
 
-export function deleteClientComment(id: string): void {
-  const data = localStorage.getItem(COMMENTS_KEY);
-  const all: Comment[] = data ? JSON.parse(data) : [];
-  localStorage.setItem(COMMENTS_KEY, JSON.stringify(all.filter((c) => c.id !== id)));
+export async function saveWarehouseAddress(address: typeof DEFAULT_WAREHOUSE): Promise<void> {
+  // Get existing row id
+  const { data } = await supabase.from("warehouse_settings").select("id").limit(1).single();
+  if (data) {
+    const { error } = await supabase.from("warehouse_settings").update({
+      name: address.name,
+      line1: address.line1,
+      line2: address.line2,
+      city: address.city,
+      country: address.country,
+      postal: address.postal,
+      phone: address.phone,
+    }).eq("id", data.id);
+    if (error) console.error("saveWarehouseAddress error:", error);
+  }
 }
 
-export function getWarehouseString(): string {
-  const a = getWarehouseAddress();
-  return `${a.name}\n${a.line1}\n${a.line2}\n${a.city}, ${a.country} ${a.postal}\nTel: ${a.phone}`;
+export async function getClientComments(clientId: string): Promise<Comment[]> {
+  const { data, error } = await supabase
+    .from("client_comments")
+    .select("*")
+    .eq("client_id", clientId)
+    .order("created_at", { ascending: false });
+  if (error || !data) return [];
+  return data.map((c: any) => ({
+    id: c.id,
+    clientId: c.client_id,
+    text: c.text,
+    createdAt: c.created_at,
+  }));
+}
+
+export async function addClientComment(clientId: string, text: string): Promise<Comment | null> {
+  const { data, error } = await supabase.from("client_comments").insert({
+    client_id: clientId,
+    text,
+  }).select().single();
+  if (error || !data) { console.error("addClientComment error:", error); return null; }
+  return { id: data.id, clientId: data.client_id, text: data.text, createdAt: data.created_at };
+}
+
+export async function deleteClientComment(id: string): Promise<void> {
+  const { error } = await supabase.from("client_comments").delete().eq("id", id);
+  if (error) console.error("deleteClientComment error:", error);
+}
+
+export function getWarehouseString(address: typeof DEFAULT_WAREHOUSE): string {
+  return `${address.name}\n${address.line1}\n${address.line2}\n${address.city}, ${address.country} ${address.postal}\nTel: ${address.phone}`;
 }
 
 export const ALL_STAGES: ClientStage[] = ["new", "consultation", "awaiting_cargo", "cargo_received", "in_transit", "arrived", "completed", "cancelled"];
 
-// Statistics helpers
-export function getClientStats() {
-  const clients = getClients();
+export function getClientStats(clients: Client[]) {
   const now = new Date();
   const thisMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
-
   const newThisMonth = clients.filter((c) => c.createdAt.startsWith(thisMonth)).length;
 
   const cityCount: Record<string, number> = {};
-  clients.forEach((c) => {
-    cityCount[c.city] = (cityCount[c.city] || 0) + 1;
-  });
-
+  clients.forEach((c) => { cityCount[c.city] = (cityCount[c.city] || 0) + 1; });
   const topCity = Object.entries(cityCount).sort((a, b) => b[1] - a[1])[0]?.[0] || "-";
 
   const monthlyData: Record<string, number> = {};
-  clients.forEach((c) => {
-    const m = c.createdAt.substring(0, 7);
-    monthlyData[m] = (monthlyData[m] || 0) + 1;
-  });
+  clients.forEach((c) => { const m = c.createdAt.substring(0, 7); monthlyData[m] = (monthlyData[m] || 0) + 1; });
 
-  const registrationsByMonth = Object.entries(monthlyData)
-    .sort(([a], [b]) => a.localeCompare(b))
-    .map(([month, count]) => ({ month, count }));
-
+  const registrationsByMonth = Object.entries(monthlyData).sort(([a], [b]) => a.localeCompare(b)).map(([month, count]) => ({ month, count }));
   const clientsByCity = Object.entries(cityCount).map(([city, count]) => ({ city, count }));
 
-  // Stage distribution
   const stageCount: Record<string, number> = {};
   ALL_STAGES.forEach((s) => { stageCount[s] = 0; });
-  clients.forEach((c) => {
-    const stage = c.stage || "new";
-    stageCount[stage] = (stageCount[stage] || 0) + 1;
-  });
+  clients.forEach((c) => { const stage = c.stage || "new"; stageCount[stage] = (stageCount[stage] || 0) + 1; });
   const stageDistribution = ALL_STAGES.map((stage) => ({ stage, count: stageCount[stage] || 0 }));
 
   const confirmedCount = clients.filter((c) => c.confirmed).length;
@@ -185,22 +203,13 @@ export function getClientStats() {
   const cancelledCount = clients.filter((c) => c.stage === "cancelled").length;
 
   return {
-    total: clients.length,
-    newThisMonth,
-    topCity,
-    activeCodes: clients.length,
-    registrationsByMonth,
-    clientsByCity,
-    stageDistribution,
-    confirmedCount,
-    confirmedPercentage,
-    completedCount,
-    cancelledCount,
+    total: clients.length, newThisMonth, topCity, activeCodes: clients.length,
+    registrationsByMonth, clientsByCity, stageDistribution,
+    confirmedCount, confirmedPercentage, completedCount, cancelledCount,
   };
 }
 
-export function exportClientsCSV(): string {
-  const clients = getClients();
+export function exportClientsCSV(clients: Client[]): string {
   const sep = ",";
   const header = ["Name", "Phone", "City", "Code", "Date", "Stage", "Confirmed"].join(sep);
   const rows = clients.map((c) =>
