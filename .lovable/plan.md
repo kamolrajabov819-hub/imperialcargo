@@ -1,35 +1,24 @@
+# Update All Contact Numbers to +996502505506
 
+## Changes
 
-# Fix SPA Routing for External Hosting (GitHub Deploy)
+Three files need updating — replace all WhatsApp and Telegram links to use the single number `+996502505506`:
 
-## Problem
-When deploying to external hosting (Netlify, Vercel, Cloudflare Pages, etc.) via GitHub, navigating directly to `/admin`, `/dashboard`, `/login`, or `/signup` returns a 404. This is because static hosting doesn't know to serve `index.html` for client-side routes — it looks for an actual `/admin/index.html` file that doesn't exist.
+### 1. `src/components/ContactButtons.tsx`
 
-Lovable's built-in hosting handles this automatically, but external hosts need explicit configuration.
+- Line 11: `https://t.me/sultanb19` → `https://t.me/+996502505506`
+- Line 27: `https://wa.me/996705102772` → `https://wa.me/996502505506`
 
-## Solution
-Add redirect/rewrite config files for the most common hosting providers so all routes serve `index.html` and let React Router handle them.
+### 2. `src/pages/Dashboard.tsx`
 
-### Files to create
-
-1. **`public/_redirects`** — for Netlify
-   ```
-   /*    /index.html   200
-   ```
-
-2. **`public/vercel.json`** — for Vercel (also copy to project root)
-   ```json
-   { "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }] }
-   ```
-
-3. **`public/404.html`** — for GitHub Pages: a small HTML file that redirects to `index.html` with the path preserved via query string (standard GitHub Pages SPA trick).
-
-This covers Netlify, Vercel, and GitHub Pages — the three most common free hosting targets. The admin page, dashboard, and all other routes will work with direct navigation and page refresh.
+- Line 40: `https://wa.me/77718191119` → `https://wa.me/996502505506`
+- Line 41: `https://t.me/sultanb19` → `https://t.me/+996502505506`
+  3. Change contact section phone numbers to +996502505506
 
 ### Files changed
-| File | Purpose |
-|---|---|
-| `public/_redirects` | Netlify SPA fallback |
-| `vercel.json` (project root) | Vercel SPA rewrite |
-| `public/404.html` | GitHub Pages SPA fallback |
 
+
+| File                                | Change                            |
+| ----------------------------------- | --------------------------------- |
+| `src/components/ContactButtons.tsx` | Update Telegram and WhatsApp URLs |
+| `src/pages/Dashboard.tsx`           | Update Telegram and WhatsApp URLs |
