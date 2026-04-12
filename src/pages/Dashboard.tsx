@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "@/lib/i18n";
 import { Header } from "@/components/Header";
-import { getCurrentUser, logoutUser, getWarehouseString, getWarehouseAddress } from "@/lib/mockData";
+import { getCurrentUser, logoutUser, getWarehouseString, getWarehouseAddress, DEFAULT_WAREHOUSE } from "@/lib/mockData";
 import { Copy, Check, MapPin, Truck, LogOut, MessageCircle, Send, AlertTriangle } from "lucide-react";
 import { LogoIcon } from "@/components/LogoIcon";
 import { useState, useEffect } from "react";
@@ -13,10 +13,11 @@ export default function Dashboard() {
   const user = getCurrentUser();
   const [codeCopied, setCodeCopied] = useState(false);
   const [addrCopied, setAddrCopied] = useState(false);
-  const [warehouseAddress] = useState(getWarehouseAddress);
+  const [warehouseAddress, setWarehouseAddress] = useState(DEFAULT_WAREHOUSE);
 
   useEffect(() => {
-    if (!user) navigate("/login");
+    if (!user) { navigate("/login"); return; }
+    getWarehouseAddress().then(setWarehouseAddress);
   }, [user, navigate]);
 
   if (!user) return null;
@@ -32,7 +33,7 @@ export default function Dashboard() {
     navigate("/");
   };
 
-  const warehouseString = getWarehouseString();
+  const warehouseString = getWarehouseString(warehouseAddress);
   const whatsappMessage = encodeURIComponent(
     `Hello! My CargoLink code is ${user.code}.\n\nWarehouse Address:\n${warehouseString}\nID: ${user.code}`
   );
@@ -42,28 +43,17 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-
       <div className="pt-24 pb-32 px-4 container mx-auto max-w-2xl">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex justify-between items-center mb-8">
           <h1 className="text-2xl md:text-3xl font-bold text-foreground">{t("dashboard.title")}</h1>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={handleLogout}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-secondary text-foreground text-sm"
-          >
+          <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={handleLogout} className="flex items-center gap-2 px-4 py-2 rounded-lg bg-secondary text-foreground text-sm">
             <LogOut className="w-4 h-4" />
             {t("dashboard.logout")}
           </motion.button>
         </motion.div>
 
         {/* Identity Card */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="glass rounded-2xl p-8 mb-6 glow-box-cyan relative overflow-hidden"
-        >
+        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="glass rounded-2xl p-8 mb-6 glow-box-cyan relative overflow-hidden">
           <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -translate-y-1/2 translate-x-1/2" />
           <div className="flex items-center gap-3 mb-6">
             <LogoIcon className="w-6 h-6 text-primary" />
@@ -73,12 +63,7 @@ export default function Dashboard() {
           <p className="text-xs text-muted-foreground mb-4">{t("dashboard.code")}</p>
           <div className="flex items-center justify-between">
             <div className="text-3xl md:text-4xl font-bold text-primary glow-cyan tracking-widest">{user.code}</div>
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              onClick={() => copyToClipboard(user.code, setCodeCopied)}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/10 text-primary text-sm hover:bg-primary/20 transition-colors"
-            >
+            <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={() => copyToClipboard(user.code, setCodeCopied)} className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/10 text-primary text-sm hover:bg-primary/20 transition-colors">
               {codeCopied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
               {codeCopied ? t("dashboard.copied") : t("dashboard.copyCode")}
             </motion.button>
@@ -86,12 +71,7 @@ export default function Dashboard() {
         </motion.div>
 
         {/* Warning Banner */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.15 }}
-          className="rounded-2xl p-6 mb-6 border-2 border-amber-500/40 bg-amber-500/10"
-        >
+        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="rounded-2xl p-6 mb-6 border-2 border-amber-500/40 bg-amber-500/10">
           <div className="flex items-start gap-3">
             <AlertTriangle className="w-6 h-6 text-amber-500 shrink-0 mt-0.5" />
             <div>
@@ -102,12 +82,7 @@ export default function Dashboard() {
         </motion.div>
 
         {/* Warehouse Address */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="glass rounded-2xl p-8 mb-6"
-        >
+        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="glass rounded-2xl p-8 mb-6">
           <div className="flex items-center gap-3 mb-6">
             <MapPin className="w-6 h-6 text-primary" />
             <h2 className="text-lg font-semibold text-foreground">{t("dashboard.warehouse")}</h2>
@@ -121,39 +96,15 @@ export default function Dashboard() {
             <p className="text-primary font-semibold mt-2">ID: {user.code}</p>
           </div>
           <div className="space-y-3">
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => copyToClipboard(getWarehouseString() + `\nID: ${user.code}`, setAddrCopied)}
-              className="w-full py-3 rounded-xl bg-primary/10 text-primary font-medium flex items-center justify-center gap-2 hover:bg-primary/20 transition-colors"
-            >
+            <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={() => copyToClipboard(getWarehouseString(warehouseAddress) + `\nID: ${user.code}`, setAddrCopied)} className="w-full py-3 rounded-xl bg-primary/10 text-primary font-medium flex items-center justify-center gap-2 hover:bg-primary/20 transition-colors">
               {addrCopied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
               {addrCopied ? t("dashboard.copied") : t("dashboard.copyAddress")}
             </motion.button>
-
-            {/* WhatsApp button with pre-filled message */}
-            <motion.a
-              href={whatsappUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="w-full py-3 rounded-xl font-medium flex items-center justify-center gap-2 transition-colors text-white"
-              style={{ backgroundColor: "hsl(142, 70%, 45%)" }}
-            >
+            <motion.a href={whatsappUrl} target="_blank" rel="noopener noreferrer" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="w-full py-3 rounded-xl font-medium flex items-center justify-center gap-2 transition-colors text-white" style={{ backgroundColor: "hsl(142, 70%, 45%)" }}>
               <MessageCircle className="w-5 h-5" />
               {t("dashboard.contactManager")}
             </motion.a>
-
-            <motion.a
-              href={telegramUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="w-full py-3 rounded-xl font-medium flex items-center justify-center gap-2 transition-colors text-white"
-              style={{ backgroundColor: "#229ED9" }}
-            >
+            <motion.a href={telegramUrl} target="_blank" rel="noopener noreferrer" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="w-full py-3 rounded-xl font-medium flex items-center justify-center gap-2 transition-colors text-white" style={{ backgroundColor: "#229ED9" }}>
               <Send className="w-5 h-5" />
               {t("dashboard.contactTelegram")}
             </motion.a>
@@ -161,12 +112,7 @@ export default function Dashboard() {
         </motion.div>
 
         {/* Order Tracking Placeholder */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="glass rounded-2xl p-8 opacity-60"
-        >
+        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="glass rounded-2xl p-8 opacity-60">
           <div className="flex items-center gap-3 mb-4">
             <Truck className="w-6 h-6 text-primary" />
             <h2 className="text-lg font-semibold text-foreground">{t("dashboard.tracking")}</h2>
