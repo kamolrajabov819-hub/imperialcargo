@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import { useTranslation } from "@/lib/i18n";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import {
@@ -7,6 +7,7 @@ import {
   getClientStats, exportClientsCSV, getWarehouseAddress, saveWarehouseAddress, DEFAULT_WAREHOUSE,
   getClientComments, addClientComment, deleteClientComment, type Comment,
 } from "@/lib/mockData";
+import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import {
   Table, TableHeader, TableBody, TableRow, TableHead, TableCell,
@@ -25,7 +26,7 @@ import {
 import {
   Search, Plus, Pencil, Trash2, Users, Settings, LogOut,
   BarChart3, Download, TrendingUp, MapPin, ShieldCheck, Menu, X, MessageSquare, Check,
-  ChevronLeft, ChevronRight, CheckCircle, XCircle, Percent,
+  ChevronLeft, ChevronRight, CheckCircle, XCircle, Percent, Loader2,
 } from "lucide-react";
 import { LogoIcon } from "@/components/LogoIcon";
 import { useNavigate } from "react-router-dom";
@@ -63,6 +64,7 @@ export default function Admin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loginLoading, setLoginLoading] = useState(false);
   const [clients, setClients] = useState<Client[]>([]);
   const [search, setSearch] = useState("");
   const [stageFilter, setStageFilter] = useState<string>("all");
@@ -76,7 +78,7 @@ export default function Admin() {
   const [editPhone, setEditPhone] = useState("");
   const [editCity, setEditCity] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(!isMobile);
-  const [warehouse, setWarehouse] = useState(getWarehouseAddress);
+  const [warehouse, setWarehouse] = useState(DEFAULT_WAREHOUSE);
   const [warehouseSaved, setWarehouseSaved] = useState(false);
   const [commentClient, setCommentClient] = useState<Client | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
@@ -86,32 +88,61 @@ export default function Admin() {
   const [confirmDialogId, setConfirmDialogId] = useState<string | null>(null);
   const [confirmedAnimId, setConfirmedAnimId] = useState<string | null>(null);
 
-  const handleConfirm = (id: string) => {
-    updateClient(id, { confirmed: true });
+  // Check if already logged in
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        setAuthed(true);
+        loadData();
+      }
+    });
+  }, []);
+
+  const loadData = useCallback(async () => {
+    const [clientsData, warehouseData] = await Promise.all([
+      getClients(),
+      getWarehouseAddress(),
+    ]);
+    setClients(clientsData);
+    setWarehouse(warehouseData);
+  }, []);
+
+  const refresh = useCallback(async () => {
+    const data = await getClients();
+    setClients(data);
+  }, []);
+
+  const handleConfirm = async (id: string) => {
+    await updateClient(id, { confirmed: true });
     setConfirmedAnimId(id);
     setTimeout(() => setConfirmedAnimId(null), 2000);
-    refresh();
+    await refresh();
   };
 
-  const handleStageChange = (id: string, stage: ClientStage) => {
-    updateClient(id, { stage });
-    refresh();
+  const handleStageChange = async (id: string, stage: ClientStage) => {
+    await updateClient(id, { stage });
+    await refresh();
   };
 
-  // Reset page when search/filter changes
   useEffect(() => { setCurrentPage(1); }, [search, stageFilter]);
 
-  const handleLogin = () => {
-    if (email === "admin@cargolink.com" && password === "admin123") {
+  const handleLogin = async () => {
+    setLoginLoading(true);
+    setError("");
+    try {
+      const { error: authError } = await supabase.auth.signInWithPassword({ email, password });
+      if (authError) {
+        setError(t("admin.invalidCreds"));
+        return;
+      }
       setAuthed(true);
-      setClients(getClients());
-      setError("");
-    } else {
+      await loadData();
+    } catch {
       setError(t("admin.invalidCreds"));
+    } finally {
+      setLoginLoading(false);
     }
   };
-
-  const refresh = () => setClients(getClients());
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase();
@@ -127,26 +158,26 @@ export default function Admin() {
   const showingFrom = filtered.length === 0 ? 0 : (currentPage - 1) * CLIENTS_PER_PAGE + 1;
   const showingTo = Math.min(currentPage * CLIENTS_PER_PAGE, filtered.length);
 
-  const stats = useMemo(() => getClientStats(), [clients]);
+  const stats = useMemo(() => getClientStats(clients), [clients]);
 
-  const handleAdd = () => {
+  const handleAdd = async () => {
     if (!newName || !newPhone) return;
-    addClient({ name: newName, phone: newPhone, city: newCity });
+    await addClient({ name: newName, phone: newPhone, city: newCity });
     setNewName(""); setNewPhone("+996"); setNewCity("");
     setAddOpen(false);
-    refresh();
+    await refresh();
   };
 
-  const handleEdit = () => {
+  const handleEdit = async () => {
     if (!editClient) return;
-    updateClient(editClient.id, { name: editName, phone: editPhone, city: editCity });
+    await updateClient(editClient.id, { name: editName, phone: editPhone, city: editCity });
     setEditClient(null);
-    refresh();
+    await refresh();
   };
 
-  const handleDelete = (id: string) => {
-    deleteClient(id);
-    refresh();
+  const handleDelete = async (id: string) => {
+    await deleteClient(id);
+    await refresh();
   };
 
   const openEdit = (c: Client) => {
@@ -157,7 +188,7 @@ export default function Admin() {
   };
 
   const handleExportCSV = () => {
-    const csv = exportClientsCSV();
+    const csv = exportClientsCSV(clients);
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -167,28 +198,40 @@ export default function Admin() {
     URL.revokeObjectURL(url);
   };
 
-  const handleSaveWarehouse = () => {
-    saveWarehouseAddress(warehouse);
+  const handleSaveWarehouse = async () => {
+    await saveWarehouseAddress(warehouse);
     setWarehouseSaved(true);
     setTimeout(() => setWarehouseSaved(false), 2500);
   };
 
-  const openComments = (c: Client) => {
+  const openComments = async (c: Client) => {
     setCommentClient(c);
-    setComments(getClientComments(c.id));
+    const data = await getClientComments(c.id);
+    setComments(data);
     setNewComment("");
   };
 
-  const handleAddComment = () => {
+  const handleAddComment = async () => {
     if (!commentClient || !newComment.trim()) return;
-    addClientComment(commentClient.id, newComment.trim());
-    setComments(getClientComments(commentClient.id));
+    await addClientComment(commentClient.id, newComment.trim());
+    const data = await getClientComments(commentClient.id);
+    setComments(data);
     setNewComment("");
   };
 
-  const handleDeleteComment = (id: string) => {
-    deleteClientComment(id);
-    if (commentClient) setComments(getClientComments(commentClient.id));
+  const handleDeleteComment = async (id: string) => {
+    await deleteClientComment(id);
+    if (commentClient) {
+      const data = await getClientComments(commentClient.id);
+      setComments(data);
+    }
+  };
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setAuthed(false);
+    setClients([]);
+    navigate("/admin");
   };
 
   const getStageName = (stage: ClientStage) => {
@@ -224,8 +267,10 @@ export default function Admin() {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={handleLogin}
-              className="w-full py-3 rounded-xl bg-primary text-primary-foreground font-semibold"
+              disabled={loginLoading}
+              className="w-full py-3 rounded-xl bg-primary text-primary-foreground font-semibold flex items-center justify-center gap-2"
             >
+              {loginLoading && <Loader2 className="w-4 h-4 animate-spin" />}
               {t("admin.signIn")}
             </motion.button>
           </div>
@@ -270,7 +315,7 @@ export default function Admin() {
       <div className="p-2 border-t border-border space-y-1">
         <LanguageSwitcher dropUp />
         <button
-          onClick={() => { setAuthed(false); navigate("/admin"); }}
+          onClick={handleLogout}
           className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm text-destructive hover:bg-destructive/10 transition-colors"
         >
           <LogOut className="w-4 h-4" />
@@ -605,14 +650,9 @@ export default function Admin() {
                 ))}
               </div>
 
-              {/* Stat Cards - Row 2: New stats */}
+              {/* Stat Cards - Row 2 */}
               <div className="grid grid-cols-3 gap-2 md:gap-4">
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4 }}
-                  className="glass rounded-xl p-3 md:p-5"
-                >
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="glass rounded-xl p-3 md:p-5">
                   <div className="flex items-center gap-2 md:gap-3 mb-2">
                     <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center">
                       <Percent className="w-4 h-4 md:w-5 md:h-5 text-emerald-400" />
@@ -621,12 +661,7 @@ export default function Admin() {
                   <p className="text-xl md:text-2xl font-bold text-foreground">{stats.confirmedPercentage}%</p>
                   <p className="text-[10px] md:text-xs text-muted-foreground mt-1 leading-tight">{t("admin.qualifiedLeads")}</p>
                 </motion.div>
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.5 }}
-                  className="glass rounded-xl p-3 md:p-5"
-                >
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="glass rounded-xl p-3 md:p-5">
                   <div className="flex items-center gap-2 md:gap-3 mb-2">
                     <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-green-500/10 flex items-center justify-center">
                       <CheckCircle className="w-4 h-4 md:w-5 md:h-5 text-green-400" />
@@ -635,12 +670,7 @@ export default function Admin() {
                   <p className="text-xl md:text-2xl font-bold text-foreground">{stats.completedCount}</p>
                   <p className="text-[10px] md:text-xs text-muted-foreground mt-1 leading-tight">{t("admin.completedDeals")}</p>
                 </motion.div>
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.6 }}
-                  className="glass rounded-xl p-3 md:p-5"
-                >
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }} className="glass rounded-xl p-3 md:p-5">
                   <div className="flex items-center gap-2 md:gap-3 mb-2">
                     <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-red-500/10 flex items-center justify-center">
                       <XCircle className="w-4 h-4 md:w-5 md:h-5 text-red-400" />
@@ -660,11 +690,7 @@ export default function Admin() {
                       <CartesianGrid strokeDasharray="3 3" stroke="hsl(240,10%,18%)" />
                       <XAxis dataKey="month" stroke="hsl(220,10%,55%)" fontSize={11} />
                       <YAxis stroke="hsl(220,10%,55%)" fontSize={11} />
-                      <Tooltip
-                        contentStyle={{ background: "hsl(240,15%,8%)", border: "1px solid hsl(240,10%,18%)", borderRadius: "8px", color: "#fff" }}
-                        itemStyle={{ color: "#fff" }}
-                        labelStyle={{ color: "#fff" }}
-                      />
+                      <Tooltip contentStyle={{ background: "hsl(240,15%,8%)", border: "1px solid hsl(240,10%,18%)", borderRadius: "8px", color: "#fff" }} itemStyle={{ color: "#fff" }} labelStyle={{ color: "#fff" }} />
                       <Bar dataKey="count" fill="hsl(0,75%,45%)" radius={[4, 4, 0, 0]} />
                     </BarChart>
                   </ResponsiveContainer>
@@ -673,25 +699,12 @@ export default function Admin() {
                   <h3 className="text-base md:text-lg font-semibold text-foreground mb-4">{t("admin.clientsByCity")}</h3>
                   <ResponsiveContainer width="100%" height={220}>
                     <PieChart>
-                      <Pie
-                        data={stats.clientsByCity}
-                        dataKey="count"
-                        nameKey="city"
-                        cx="50%"
-                        cy="50%"
-                        outerRadius={isMobile ? 60 : 80}
-                        label={false}
-                        labelLine={false}
-                      >
+                      <Pie data={stats.clientsByCity} dataKey="count" nameKey="city" cx="50%" cy="50%" outerRadius={isMobile ? 60 : 80} label={false} labelLine={false}>
                         {stats.clientsByCity.map((_, i) => (
                           <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
                         ))}
                       </Pie>
-                      <Tooltip
-                        contentStyle={{ background: "hsl(240,15%,8%)", border: "1px solid hsl(240,10%,18%)", borderRadius: "8px", color: "hsl(200,100%,95%)" }}
-                        itemStyle={{ color: "hsl(200,100%,95%)" }}
-                        labelStyle={{ color: "hsl(200,100%,95%)" }}
-                      />
+                      <Tooltip contentStyle={{ background: "hsl(240,15%,8%)", border: "1px solid hsl(240,10%,18%)", borderRadius: "8px", color: "hsl(200,100%,95%)" }} itemStyle={{ color: "hsl(200,100%,95%)" }} labelStyle={{ color: "hsl(200,100%,95%)" }} />
                     </PieChart>
                   </ResponsiveContainer>
                   <div className="flex flex-wrap gap-2 mt-3 justify-center">
@@ -713,11 +726,7 @@ export default function Admin() {
                     <CartesianGrid strokeDasharray="3 3" stroke="hsl(240,10%,18%)" />
                     <XAxis type="number" stroke="hsl(220,10%,55%)" fontSize={11} />
                     <YAxis dataKey="name" type="category" stroke="hsl(220,10%,55%)" fontSize={10} width={isMobile ? 80 : 120} />
-                    <Tooltip
-                      contentStyle={{ background: "hsl(240,15%,8%)", border: "1px solid hsl(240,10%,18%)", borderRadius: "8px", color: "#fff" }}
-                      itemStyle={{ color: "#fff" }}
-                      labelStyle={{ color: "#fff" }}
-                    />
+                    <Tooltip contentStyle={{ background: "hsl(240,15%,8%)", border: "1px solid hsl(240,10%,18%)", borderRadius: "8px", color: "#fff" }} itemStyle={{ color: "#fff" }} labelStyle={{ color: "#fff" }} />
                     <Bar dataKey="count" radius={[0, 4, 4, 0]}>
                       {stats.stageDistribution.map((_, i) => (
                         <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
@@ -762,46 +771,17 @@ export default function Admin() {
                   >
                     <AnimatePresence mode="wait">
                       {warehouseSaved ? (
-                        <motion.span
-                          key="saved"
-                          initial={{ opacity: 0, scale: 0.8 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          exit={{ opacity: 0, scale: 0.8 }}
-                          className="flex items-center gap-2"
-                        >
+                        <motion.span key="saved" initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }} className="flex items-center gap-2">
                           <Check className="w-5 h-5" />
                           {t("dashboard.copied") || "Saved ✓"}
                         </motion.span>
                       ) : (
-                        <motion.span
-                          key="save"
-                          initial={{ opacity: 0, scale: 0.8 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          exit={{ opacity: 0, scale: 0.8 }}
-                        >
+                        <motion.span key="save" initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }}>
                           {t("admin.save")}
                         </motion.span>
                       )}
                     </AnimatePresence>
                   </motion.button>
-                </div>
-              </div>
-
-              {/* Admin Credentials */}
-              <div className="glass rounded-xl p-4 md:p-6">
-                <h3 className="text-base md:text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-                  <ShieldCheck className="w-5 h-5 text-primary" />
-                  {t("admin.adminCredentials")}
-                </h3>
-                <div className="space-y-3">
-                  <div>
-                    <label className="text-xs text-muted-foreground">{t("admin.currentEmail")}</label>
-                    <Input value="admin@cargolink.com" readOnly className="bg-secondary border-border text-muted-foreground mt-1" />
-                  </div>
-                  <div>
-                    <label className="text-xs text-muted-foreground">{t("admin.currentPassword")}</label>
-                    <Input value="••••••••" readOnly className="bg-secondary border-border text-muted-foreground mt-1" />
-                  </div>
                 </div>
               </div>
 
@@ -929,9 +909,7 @@ export default function Admin() {
         <AlertDialogContent className="glass border-border">
           <AlertDialogHeader>
             <AlertDialogTitle className="text-foreground">{t("admin.deleteConfirm")}</AlertDialogTitle>
-            <AlertDialogDescription>
-              {t("admin.deleteConfirmDesc")}
-            </AlertDialogDescription>
+            <AlertDialogDescription>{t("admin.deleteConfirmDesc")}</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel className="bg-secondary text-foreground border-border hover:bg-muted">{t("admin.cancel")}</AlertDialogCancel>
@@ -955,9 +933,7 @@ export default function Admin() {
         <AlertDialogContent className="glass border-border">
           <AlertDialogHeader>
             <AlertDialogTitle className="text-foreground">{t("admin.confirmLead")}</AlertDialogTitle>
-            <AlertDialogDescription>
-              {t("admin.confirmLeadDesc")}
-            </AlertDialogDescription>
+            <AlertDialogDescription>{t("admin.confirmLeadDesc")}</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel className="bg-secondary text-foreground border-border hover:bg-muted">{t("admin.cancel")}</AlertDialogCancel>
