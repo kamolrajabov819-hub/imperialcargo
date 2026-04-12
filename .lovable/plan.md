@@ -1,70 +1,35 @@
 
 
-# Migrate from localStorage to Lovable Cloud Database
+# Fix SPA Routing for External Hosting (GitHub Deploy)
 
-Currently all data (clients, comments, warehouse settings, admin auth, user sessions) lives in localStorage and is lost when clearing browser data. This plan migrates everything to a persistent database with proper authentication.
+## Problem
+When deploying to external hosting (Netlify, Vercel, Cloudflare Pages, etc.) via GitHub, navigating directly to `/admin`, `/dashboard`, `/login`, or `/signup` returns a 404. This is because static hosting doesn't know to serve `index.html` for client-side routes — it looks for an actual `/admin/index.html` file that doesn't exist.
 
-## Database Tables
+Lovable's built-in hosting handles this automatically, but external hosts need explicit configuration.
 
-### 1. `clients` table
-Stores all client/parcel records (name, phone, city, code, stage, confirmed status, timestamps).
+## Solution
+Add redirect/rewrite config files for the most common hosting providers so all routes serve `index.html` and let React Router handle them.
 
-### 2. `client_comments` table
-Stores admin comments per client, linked via `client_id` foreign key.
+### Files to create
 
-### 3. `warehouse_settings` table
-Single-row table for the warehouse address configuration.
+1. **`public/_redirects`** — for Netlify
+   ```
+   /*    /index.html   200
+   ```
 
-### 4. `user_roles` table
-Stores admin role assignments (follows security best practices — roles in separate table).
+2. **`public/vercel.json`** — for Vercel (also copy to project root)
+   ```json
+   { "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }] }
+   ```
 
-## Authentication
+3. **`public/404.html`** — for GitHub Pages: a small HTML file that redirects to `index.html` with the path preserved via query string (standard GitHub Pages SPA trick).
 
-- **Admin**: Real email/password auth via Lovable Cloud auth system (replaces hardcoded `admin@cargolink.com / admin123`). Admin role stored in `user_roles` table.
-- **Client login**: Clients log in with name + phone (looked up in `clients` table). No Supabase auth account needed — they're lightweight users identified by their record.
-- **Client signup**: Creates a record in `clients` table (same as now, but persisted to DB).
+This covers Netlify, Vercel, and GitHub Pages — the three most common free hosting targets. The admin page, dashboard, and all other routes will work with direct navigation and page refresh.
 
-## RLS Policies
-
-- `clients`: Public read for login lookup (by name+phone). Insert allowed for signup. Admin (via `has_role`) can do everything.
-- `client_comments`: Admin-only CRUD.
-- `warehouse_settings`: Public read (dashboard needs it). Admin-only update.
-- `user_roles`: No public access, used only via `has_role()` security definer function.
-
-## Code Changes
-
-### `src/lib/mockData.ts` → `src/lib/dataService.ts`
-Rewrite all functions to use Supabase client instead of localStorage. Keep the same function signatures so Admin/Dashboard/Signup/Login pages need minimal changes. Make functions async.
-
-### `src/pages/Admin.tsx`
-- Replace hardcoded login with `supabase.auth.signInWithPassword()`
-- Replace `getClients()` etc. with async versions
-- Add `useEffect` hooks for data fetching
-- Wrap mutations in async calls
-
-### `src/pages/Dashboard.tsx`
-- Fetch client data from DB instead of localStorage
-- Store current user session in localStorage (just the client ID) + fetch fresh data from DB
-
-### `src/pages/Login.tsx`
-- Use async `findClientByNameAndPhone()` that queries DB
-
-### `src/pages/Signup.tsx`
-- Use async `addClient()` that inserts into DB
-
-### Initial Admin Setup
-- Seed the admin user via a migration: create the auth user and assign admin role
-- Seed default warehouse settings
-- Seed the 8 default demo clients
-
-## Files Changed
-| File | Change |
+### Files changed
+| File | Purpose |
 |---|---|
-| Migration SQL | Create tables, RLS, functions, seed data |
-| `src/lib/mockData.ts` | Rewrite to async Supabase queries |
-| `src/pages/Admin.tsx` | Async data + Supabase auth login |
-| `src/pages/Dashboard.tsx` | Async data fetching |
-| `src/pages/Login.tsx` | Async client lookup |
-| `src/pages/Signup.tsx` | Async client creation |
-| `src/components/Header.tsx` | Check session from localStorage client ID |
+| `public/_redirects` | Netlify SPA fallback |
+| `vercel.json` (project root) | Vercel SPA rewrite |
+| `public/404.html` | GitHub Pages SPA fallback |
 
