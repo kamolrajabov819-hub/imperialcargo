@@ -14,16 +14,143 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      client_comments: {
+        Row: {
+          client_id: string
+          created_at: string
+          id: string
+          text: string
+        }
+        Insert: {
+          client_id: string
+          created_at?: string
+          id?: string
+          text: string
+        }
+        Update: {
+          client_id?: string
+          created_at?: string
+          id?: string
+          text?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_comments_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      clients: {
+        Row: {
+          city: string
+          code: string
+          confirmed: boolean
+          created_at: string
+          id: string
+          name: string
+          phone: string
+          stage: Database["public"]["Enums"]["client_stage"]
+        }
+        Insert: {
+          city?: string
+          code: string
+          confirmed?: boolean
+          created_at?: string
+          id?: string
+          name: string
+          phone: string
+          stage?: Database["public"]["Enums"]["client_stage"]
+        }
+        Update: {
+          city?: string
+          code?: string
+          confirmed?: boolean
+          created_at?: string
+          id?: string
+          name?: string
+          phone?: string
+          stage?: Database["public"]["Enums"]["client_stage"]
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      warehouse_settings: {
+        Row: {
+          city: string
+          country: string
+          id: string
+          line1: string
+          line2: string
+          name: string
+          phone: string
+          postal: string
+        }
+        Insert: {
+          city?: string
+          country?: string
+          id?: string
+          line1?: string
+          line2?: string
+          name?: string
+          phone?: string
+          postal?: string
+        }
+        Update: {
+          city?: string
+          country?: string
+          id?: string
+          line1?: string
+          line2?: string
+          name?: string
+          phone?: string
+          postal?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "moderator" | "user"
+      client_stage:
+        | "new"
+        | "consultation"
+        | "awaiting_cargo"
+        | "cargo_received"
+        | "in_transit"
+        | "arrived"
+        | "completed"
+        | "cancelled"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +277,18 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "moderator", "user"],
+      client_stage: [
+        "new",
+        "consultation",
+        "awaiting_cargo",
+        "cargo_received",
+        "in_transit",
+        "arrived",
+        "completed",
+        "cancelled",
+      ],
+    },
   },
 } as const
