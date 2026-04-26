@@ -93,7 +93,7 @@ export default function Dashboard() {
             <p>{warehouseAddress.line2}</p>
             <p>{warehouseAddress.city}, {warehouseAddress.country} {warehouseAddress.postal}</p>
             <p className="text-muted-foreground">唛头: {warehouseAddress.phone}</p>
-            <p className="text-primary font-semibold mt-2">ID: {user.code}</p>
+            <p className="text-primary font-semibold mt-2">唛头: {user.code}</p>
           </div>
           <div className="space-y-3">
             <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={() => copyToClipboard(getWarehouseString(warehouseAddress) + `\nID: ${user.code}`, setAddrCopied)} className="w-full py-3 rounded-xl bg-primary/10 text-primary font-medium flex items-center justify-center gap-2 hover:bg-primary/20 transition-colors">
