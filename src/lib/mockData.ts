@@ -172,7 +172,7 @@ export async function deleteClientComment(id: string): Promise<void> {
 }
 
 export function getWarehouseString(address: typeof DEFAULT_WAREHOUSE): string {
-  return `${address.name}\n${address.line1}\n${address.line2}\n${address.city}, ${address.country} ${address.postal}\nTel: ${address.phone}`;
+  return `${address.name}\n${address.line1}\n${address.line2}\n${address.city}, ${address.country} ${address.postal}\n唛头: ${address.phone}`;
 }
 
 export const ALL_STAGES: ClientStage[] = ["new", "consultation", "awaiting_cargo", "cargo_received", "in_transit", "arrived", "completed", "cancelled"];
