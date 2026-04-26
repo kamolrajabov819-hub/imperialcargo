@@ -748,7 +748,7 @@ export default function Admin() {
                   {t("admin.warehouseAddress")}
                 </h3>
                 <div className="space-y-3">
-                  {(Object.keys(DEFAULT_WAREHOUSE) as (keyof typeof DEFAULT_WAREHOUSE)[]).map((key) => (
+                  {(Object.keys(DEFAULT_WAREHOUSE) as (keyof typeof DEFAULT_WAREHOUSE)[]).filter((key) => key !== "phone").map((key) => (
                     <div key={key}>
                       <label className="text-xs text-muted-foreground capitalize">{key}</label>
                       <Input
