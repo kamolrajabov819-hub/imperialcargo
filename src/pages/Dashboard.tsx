@@ -92,7 +92,6 @@ export default function Dashboard() {
             <p>{warehouseAddress.line1}</p>
             <p>{warehouseAddress.line2}</p>
             <p>{warehouseAddress.city}, {warehouseAddress.country} {warehouseAddress.postal}</p>
-            <p className="text-muted-foreground">唛头: {warehouseAddress.phone}</p>
             <p className="text-primary font-semibold mt-2">唛头: {user.code}</p>
           </div>
           <div className="space-y-3">
